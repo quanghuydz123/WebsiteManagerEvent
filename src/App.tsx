@@ -1,25 +1,24 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import { Box } from '@mui/system';
+import { Route, Routes } from 'react-router-dom';
+import AdminPage from './pages/AdminPage';
+import { SideBarComponent } from './components';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <section className="main flex">
+        <div className="sidebarWapper w-[18%]">
+            <SideBarComponent />
+        </div>
+        <div className="content_Right w-[82%] px-3">
+          <Routes>
+              <Route path='/' element={<AdminPage />}/>
+          </Routes>
+        </div>
+    </section>
+</>
   );
 }
 
