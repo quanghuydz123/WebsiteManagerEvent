@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import Button from '@mui/material/Button';
-import { MdMenuOpen, MdOutlineMenu } from "react-icons/md";
+import { MdMenuBook, MdMenuOpen, MdOutlineMenu } from "react-icons/md";
 import SearchBox from "../SearchBox/SearchBox";
 import { CiLight } from "react-icons/ci";
 import { CiDark } from "react-icons/ci";
@@ -15,8 +15,12 @@ import { MdOutlineSecurity } from "react-icons/md";
 import { Divider } from "@mui/material";
 import AvatarComponent from "../Avatar/AvatarComponent";
 import NotificationComponent from "../Notification/NotificationComponent";
-
-const Header = () => {
+interface Props{
+    isToggle:boolean,
+    setIsToggle:(val:boolean)=>void
+}
+const Header = (props:Props) => {
+    const {isToggle,setIsToggle} = props
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [isOpenNotifications,setIsOpenNotifications] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -48,8 +52,8 @@ const Header = () => {
                             </Link>
                         </div>
                         <div className="col-sm-3 d-flex align-items-center part2 pl-2">
-                            <Button className="rounded-circl mr-3">
-                                <MdMenuOpen className="icon" />
+                            <Button className="rounded-circl mr-3 ml-3" onClick={()=>setIsToggle(!isToggle)}>
+                                {isToggle ? <MdMenuOpen className="icon"/>: <MdOutlineMenu className="icon"/>}
                             </Button>
                             <SearchBox />
                         </div>

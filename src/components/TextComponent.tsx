@@ -15,7 +15,7 @@ interface Props{
 const TextComponent = (props:Props)=> {
     const {text,styles,size,className,fontWeight,color} = props
     return (
-        <span style={{...styles,fontSize:size,fontWeight:fontWeight,color:color}} className={`${className}`}>
+        <span style={{fontSize:size,fontWeight:fontWeight,color:color,textTransform:'none',...styles}} className={`${className}`}>
             {text}
         </span>
     );
