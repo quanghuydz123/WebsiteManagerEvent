@@ -100,7 +100,7 @@ opacity: 0;overflow: hidden;transition: all .3s;}
 
 .main .content{width: 82%;flex:0 0 82%;transition: all 0.3s }
 .main .content.toggle{width: 100%;flex:0 0 100%}
-.right-content{padding: 95px 0px;}
+.right-content{padding: 95px 0px; width: 100%;}
 
 .dashboardBoxWapper{gap:20px;width: 100%;flex-wrap: wrap;}
 
@@ -136,3 +136,10 @@ border-radius: 50%;}
 
 /*  */
 .table .thead-dark th{ background-color: #1866ee !important; border-color: #000 !important;font-size: 13px !important; } 
+
+
+
+/*  */
+.loginSection{
+  width: 100%; height: 100vh; padding: 35px 25px;
+}

@@ -72,7 +72,7 @@ const DashBoardBoxComponent = (props:Props) => {
         <>
             <Button className="dashboardBox"  style={{
                 backgroundImage:`linear-gradient(to right , ${color[0]} , ${color[1]})`
-            }}>
+            }} >
                 {
                     grow ? <span className="chart"><TrendingUpOutlined /></span> : <span className="chart"><TrendingDownOutlined     /></span>
                 }

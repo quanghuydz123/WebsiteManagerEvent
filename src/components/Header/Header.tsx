@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Button from '@mui/material/Button';
 import { MdMenuBook, MdMenuOpen, MdOutlineMenu } from "react-icons/md";
 import SearchBox from "../SearchBox/SearchBox";
@@ -15,9 +15,12 @@ import { MdOutlineSecurity } from "react-icons/md";
 import { Divider } from "@mui/material";
 import AvatarComponent from "../Avatar/AvatarComponent";
 import NotificationComponent from "../Notification/NotificationComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthState, setIsLogin } from "../../reduxs/reducers/authReducers";
 interface Props{
     isToggle:boolean,
-    setIsToggle:(val:boolean)=>void
+    setIsToggle:(val:boolean)=>void,
+  
 }
 const Header = (props:Props) => {
     const {isToggle,setIsToggle} = props
@@ -25,6 +28,12 @@ const Header = (props:Props) => {
     const [isOpenNotifications,setIsOpenNotifications] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const openNotification = Boolean(isOpenNotifications);
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const auth:AuthState = useSelector((state:any) => state.auth)
+    // React.useEffect(()=>{
+    //     dispatch(removeAuth())
+    // },[])
     const handleOpenMyAcc = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -38,6 +47,9 @@ const Header = (props:Props) => {
     const handleCloseNotification = () => {
         setIsOpenNotifications(null);
     };
+    const handleLogout = ()=>{
+        dispatch(setIsLogin({isLogin:false}))
+    }
     return (
         <>
             <header className="d-flex align-items-center">
@@ -53,7 +65,7 @@ const Header = (props:Props) => {
                         </div>
                         <div className="col-sm-3 d-flex align-items-center part2 pl-2">
                             <Button className="rounded-circl mr-3 ml-3" onClick={()=>setIsToggle(!isToggle)}>
-                                {isToggle ? <MdMenuOpen className="icon"/>: <MdOutlineMenu className="icon"/>}
+                                {isToggle ? <MdOutlineMenu className="icon"/>: <MdMenuOpen className="icon"/>}
                             </Button>
                             <SearchBox />
                         </div>
@@ -165,7 +177,7 @@ const Header = (props:Props) => {
                                     </ListItemIcon>
                                     Đổi mật khẩu
                                 </MenuItem>
-                                <MenuItem onClick={handleCloseMyAcc}>
+                                <MenuItem onClick={handleLogout}>
                                     <ListItemIcon>
                                         <Logout fontSize="small" />
                                     </ListItemIcon>

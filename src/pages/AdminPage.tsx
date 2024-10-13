@@ -58,7 +58,7 @@ const AdminPage = () => {
   };
   return (
     <>
-      <div className="right-content w-100">
+      <div className="right-content">
         <div className="row dashboardBoxWapperRow">
           <div className="col-md-8">
             <div className="dashboardBoxWapper d-flex">

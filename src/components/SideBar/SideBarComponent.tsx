@@ -1,20 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import TextComponent from "../TextComponent";
 import { FaUser } from "react-icons/fa";
 import { FaProductHunt } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ItemMenu from "../ItemMenu";
 interface Props{
     isToggle:boolean
 }
 const SideBarComponent = (props:Props) => {
-    const {isToggle} = props
     const [activeItemMenu,setActiveItemMenu] = useState(0)
     const [isToogleSubMenu,setIsToogleSubMenu] = useState(false)
-
+    useEffect(()=>{
+        navigate('/')
+    },[])
+    const navigate = useNavigate()
     const openSubMenu = (index:number)=>{
         setActiveItemMenu(index)
         if(index===2){
@@ -23,6 +25,11 @@ const SideBarComponent = (props:Props) => {
             if(isToogleSubMenu){
                 setIsToogleSubMenu(false)
             }
+        }
+        if(index ===0){
+            navigate('/')
+        }else if(index === 1){
+            navigate('/users')
         }
     }
     return (
@@ -39,7 +46,7 @@ const SideBarComponent = (props:Props) => {
                             </Button> */}
                             <ItemMenu text="Trang chủ" 
                             iconLeft={<MdOutlineDashboardCustomize size={20} color={activeItemMenu === 0 ? "hsl(210deg 71.43% 46.67%)" : "#5e5d72"} />}
-                            onClick={()=>openSubMenu(0)}
+                            onClick={()=>{openSubMenu(0)}}
                             isActive={activeItemMenu === 0}
                             />
                         </li>
