@@ -143,11 +143,7 @@ const Header = (props:Props) => {
 
                             </Menu>
                             <Button className="myAcc d-flex align-items-center" onClick={handleOpenMyAcc}>
-                                <div className="userImg">
-                                    <span className="rounded-circl">
-                                        <img src="https://i.scdn.co/image/ab676161000051745a79a6ca8c60e4ec1440be53" />
-                                    </span>
-                                </div>
+                                <AvatarComponent />
                                 <div className="userInfo">
                                     <h4>Quang Huy</h4>
                                     <p className="mb-0">examp@gmail.com</p>

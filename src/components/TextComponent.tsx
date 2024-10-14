@@ -10,14 +10,15 @@ interface Props{
     size?:number
     className?:string,
     fontWeight?:number,
-    color?:string
+    color?:string,
+    mb?:number
 }
 const TextComponent = (props:Props)=> {
-    const {text,styles,size,className,fontWeight,color} = props
+    const {text,styles,size,className,fontWeight,color,mb} = props
     return (
-        <span style={{fontSize:size,fontWeight:fontWeight,color:color,textTransform:'none',...styles}} className={`${className}`}>
+        <p style={{fontSize:size ?? 14,fontWeight:fontWeight,color:color,textTransform:'none',...styles,marginBottom:mb ?? 0}} className={`${className}`}>
             {text}
-        </span>
+        </p>
     );
   }
   

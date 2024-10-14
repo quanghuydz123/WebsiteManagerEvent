@@ -20,49 +20,57 @@ import { useDispatch, useSelector } from 'react-redux';
 import { removeAuth, setIsLogin } from '../../reduxs/reducers/authReducers';
 import { IconButton, InputAdornment, OutlinedInput } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import Grid from '@mui/material/Grid';
+import { Grid2 } from '@mui/material';
+import TextComponent from '../../components/TextComponent';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     alignSelf: 'center',
+    justifyContent: 'center',
     width: '100%',
+    height: '100vh',
     padding: theme.spacing(4),
     gap: theme.spacing(2),
     margin: 'auto',
+    border: 'none',
     [theme.breakpoints.up('sm')]: {
         maxWidth: '450px',
     },
-    boxShadow:
-        'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-    ...theme.applyStyles('dark', {
-        boxShadow:
-            'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-    }),
+    // boxShadow:
+    //     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+    // ...theme.applyStyles('dark', {
+    //     boxShadow:
+    //         'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+    // }),
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
     minHeight: '100%',
-    padding: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-        padding: theme.spacing(4),
-    },
-    '&::before': {
-        content: '""',
-        display: 'block',
-        position: 'absolute',
-        zIndex: -1,
-        inset: 0,
-        backgroundImage:
-            'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-        backgroundRepeat: 'no-repeat',
-        ...theme.applyStyles('dark', {
-            backgroundImage:
-                'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-        }),
-    },
+    height: '100vh',
+    // padding: theme.spacing(2),
+    // [theme.breakpoints.up('sm')]: {
+    //     padding: theme.spacing(4),
+    // },
+    backgroundColor: 'white',
+    // '&::before': {
+    //     content: '""',
+    //     display: 'block',
+    //     position: 'absolute',
+    //     zIndex: -1,
+    //     inset: 0,
+    //     backgroundImage:
+    //         'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+    //     backgroundRepeat: 'no-repeat',
+    //     ...theme.applyStyles('dark', {
+    //         backgroundImage:
+    //             'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+    //     }),
+    // },
 }));
 
-export default function LoginPage(props:any) {
+export default function LoginPage(props: any) {
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
@@ -74,8 +82,7 @@ export default function LoginPage(props:any) {
     const [password, setPassword] = React.useState('')
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const auth = useSelector((state:any) => state.auth)
-    console.log("auth",auth)
+    const auth = useSelector((state: any) => state.auth)
     // React.useEffect(()=>{
     //     dispatch(removeAuth())
     // },[])
@@ -100,14 +107,13 @@ export default function LoginPage(props:any) {
         // });
         event.preventDefault();
     };
-
-    const validateInputs = () => {
-        const email = document.getElementById('email') as HTMLInputElement;
-        const password = document.getElementById('password') as HTMLInputElement;
+    const handleLogin = () => {
+        // const email = document.getElementById('email') as HTMLInputElement;
+        // const password = document.getElementById('password') as HTMLInputElement;
 
         let isValid = true;
 
-        if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+        if (!email || !/\S+@\S+\.\S+/.test(email)) {
             setEmailError(true);
             setEmailErrorMessage('Hãy nhập định dạng Email');
             isValid = false;
@@ -116,7 +122,7 @@ export default function LoginPage(props:any) {
             setEmailErrorMessage('');
         }
 
-        if (!password.value || password.value.length < 6) {
+        if (!password || password.length < 6) {
             setPasswordError(true);
             setPasswordErrorMessage('Mật khẩu phải 6 chứ số trở lên.');
             isValid = false;
@@ -128,7 +134,7 @@ export default function LoginPage(props:any) {
         return isValid;
     };
     const loginGoogle = () => {
-        dispatch(setIsLogin({isLogin:true}))
+        dispatch(setIsLogin({ isLogin: true }))
     }
     const handleOnchange = (e: any, name: 'email' | 'password') => {
         const target = e.target as HTMLInputElement;
@@ -139,142 +145,144 @@ export default function LoginPage(props:any) {
         }
     }
     return (
-            <AppTheme {...props} >
-            <CssBaseline enableColorScheme />
-            <SignInContainer direction="column" justifyContent="space-between" >
-                <Card variant="outlined">
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <img style={{ width: 200 }} src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh-WlQ_o8q2pBl-bCv6N9XZgWhFaa4b_DRUw&s'} />
-                    </div>
-                    <Typography
-                        component="h1"
-                        variant="h4"
-                        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-                    >
-                        Đăng nhập
-                    </Typography>
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                        noValidate
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
+        <Box sx={{ flexGrow: 1 }}>
+            <Grid2 container>
+                <Grid2 component={"div"} size={{ lg: 8, xs: 0, md: 6 }} sx={{
+                    display: {
+                        lg: 'block',
+                        md: 'block',
+                        xs: 'none'
+                    }
+                }}>
+                    <Box sx={{
+                        height: '100vh', width: '100%', position: 'relative',
+                        backgroundImage: 'url(https://img.freepik.com/free-photo/blue-surface-with-study-tools_23-2147864592.jpg)',
+                        backgroundSize: 'cover', objectFit: '', backgroundPosition: 'center'
+                    }}>
+                        <Box sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
                             width: '100%',
-                            gap: 2,
-                        }}
-                    >
-                        <FormControl>
-                            <FormLabel htmlFor="email">Email</FormLabel>
-                            <TextField
-                                error={emailError}
-                                helperText={emailErrorMessage}
-                                id="email"
-                                type="email"
-                                name="email"
-                                onChange={(e) => handleOnchange(e, 'email')}
-                                placeholder="examle@gmail.com"
-                                autoComplete="email"
-                                autoFocus
-                                required
-                                fullWidth
-                                variant="outlined"
-                                value={email}
-                                color={emailError ? 'error' : 'primary'}
-                                sx={{ ariaLabel: 'email' }}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <FormLabel htmlFor="password">Mật khẩu</FormLabel>
-                                <Link
-                                    component="button"
-                                    type="button"
-                                    onClick={handleClickOpen}
-                                    variant="body2"
-                                    sx={{ alignSelf: 'baseline' }}
-                                >
-                                    Quên mật khẩu?
-                                </Link>
-                            </Box>
-                            <TextField
-                                error={passwordError}
-                                helperText={passwordErrorMessage}
-                                name="password"
-                                placeholder="••••••"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                onChange={(e) => handleOnchange(e, 'password')}
-                                autoFocus
-                                required
-                                fullWidth
-                                value={password}
-                                variant="outlined"
-                                color={passwordError ? 'error' : 'primary'}
-                                
-                            >
-                                
-                            </TextField>
-                            
-                         {/* <OutlinedInput
-                            id="outlined-adornment-password"
-                            type={showPassword ? 'text' : 'password'}
-                            endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                                // onMouseDown={handleMouseDownPassword}
-                                // onMouseUp={handleMouseUpPassword}
-                                edge="end"
-                                >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                            }
-                            label="Password"
-                        /> */}
-                        </FormControl>
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Nhớ mật khẩu"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            onClick={validateInputs}
-                        >
-                            Đăng nhập
-                        </Button>
-                        {/* <Typography sx={{ textAlign: 'center' }}>
-              Don&apos;t have an account?{' '}
-              <span>
-                <Link
-                  href="/material-ui/getting-started/templates/sign-in/"
-                  variant="body2"
-                  sx={{ alignSelf: 'center' }}
-                >
-                  Sign up
-                </Link>
-              </span>
-            </Typography> */}
-                    </Box>
-                    <Divider>or</Divider>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => loginGoogle()}
-                            startIcon={<GoogleIcon />}
-                        >
-                            Đăng nhập bằng google
-                        </Button>
+                            height: '100%',
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)' // Điều chỉnh màu sắc và độ mờ của lớp phủ
+                        }} />
+                        <Box sx={{ position: 'relative', padding: {
+                            lg:'150px 100px',
+                            md:'100px 50px',
 
+                        }, width: '100%' }} >
+                            <h1 style={{ fontWeight: 'bold', fontSize: 50 }}>Trang quản lý sự kiện</h1>
+                            <TextComponent size={16} mb={16}  text='Chào mừng bạn đến với hệ thống quản lý EventHub, giải pháp trọn gói của bạn để tổ chức và quản lý sự
+                                kiện hiệu quả. Tại đây, bạn có thể tạo sự kiện mới, cập nhật sự kiện hiện có và theo dõi hiệu suất sự kiện bằng dữ liệu thời gian thực.'/>
+
+                            <TextComponent size={16} text='Khám phá các tính năng, tùy chỉnh cài đặt sự kiện và tận dụng sức mạnh
+                                của công nghệ để mang đến trải nghiệm đặc biệt cho người tham dự.'/>
+                        </Box>
                     </Box>
-                </Card>
-            </SignInContainer>
-        </AppTheme>
+                </Grid2>
+                <Grid2 component={"div"} size={{ lg: 4, xs: 12, md: 6 }}>
+                    <AppTheme {...props} >
+                        <SignInContainer direction="column" justifyContent="space-between" >
+                            <Card variant="outlined">
+                                <Box style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <img style={{ width: '100%', maxWidth: 300 }} src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh-WlQ_o8q2pBl-bCv6N9XZgWhFaa4b_DRUw&s'} />
+                                </Box>
+                                <TextComponent size={28} fontWeight={500} text='Đăng nhập tài khoản'/>
+                                <Box
+                                    // component="form"
+                                    // onSubmit={handleSubmit}
+                                    // noValidate
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        width: '100%',
+                                        gap: 2,
+                                    }}
+                                >
+                                    <FormControl>
+                                        <FormLabel htmlFor="email">Email</FormLabel>
+                                        <TextField
+                                            error={emailError}
+                                            helperText={emailErrorMessage}
+                                            id="email"
+                                            type="email"
+                                            name="email"
+                                            onChange={(e) => handleOnchange(e, 'email')}
+                                            placeholder="examle@gmail.com"
+                                            autoComplete="email"
+                                            autoFocus
+                                            required
+                                            fullWidth
+                                            variant="outlined"
+                                            value={email}
+                                            color={emailError ? 'error' : 'primary'}
+                                            sx={{ ariaLabel: 'email' }}
+                                        />
+                                    </FormControl>
+                                    <FormControl>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <FormLabel htmlFor="password">Mật khẩu</FormLabel>
+                                            <Link
+                                                component="button"
+                                                type="button"
+                                                onClick={handleClickOpen}
+                                                variant="body2"
+                                                sx={{ alignSelf: 'baseline' }}
+                                            >
+                                                Quên mật khẩu?
+                                            </Link>
+                                        </Box>
+                                        <OutlinedInput
+                                            id="outlined-adornment-password"
+                                            type={showPassword ? 'text' : 'password'}
+                                            onChange={(e) => handleOnchange(e, 'password')}
+                                            value={password}
+                                            name="password"
+                                            placeholder="••••••"
+                                            error={passwordError}
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={handleClickShowPassword}
+                                                        edge="end"
+                                                    >
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
+                                            label="Password"
+                                        />
+                                    </FormControl>
+                                    <FormControlLabel
+                                        control={<Checkbox value="remember" color="primary" />}
+                                        label="Nhớ mật khẩu"
+                                    />
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        onClick={handleLogin}
+                                    >
+                                        Đăng nhập
+                                    </Button>
+                                </Box>
+                                <Divider>or</Divider>
+                                <Button
+                                    fullWidth
+                                    variant="outlined"
+                                    onClick={() => loginGoogle()}
+                                    startIcon={<GoogleIcon />}
+                                >
+                                    Đăng nhập bằng google
+                                </Button>
+                            </Card>
+                        </SignInContainer>
+                    </AppTheme>
+                </Grid2>
+            </Grid2>
+        </Box>
+
     );
 }

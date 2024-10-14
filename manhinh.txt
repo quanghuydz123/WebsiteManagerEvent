@@ -1,0 +1,5 @@
+xs (extra-small): <600px (màn hình rất nhỏ, như điện thoại di động)
+sm (small): ≥600px (màn hình nhỏ, như tablet)
+md (medium): ≥960px (màn hình trung bình, như laptop)
+lg (large): ≥1280px (màn hình lớn, như màn hình desktop)
+xl (extra-large): ≥1920px (màn hình rất lớn)

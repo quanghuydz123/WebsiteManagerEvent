@@ -95,47 +95,6 @@ const AdminPage = () => {
           <h3 className="hd">
             Vé đã bán được
           </h3>
-          {/* <div className="row cardFilters mt-3">
-            <div className="col-md-3">
-              <h4>Sắp xếp theo</h4>
-              <FormControl size="small" className="w-100">
-                <Select
-                  value={sortBy}
-                  onChange={handleChangeSortBy}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
-                  className="w-100"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-
-            <div className="col-md-3">
-              <h4>Sắp xếp theo</h4>
-              <FormControl size="small" className="w-100">
-                <Select
-                  value={sortBy}
-                  onChange={handleChangeSortBy}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
-                  className="w-100"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-          </div> */}
           <div>
             <Paper sx={{ height: 400, width: '100%' }}>
               <DataGrid
