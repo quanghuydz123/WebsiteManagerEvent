@@ -6,6 +6,8 @@ import Chart from "react-google-charts";
 import { FormControl, MenuItem, Paper, Select, SelectChangeEvent } from "@mui/material";
 import { useState } from "react";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Grid2 } from '@mui/material';
+import { Grid } from "@mui/system";
 
 const AdminPage = () => {
   const data = [
@@ -53,46 +55,71 @@ const AdminPage = () => {
   const handleChangeSortBy = (event: SelectChangeEvent) => {
     setSortBy(event.target.value);
   };
+
   const options = {
     backgroundColor: 'transparent',
   };
   return (
     <>
       <div className="right-content">
-        <div className="row dashboardBoxWapperRow">
-          <div className="col-md-8">
-            <div className="dashboardBoxWapper d-flex">
-              <DashBoardBoxComponent color={["#1da256", "#48d483"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
-              <DashBoardBoxComponent color={["#c012e2", "#db64fe"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
-              <DashBoardBoxComponent color={["#2c78e5", "#60aff5"]} icon={<FaUserCircle />} title="Người dùng" grow={false} />
-              <DashBoardBoxComponent color={["#e1950e", "#f3cd29"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
-            </div>
-          </div>
-          <div className="col-md-4 pl-0">
-            <div className="box graphBox">
-              <div className="d-flex align-items-center w-100">
-                <h4 className="text-white mb-0 mt-0" >TỔNG DOANH THU</h4>
-                <Button className="ml-auto toggleIcon">
-                  <HiDotsVertical />
-                </Button>
-              </div>
-              <h3 className="text-white">2.500.000 VNĐ</h3>
-              <p>2.000.000 VNĐ trong tháng trước</p>
-              <div>
-                <Chart
-                  chartType="PieChart"
-                  data={data}
-                  options={options}
+        <div className="row dashboardBoxWapperRow" style={{ marginLeft: 0 ,width:'100%'}}>
+          <Grid2 container sx={{ padding: 0 ,width:'100%'}}>
+            <Grid2 size={{xl:8, lg: 8, md: 12 }}>  
+              <div className="dashboardBoxWapper">
+                <Grid2 container spacing={2} sx={{display:'flex',flexWrap:'wrap',marginRight:{lg:2}}}>
+                  {/* <DashBoardBoxComponent color={["#1da256", "#48d483"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
+                  <DashBoardBoxComponent color={["#c012e2", "#db64fe"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
+                  <DashBoardBoxComponent color={["#2c78e5", "#60aff5"]} icon={<FaUserCircle />} title="Người dùng" grow={false} />
+                  <DashBoardBoxComponent color={["#e1950e", "#f3cd29"]} icon={<FaUserCircle />} title="Người dùng" grow={true} /> */}
 
-                  width={"100%"}
-                  height={"200px"}
-                />
+                  <Grid size={{lg:6,md:6,sm:12,xs:12}}>
+                    <DashBoardBoxComponent color={["#1da256", "#48d483"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
+                  </Grid>
+                  <Grid size={{lg:6,md:6,sm:12,xs:12}}>
+                    <DashBoardBoxComponent color={["#c012e2", "#db64fe"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
+                  </Grid>
+                  <Grid size={{lg:6,md:6,sm:12,xs:12}}>
+                    <DashBoardBoxComponent color={["#2c78e5", "#60aff5"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
+                  </Grid>
+                  <Grid size={{lg:6,md:6,sm:12,xs:12}}>
+                    <DashBoardBoxComponent color={["#e1950e", "#f3cd29"]} icon={<FaUserCircle />} title="Người dùng" grow={true} />
+                  </Grid>
+                  
+                </Grid2>
               </div>
-            </div>
-          </div>
+            </Grid2>
+            <Grid2 size={{xl:4,lg: 4, md: 12, sm: 12, xs: 12 }} >
+              <div className="box graphBox">
+                <div className="d-flex align-items-center w-100">
+                  <h4 className="text-white mb-0 mt-0" >TỔNG DOANH THU</h4>
+                  <Button className="ml-auto toggleIcon">
+                    <HiDotsVertical />
+                  </Button>
+                </div>
+                <h3 className="text-white">2.500.000 VNĐ</h3>
+                <p>2.000.000 VNĐ trong tháng trước</p>
+                <div>
+                  <Chart
+                    chartType="PieChart"
+                    data={data}
+                    options={options}
+
+                    width={"100%"}
+                    height={"200px"}
+                  />
+                </div>
+              </div>
+            </Grid2>
+          </Grid2>
         </div>
-        <div className="card shadow border-0 p-3 mt-4">
-          <h3 className="hd">
+        <div style={{
+          margin: '20px 0',
+          borderRadius: 10,
+          backgroundColor: 'white',
+          padding: 30,
+
+        }}>
+          <h3 style={{ fontSize: 18, fontWeight: 'bold', color: '#403e57' }}>
             Vé đã bán được
           </h3>
           <div>
@@ -107,7 +134,7 @@ const AdminPage = () => {
               />
             </Paper>
           </div>
-          
+
         </div>
       </div>
     </>

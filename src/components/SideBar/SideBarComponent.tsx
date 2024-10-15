@@ -8,9 +8,11 @@ import { FaAngleRight } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import ItemMenu from "../ItemMenu";
 interface Props{
-    isToggle:boolean
+    isToggle:boolean,
+    setIsOpenNav:(val:boolean)=>void
 }
 const SideBarComponent = (props:Props) => {
+    const {setIsOpenNav} = props
     const [activeItemMenu,setActiveItemMenu] = useState(0)
     const [isToogleSubMenu,setIsToogleSubMenu] = useState(false)
     useEffect(()=>{
@@ -18,6 +20,7 @@ const SideBarComponent = (props:Props) => {
     },[])
     const navigate = useNavigate()
     const openSubMenu = (index:number)=>{
+        setIsOpenNav(false)
         setActiveItemMenu(index)
         if(index===2){
             setIsToogleSubMenu(!isToogleSubMenu)

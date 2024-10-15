@@ -20,10 +20,12 @@ import { AuthState, setIsLogin } from "../../reduxs/reducers/authReducers";
 interface Props{
     isToggle:boolean,
     setIsToggle:(val:boolean)=>void,
-  
+    windowWidth:number,
+    setIsOpenNav:(val:boolean)=>void,
+    isOpenNav:boolean
 }
 const Header = (props:Props) => {
-    const {isToggle,setIsToggle} = props
+    const {isToggle,setIsToggle,windowWidth,setIsOpenNav,isOpenNav} = props
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [isOpenNotifications,setIsOpenNotifications] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -48,13 +50,14 @@ const Header = (props:Props) => {
         setIsOpenNotifications(null);
     };
     const handleLogout = ()=>{
+        navigate('/')
         dispatch(setIsLogin({isLogin:false}))
     }
     return (
         <>
             <header className="d-flex align-items-center">
                 <div className="container-fluid w-100">
-                    <div className="row d-flex align-items-center w-100">
+                    <div className="row d-flex align-items-center w-100 ">
                         {/*logo*/}
                         <div className="col-sm-2 part1">
                             <Link to={'/'}>
@@ -63,22 +66,24 @@ const Header = (props:Props) => {
                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh-WlQ_o8q2pBl-bCv6N9XZgWhFaa4b_DRUw&s" />
                             </Link>
                         </div>
-                        <div className="col-sm-3 d-flex align-items-center part2 pl-2">
+                        {windowWidth > 992 && <div className="col-sm-3 d-flex align-items-center part2 pl-2 res-hide">
                             <Button className="rounded-circl mr-3 ml-3" onClick={()=>setIsToggle(!isToggle)}>
                                 {isToggle ? <MdOutlineMenu className="icon"/>: <MdMenuOpen className="icon"/>}
                             </Button>
                             <SearchBox />
-                        </div>
+                        </div>}
 
                         <div className="col-sm-7 d-flex align-items-center part3 justify-content-end">
-                            <Button className="rounded-circl mr-3">
-                                <CiLight className="icon" />
-                            </Button>
+                            
 
-                            <Button className="rounded-circl mr-3" onClick={handleOpenNotification}>
+                            <Button className="rounded-circl mr-2" onClick={handleOpenNotification}>
                                 <IoMdNotifications className="icon" />
 
                             </Button>
+
+                           {windowWidth < 992 && <Button className="rounded-circl mr-2" onClick={()=>setIsOpenNav(!isOpenNav)}>
+                                <MdOutlineMenu className="icon" />
+                            </Button>}
                             <Menu
                                 anchorEl={isOpenNotifications}
                                 id="notification"
@@ -144,7 +149,7 @@ const Header = (props:Props) => {
                             </Menu>
                             <Button className="myAcc d-flex align-items-center" onClick={handleOpenMyAcc}>
                                 <AvatarComponent />
-                                <div className="userInfo">
+                                <div className="userInfo res-hide">
                                     <h4>Quang Huy</h4>
                                     <p className="mb-0">examp@gmail.com</p>
                                 </div>

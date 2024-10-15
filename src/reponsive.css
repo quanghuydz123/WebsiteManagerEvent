@@ -1,0 +1,34 @@
+@media only screen and (min-width:992px){
+   
+}
+
+@media only screen and (min-width:320px) and (max-width:992px) {
+    header .part1,header .part3 {
+        padding: 0px !important;
+    }
+    header .part1{
+        max-width: 40% !important; flex: 0 0 40% !important;
+    }
+    header .logo{width: 150px !important;}
+    header{
+        padding: 15px 0px;height: auto;padding-left: 10px;
+    }
+    header .part3{
+        max-width: 60% !important; flex: 0 0 60% !important;
+    }
+    .main .sidebarWapper{width: 60% !important; height: 100vh !important; position: fixed; top: 0px; left: -100%; z-index: 10000;opacity: 0;transition: all 0.3s ease-in-out}
+    .main .sidebarWapper .sidebar{width: 100% !important; position: relative ; top: 0px;left: -100%; max-height: inherit !important;opacity: 0;}
+    .main .content{width: 100% !important; flex: 0 0 100%;}
+    .sidebarWapper.open{left: 0px !important;opacity: 1 !important;}
+    .sidebarWapper.open .sidebar{left: 0px !important;opacity: 1 !important;}
+
+
+    .sidebarOverlay{position: fixed; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 100; width: 100%; height: 100vh;}
+    .sidebarOverlay.show{display: block !important;}
+}
+
+@media only screen and (min-width:320px) and (max-width:525px) {
+    header button.rounded-circl{width: 40px !important; height: 40px !important; min-width: 40px !important; margin-right: 6px !important;}
+    header .logo {width: 140px !important;}
+    .res-hide{display: none !important;}
+}
