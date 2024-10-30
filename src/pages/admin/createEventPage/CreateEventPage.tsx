@@ -1,4 +1,4 @@
-const EventDetailsPage = () => {
+const CreateEventPage = () => {
     return (
         <div className="right-content">
             <div style={{
@@ -8,11 +8,11 @@ const EventDetailsPage = () => {
 
             }}>
                 <h3 style={{ fontSize: 18, color: '#403e57' }}>
-                    Chi tiết sự kiện
+                    CreateEventPage
                 </h3>
             </div>
         </div>
     )
 }
 
-export default EventDetailsPage
+export default CreateEventPage

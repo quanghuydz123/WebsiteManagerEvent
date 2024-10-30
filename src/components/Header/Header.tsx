@@ -50,7 +50,7 @@ const Header = (props:Props) => {
         setIsOpenNotifications(null);
     };
     const handleLogout = ()=>{
-        navigate('/')
+        navigate('/login')
         dispatch(setIsLogin({isLogin:false}))
     }
     return (
@@ -60,7 +60,7 @@ const Header = (props:Props) => {
                     <div className="row d-flex align-items-center w-100 ">
                         {/*logo*/}
                         <div className="col-sm-2 part1">
-                            <Link to={'/'}>
+                            <Link to={'/organizer/dashboard'}>
                                 <img
                                     className="logo"
                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh-WlQ_o8q2pBl-bCv6N9XZgWhFaa4b_DRUw&s" />

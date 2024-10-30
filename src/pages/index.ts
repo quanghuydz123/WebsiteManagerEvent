@@ -1,8 +1,11 @@
-import UserPage from './UserPage'
 import LoginPage from './login/LoginPage'
-import EventDetailsPage from './eventpage/EventDetailsPage'
+import EventPage from './admin/eventPage/EventPage'
+import CreateEventPage from './admin/createEventPage/CreateEventPage'
+import DashboardPage from './admin/dashboradPage/DashboardPage'
+
 export {
-    UserPage,
     LoginPage,
-    EventDetailsPage
+    EventPage,
+    CreateEventPage,
+    DashboardPage
 }

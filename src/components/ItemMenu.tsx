@@ -19,12 +19,15 @@ const ItemMenu = (props: Props) => {
     return (
         <Button  style={{
             backgroundColor:isActive ? 'hsl(210deg 100% 96.08%)' : '',
-        }} className={`w-100 px-2 py-2 hover:bg-black/10  ${classNameButton || ''}`}  onClick={onClick}  >
-            {iconLeft && <span className="icon mr-2 w-[20px] h-[20px] flex items-centrer  justify-center rounded-md ">
+            paddingLeft:20,
+            paddingTop:14,
+            paddingBottom:14,
+        }} className={`w-100  hover:bg-black/10  ${classNameButton || ''}`}  onClick={onClick}  >
+            {iconLeft && <span className="icon mr-2  flex items-centrer  justify-center rounded-md ">
                 {iconLeft}
             </span>}
-            <TextComponent text={text} className="flex-1 text-start" color={isActive ? 'hsl(210deg 71.43% 46.67%)' : "#222222"} size={fontSize ?? 14} />   
-            {iconRight && <span className=" ml-auto w-[20px] h-[20px] flex items-center justify-center">
+            <TextComponent text={text} className="flex-1 text-start" color={isActive ? 'hsl(210deg 71.43% 46.67%)' : "#222222"} size={fontSize ?? 16} />   
+            {iconRight && <span className=" ml-auto  flex items-center justify-center">
                 {iconRight}
             </span>}
         </Button>

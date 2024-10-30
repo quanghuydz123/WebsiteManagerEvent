@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import { Box } from '@mui/system';
 import { Route, Routes } from 'react-router-dom';
-import AdminPage from './pages/AdminPage';
 import { Header, SideBarComponent } from './components';
-import { EventDetailsPage, LoginPage, UserPage } from './pages';
+import { CreateEventPage, DashboardPage, EventPage, LoginPage } from './pages';
 import { useSelector } from 'react-redux';
 import { AuthState } from './reduxs/reducers/authReducers';
 
@@ -25,7 +24,7 @@ function App() {
   },[])
   useEffect(()=>{
     if(windowWidth > 992){
-      setIsOpenNav(false)
+      setIsOpenNav(false) 
     }else{
       setIsToggleMenu(false)
     }
@@ -42,8 +41,9 @@ function App() {
               </div>
             <div className={`content px-3 ${isToggleMenu === true ? 'toggle' : ''}`} >
                 <Routes>
-                  <Route path='/'  element={<AdminPage />}/>
-                  <Route path='/users'  element={<EventDetailsPage/>}/>
+                  <Route path='/organizer/dashboard'  element={<DashboardPage />}/>
+                  <Route path='/organizer/events'  element={<EventPage />}/>
+                  <Route path='/organizer/create-event'  element={<CreateEventPage />}/>
                   <Route path='*' element={<h1>404 - Page Not Found</h1>} />
                 </Routes>
             </div>
@@ -51,7 +51,7 @@ function App() {
     </section> : 
     <>
       <Routes>
-        <Route path='/'  element={<LoginPage/>}/>
+        <Route path='/login'  element={<LoginPage/>}/>
         <Route path='*' element={<h1>404 - Page Not Found</h1>} />
       </Routes>
     </>}

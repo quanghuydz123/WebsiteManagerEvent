@@ -1,5 +1,4 @@
 import { HiDotsVertical } from "react-icons/hi";
-import { DashBoardBoxComponent } from "../components";
 import { FaUserCircle } from "react-icons/fa";
 import Button from '@mui/material/Button';
 import Chart from "react-google-charts";
@@ -8,8 +7,9 @@ import { useState } from "react";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Grid2 } from '@mui/material';
 import { Grid } from "@mui/system";
+import { DashBoardBoxComponent } from "../../../components";
 
-const AdminPage = () => {
+const DashboardPage = () => {
   const data = [
     ["Task", "Hours per Day"],
     ["Work", 9],
@@ -141,4 +141,4 @@ const AdminPage = () => {
   );
 }
 
-export default AdminPage;
+export default DashboardPage;
