@@ -1,94 +1,88 @@
-import { Link, useNavigate } from "react-router-dom";
-import Button from '@mui/material/Button';
-import { MdOutlineDashboardCustomize } from "react-icons/md";
-import TextComponent from "../TextComponent";
-import { FaUser } from "react-icons/fa";
-import { FaProductHunt } from "react-icons/fa";
-import { FaAngleRight } from "react-icons/fa6";
-import { useEffect, useState } from "react";
-import ItemMenu from "../ItemMenu";
-import { IoMdCreate } from "react-icons/io";
-import { MdEventAvailable } from "react-icons/md";
+import React, { useEffect, useState } from 'react'
+import { LuLayoutDashboard } from "react-icons/lu";
+import { RiArrowLeftWideFill, RiArrowRightWideFill } from "react-icons/ri";
+import { FaUser, FaBook, FaClipboardList, FaTachometerAlt, FaChartLine, FaCog, FaSignOutAlt, FaTags, FaListAlt } from 'react-icons/fa';
+import { Navigate, useNavigate } from 'react-router-dom';
+import MenuItem from './MenuItem';
+const menuItems = [
+  {
+    icon: FaUser, 
+    name: 'Người dùng',
+  },
+  {
+    icon: FaBook, 
+    name: 'Truyện tranh',
+  },
+  // {
+  //   icon: FaClipboardList, 
+  //   name: 'Chương',
+  // },
+  {
+    icon: FaListAlt, 
+    name: 'Thể loại',
+  },
+  {
+    icon: FaChartLine, 
+    name: 'Thống kê',
+  },
+  {
+    icon: FaSignOutAlt, 
+    name: 'Logout',
+    isLogout: true,
+  },
+];
 
-interface Props{
-    isToggle:boolean,
-    setIsOpenNav:(val:boolean)=>void
-}
-const SideBarComponent = (props:Props) => {
-    const {setIsOpenNav} = props
-    const [activeItemMenu,setActiveItemMenu] = useState(0)
-    const [isToogleSubMenu,setIsToogleSubMenu] = useState(false)
-    useEffect(()=>{
-        navigate('/organizer/dashboard')
-    },[])
-    const navigate = useNavigate()
-    const openSubMenu = (index:number)=>{
-        setIsOpenNav(false)
-        setActiveItemMenu(index)
-        // if(index===2){
-        //     setIsToogleSubMenu(!isToogleSubMenu)
-        // }else{
-        //     if(isToogleSubMenu){
-        //         setIsToogleSubMenu(false)
-        //     }
-        // }
-        if(index ===0){
-            navigate('/organizer/dashboard')
-        }else if(index === 1){
-            navigate('/organizer/events')
-        }else if(index ===2){
-            navigate('/organizer/create-event')
 
-        }
+const SidebarComponent = ({ isOpen, toggleSidebar, setIsOpen }: {isOpen:any, toggleSidebar:any, setIsOpen:React.Dispatch<React.SetStateAction<boolean>>}) => {
+  const navigate= useNavigate()
+  useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth<800){
+      setIsOpen(false)
     }
-    return (
-        <>
-            <div className="sidebar">
-                <div className="sidebarTabs">
-                    <ul className="flex gap-2 flex-col">
-                        <li>
-                            <ItemMenu text="Thống kê" 
-                            iconLeft={<MdOutlineDashboardCustomize size={24} color={activeItemMenu === 0 ? "hsl(210deg 71.43% 46.67%)" : "#5e5d72"} />}
-                            onClick={()=>{openSubMenu(0)}}
-                            isActive={activeItemMenu === 0}
-                            />
-                        </li>
-                        
-                        <li>
-                           
-                             <ItemMenu text="Sự kiện đã tạo" 
-                            iconLeft={<MdEventAvailable size={24} color={activeItemMenu === 1 ? "hsl(210deg 71.43% 46.67%)" : "#222222"} />}
-                            onClick={()=>openSubMenu(1)}
-                            isActive={activeItemMenu === 1}
-                            />
-                        </li>
-                        {/* <li className={`${activeItemMenu === 2 && isToogleSubMenu === true ? 'colapse' : ''}`}>
-                           
-                             <ItemMenu text="Sản phẩm" 
-                            iconLeft={<FaProductHunt size={24} color={activeItemMenu === 2 ? "hsl(210deg 71.43% 46.67%)" : "#222222"} />}
-                            onClick={()=>openSubMenu(2)}
-                            isActive={activeItemMenu === 2}
-                            iconRight={<FaAngleRight className={`arrow ${activeItemMenu === 2 && isToogleSubMenu === true ? 'rotate' : ''}`} size={12} color={activeItemMenu === 2 ? "hsl(210deg 71.43% 46.67%)" : "#222222"} />}
-                            />
+    else{
+      setIsOpen(true)
+    }
+  }
 
-                            <div className="submenu">
-                               
-                                <ItemMenu text="Danh sách sản phẩm" fontSize={14}/>
-                                <ItemMenu text="Thêm sản phẩm" fontSize={14}/>
-                            </div>
-                        </li> */}
-                        <li>
-                            <ItemMenu text="Tạo sự kiện" 
-                            iconLeft={<IoMdCreate size={24} color={activeItemMenu === 2 ? "hsl(210deg 71.43% 46.67%)" : "#222222"} />}
-                            onClick={()=>openSubMenu(2)}
-                            isActive={activeItemMenu === 2}
-                            />
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </>
-    );
+  window.addEventListener('resize', handleResize );
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
+
+  return (
+    <div className={`fixed left-0 top-0 h-full bg-slate-800 text-white transition-all flex flex-col duration-300
+    dark: bg 
+    ${isOpen ? "w-44" : "w-16 items-center"}`}>
+      {/* sidebar logo */}
+      <div className="flex items-center justify-center py-4">
+        <LuLayoutDashboard   className={`text-2xl text-teal-700 transition-all ${isOpen ? "w-12" : "w-8"}`}/>
+      </div>
+      {/* menu list */}
+      <div className="mt-6 flex-1">
+        {
+           menuItems.map((item, index) => (
+          <MenuItem
+            key={index}
+            icon={item.icon}
+            name={item.name}
+            isOpen={isOpen}
+            isLogout={item.isLogout}
+            onClicked= {()=>{navigate("/admin/"+item.name)}}
+          />
+        ))
+        }
+
+
+        </div>
+      {/* Toggle button */}
+      <button
+        onClick={toggleSidebar}
+        className="m-2 flex items-center justify-center rounded-md bg-gray-700 p-3 text-2xl font-bold hover:bg-teal-500 duration-300"
+      >
+        {isOpen ? <RiArrowLeftWideFill /> : <RiArrowRightWideFill />}
+      </button>
+    </div>
+  );
 }
 
-export default SideBarComponent;
+export default SidebarComponent;
