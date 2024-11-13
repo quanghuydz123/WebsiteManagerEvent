@@ -3,14 +3,16 @@ import { Route, Routes } from 'react-router-dom';
 import Header from '../../../components/Header/Header';
 import DashboardPage from '../../admin/dashboradPage/DashboardPage';
 import EventPage from '../EventPage/EventPage';
+import EventCreationOrganizerPage from '../EventCreationOrganizerPage/EventCreationOrganizerPage';
 
 
 const Content = ({ isOpen }: { isOpen: boolean }) => {
   return (
     <div
-      className={`min-h-screen flex-1 transition-all duration-300 ${isOpen ? "md:ml-56" : "ml-20"} bg-gradient-to-b from-green-900 via-black to-purple-900`} style={{ paddingTop: '4rem' }}
+      className={`min-h-screen flex-1 transition-all duration-300 ${isOpen ? "md:ml-56" : "ml-20"} bg-gradient-to-b from-green-900 via-black to-purple-900`} 
     >
       <div className={`text-white`}>
+       
         <Header
           isToggle={false}
           setIsToggle={function (val: boolean): void {
@@ -25,6 +27,8 @@ const Content = ({ isOpen }: { isOpen: boolean }) => {
         <Routes>
           <Route path='EventPage' element={<EventPage />} />
           <Route path='Dashboard' element={<DashboardPage />} />
+          <Route path='CreateEvent' element={<EventCreationOrganizerPage/>} />
+
           
         </Routes>
       </div>

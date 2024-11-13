@@ -18,6 +18,7 @@ const menuItems = [
     {
       icon: FaEdit, 
       name: 'Tạo sự kiện',
+      key: 'CreateEvent'
     },
     {
       icon: FaBookOpen, 
