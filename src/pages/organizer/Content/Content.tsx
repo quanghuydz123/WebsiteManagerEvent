@@ -9,7 +9,7 @@ import EventCreationOrganizerPage from '../EventCreationOrganizerPage/EventCreat
 const Content = ({ isOpen }: { isOpen: boolean }) => {
   return (
     <div
-      className={`min-h-screen flex-1 transition-all duration-300 ${isOpen ? "md:ml-56" : "ml-20"} bg-gradient-to-b from-green-900 via-black to-purple-900`} 
+      className={`min-h-screen flex-1 transition-all duration-300 ${isOpen ? "md:ml-56" : "ml-20"} bg-gradient-to-b from-[#1a251f] via-[#1d1b20] to-[#0e0910] text-white`} 
     >
       <div className={`text-white`}>
        

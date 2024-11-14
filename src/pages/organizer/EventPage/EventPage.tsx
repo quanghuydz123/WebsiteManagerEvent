@@ -2,8 +2,8 @@ import React from 'react';
 
 const EventPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-900 via-black to-purple-900 text-white ">
-      <div className="flex items-center justify-between bg-gray-900 p-4 rounded mb-4">
+    <div className="min-h-screen bg-custom-gradient text-white ">
+      <div className="flex items-center justify-between p-4 rounded mb-4">
   <h1 className="text-xl font-bold">Sự kiện đã tạo</h1>
   <div className="flex-1 flex justify-end">
     <input

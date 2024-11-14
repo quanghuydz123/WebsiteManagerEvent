@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { LuLayoutDashboard } from "react-icons/lu";
 import { RiArrowLeftWideFill, RiArrowRightWideFill } from "react-icons/ri";
 import { FaUser, FaBook, FaClipboardList, FaTachometerAlt, FaChartLine, FaCog, FaSignOutAlt, FaTags, FaListAlt, FaBookOpen, FaCalendarAlt, FaEdit, FaFileExport } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MenuItem from '../../../components/SideBar/MenuItem';
 
 const menuItems = [
@@ -48,12 +48,18 @@ const SidebarComponent = ({ isOpen, toggleSidebar, setIsOpen }: { isOpen: any, t
   }, []);
 
   return (
-    <div className={`fixed left-0 top-0 h-full bg-gradient-to-b from-green-900 via-black to-purple-900 text-white transition-all flex flex-col duration-300
+    <div className={`fixed left-0 top-0 h-full bg-gradient-to-b from-[#1a251f] via-[#1d1b20] to-[#231a27] text-white transition-all flex flex-col duration-300
     ${isOpen ? "w-56" : "w-20 items-center"}`}>
       {/* Sidebar logo */}
-      <div className="flex items-center justify-center py-4">
-        <LuLayoutDashboard className={`text-2xl text-teal-700 transition-all ${isOpen ? "w-12" : "w-8"}`} />
-      </div>
+      <div className="flex items-center justify-center ">
+      <Link to={'/organizer/dashboard'}>
+        <img
+          className={`logo transition-all ${isOpen ? "w-100" : "w-100"}`}
+          src="https://cdn.saffire.com/images.ashx?t=ig&rid=FFEA&i=Event_Hub(3)(1).png"
+          alt="Logo"
+        />
+      </Link>
+</div>
       {/* Menu list */}
       <div className="mt-6 flex-1">
         {

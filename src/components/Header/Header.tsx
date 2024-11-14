@@ -55,16 +55,12 @@ const Header = (props:Props) => {
     }
     return (
         <>
-            <header className="d-flex align-items-center">
+            <header className="d-flex align-items-center" style={{ backgroundColor: 'rgba(79, 79, 79, 0.5)', borderBottom: '1px solid #616161 !important' }}>
                 <div className="container-fluid w-100">
                     <div className="row d-flex align-items-center w-100 ">
                         {/*logo*/}
                         <div className="col-sm-2 part1">
-                            <Link to={'/organizer/dashboard'}>
-                                <img
-                                    className="logo"
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh-WlQ_o8q2pBl-bCv6N9XZgWhFaa4b_DRUw&s" />
-                            </Link>
+                           
                         </div>
                         {windowWidth > 992 && <div className="col-sm-3 d-flex align-items-center part2 pl-2 res-hide">
                             <Button className="rounded-circl mr-3 ml-3" onClick={()=>setIsToggle(!isToggle)}>
@@ -149,8 +145,8 @@ const Header = (props:Props) => {
                             </Menu>
                             <Button className="myAcc d-flex align-items-center" onClick={handleOpenMyAcc}>
                                 <AvatarComponent />
-                                <div className="userInfo res-hide">
-                                    <h4>Quang Huy</h4>
+                                <div className="userInfo res-hide text-white">
+                                    <h4 className=" text-white">Quang Huy</h4>
                                     <p className="mb-0">examp@gmail.com</p>
                                 </div>
                             </Button>
