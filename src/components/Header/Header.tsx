@@ -22,10 +22,11 @@ interface Props{
     setIsToggle:(val:boolean)=>void,
     windowWidth:number,
     setIsOpenNav:(val:boolean)=>void,
-    isOpenNav:boolean
+    isOpenNav:boolean,
+    bgColor?:string
 }
 const Header = (props:Props) => {
-    const {isToggle,setIsToggle,windowWidth,setIsOpenNav,isOpenNav} = props
+    const {isToggle,setIsToggle,windowWidth,setIsOpenNav,isOpenNav,bgColor} = props
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [isOpenNotifications,setIsOpenNotifications] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -55,7 +56,7 @@ const Header = (props:Props) => {
     }
     return (
         <>
-            <header className="d-flex align-items-center">
+            <header className="d-flex align-items-center" style={{backgroundColor:bgColor}}>
                 <div className="container-fluid w-100">
                     <div className="row d-flex align-items-center w-100 ">
                         {/*logo*/}
@@ -70,7 +71,7 @@ const Header = (props:Props) => {
                             <Button className="rounded-circl mr-3 ml-3" onClick={()=>setIsToggle(!isToggle)}>
                                 {isToggle ? <MdOutlineMenu className="icon"/>: <MdMenuOpen className="icon"/>}
                             </Button>
-                            <SearchBox />
+                            {/* <SearchBox /> */}
                         </div>}
 
                         <div className="col-sm-7 d-flex align-items-center part3 justify-content-end">

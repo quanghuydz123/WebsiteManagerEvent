@@ -39,7 +39,7 @@ function App() {
               <div className={`sidebarWapper  ${isToggleMenu === true ? 'toggle' : ''} ${isOpenNav ? 'open' : ''}`}>
                   <SideBarComponent isToggle={isToggleMenu} setIsOpenNav={(val)=>setIsOpenNav(val)}/>
               </div>
-            <div className={`content px-3 ${isToggleMenu === true ? 'toggle' : ''}`} >
+            <div className={`content px-3 ${isToggleMenu === true ? 'toggle' : ''}`} style={{backgroundColor:''}} >
                 <Routes>
                   <Route path='/organizer/dashboard'  element={<DashboardPage />}/>
                   <Route path='/organizer/events'  element={<EventPage />}/>

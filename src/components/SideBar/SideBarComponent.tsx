@@ -13,9 +13,10 @@ import { MdEventAvailable } from "react-icons/md";
 interface Props{
     isToggle:boolean,
     setIsOpenNav:(val:boolean)=>void
+    bgColor?:string
 }
 const SideBarComponent = (props:Props) => {
-    const {setIsOpenNav} = props
+    const {setIsOpenNav,bgColor} = props
     const [activeItemMenu,setActiveItemMenu] = useState(0)
     const [isToogleSubMenu,setIsToogleSubMenu] = useState(false)
     useEffect(()=>{
@@ -43,7 +44,7 @@ const SideBarComponent = (props:Props) => {
     }
     return (
         <>
-            <div className="sidebar">
+            <div className="sidebar" style={{backgroundColor:bgColor}}>
                 <div className="sidebarTabs">
                     <ul className="flex gap-2 flex-col">
                         <li>
