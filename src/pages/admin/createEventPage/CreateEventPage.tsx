@@ -1,14 +1,9 @@
 const CreateEventPage = () => {
     return (
         <div className="right-content">
-            <div style={{
-                borderRadius: 10,
-                backgroundColor: 'white',
-                padding: 20,
-
-            }}>
-                <h3 style={{ fontSize: 18, color: '#403e57' }}>
-                    CreateEventPage
+            <div className="rounded-lg bg-white p-5">
+                <h3 className="text-lg text-[#403e57]">
+                    Duyệt sự kiện
                 </h3>
             </div>
         </div>
