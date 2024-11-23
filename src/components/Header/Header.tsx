@@ -55,7 +55,7 @@ const Header = (props:Props) => {
     }
     return (
         <>
-            <header className="d-flex align-items-center" style={{ backgroundColor: 'rgba(79, 79, 79, 0.5)', borderBottom: '1px solid #616161 !important' }}>
+            <header className="d-flex align-items-center" style={{ backgroundColor: '#000', borderBottom: '1px solid #616161 !important' }}>
                 <div className="container-fluid w-100">
                     <div className="row d-flex align-items-center w-100 ">
                         {/*logo*/}

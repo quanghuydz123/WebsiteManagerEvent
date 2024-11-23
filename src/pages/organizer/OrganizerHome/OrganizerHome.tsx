@@ -18,8 +18,7 @@ const OrganizerHome = () => {
         <div className={`flex font-Montserrat bg-slate-700`}>
         <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} setIsOpen={setIsOpen} />
         <Content 
-            isOpen={isOpen} 
-           
+            isOpen={isOpen}  
             />
 
         </div>

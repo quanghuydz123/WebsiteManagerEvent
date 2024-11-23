@@ -116,47 +116,51 @@ const EventCreationOrganizerPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-custom-gradient text-white ">
+    <div className="min-h-screen bg-custom-gradient text-white">
       {/* Navigation Step Bar */}
-    <div className="px-4 py-2 flex justify-between items-center bg-black text-white">
-      <div>
-        <h1 className="text-xl font-semibold">Tạo sự kiện</h1>
+      <div className="px-4 py-2 flex flex-wrap justify-between items-center bg-black text-white">
+        <div>
+          <h1 className="text-lg md:text-xl font-semibold">Tạo sự kiện</h1>
+        </div>
+        <div className="flex flex-wrap justify-center space-x-4 md:space-x-8 mt-2 md:mt-0">
+          {[
+            { step: 1, label: "Thông tin sự kiện" },
+            { step: 2, label: "Thời gian & Loại vé" },
+            { step: 3, label: "Cài đặt" },
+            { step: 4, label: "Thông tin thanh toán" },
+          ].map(({ step, label }) => (
+            <div key={step} className="flex items-center">
+              <span
+                className={`${
+                  step === 1 ? "bg-green-500" : "bg-gray-700"
+                } text-white rounded-full w-8 h-8 flex items-center justify-center`}
+              >
+                {step}
+              </span>
+              <span className="ml-2 text-sm md:text-base">{label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex space-x-2 md:space-x-4 mt-2 md:mt-0">
+          <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md">
+            Lưu
+          </button>
+          <button className="bg-green-600 text-white px-2 md:px-4 py-2 rounded-md">
+            Tiếp tục
+          </button>
+        </div>
       </div>
-      <div className="flex space-x-8">
-        <div className="flex items-center">
-          <span className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center">1</span>
-          <span className="ml-2">Thông tin sự kiện</span>
-        </div>
-        <div className="flex items-center">
-          <span className="bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center">2</span>
-          <span className="ml-2">Thời gian & Loại vé</span>
-        </div>
-        <div className="flex items-center">
-          <span className="bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center">3</span>
-          <span className="ml-2">Cài đặt</span>
-        </div>
-        <div className="flex items-center">
-          <span className="bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center">4</span>
-          <span className="ml-2">Thông tin thanh toán</span>
-        </div>
-      </div>
-      <div className="flex space-x-4">
-        <button className="bg-gray-700 text-white px-4 py-2 rounded-md">Lưu</button>
-        <button className="bg-green-600 text-white px-4 py-2 rounded-md">Tiếp tục</button>
-      </div>
-    </div>
-
-
-          <div className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Image Upload Section */}
-              <div className="bg-customGray p-6 rounded-lg flex flex-col justify-center">
-              <label className="font-medium text-white">
-                <span className="text-red-500">*</span> Upload hình ảnh
-              </label>
-                <section className='flex justify-center'>
+  
+      <div className="p-4 md:p-8">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-8">
+          {/* Image Upload Section */}
+          <div className="bg-customGray p-4 md:p-6 rounded-lg flex flex-col justify-center">
+            <label className="font-medium text-white">
+              <span className="text-red-500">*</span> Upload hình ảnh
+            </label>
+            <section className="flex justify-center">
               {/* Event Background Upload */}
-              <div className="bg-customGray2 border border-gray-500 rounded-lg p-4 flex flex-col items-center justify-center text-center w-[900px] h-[400px] relative">
+              <div className="bg-customGray2 border border-gray-500 rounded-lg p-4 flex flex-col items-center justify-center text-center w-full h-52 md:w-[900px] md:h-[400px] relative">
                 <input
                   type="file"
                   accept="image/*"
@@ -175,127 +179,125 @@ const EventCreationOrganizerPage: React.FC = () => {
                     <p className="text-white font-bold">(1280x720)</p>
                   </>
                 )}
-             
-            </div>
+              </div>
             </section>
           </div>
-
+  
           {/* Event Name */}
-          <div className="bg-customGray p-6 rounded-lg">
-          <label className="font-medium text-white">
-            <span className="text-red-500">*</span> Tên sự kiện
-          </label>
+          <div className="bg-customGray p-4 md:p-6 rounded-lg">
+            <label className="font-medium text-white">
+              <span className="text-red-500">*</span> Tên sự kiện
+            </label>
             <input
               type="text"
               value={eventName}
               onChange={(e) => setEventName(e.target.value)}
-              className="w-full mt-2 p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
+              className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
               placeholder="Tên sự kiện"
             />
           </div>
-
+  
           {/* Event Location */}
-        <div className="bg-customGray p-6 rounded-lg space-y-4">
-        <label className="font-medium text-white block mb-2">
-          <span className="text-red-600">*</span> Địa chỉ sự kiện:
-        </label>
-          <div className="mb-4">
-          <label className="font-medium text-white block mb-2">
-            <span className="text-red-500">*</span> Tên địa điểm
-          </label>
-            <input
-              type="text"
-              className="w-full p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
-              placeholder="Tên địa điểm"
-              maxLength={80}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block mb-1">Tỉnh/Thành</label>
-              <select
-                value={selectedProvince}
-                onChange={(e) => {
-                  setSelectedProvince(e.target.value);
-                  setSelectedDistrict(''); // Reset district and ward when province changes
-                }}
-                className="w-full p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
-              >
-                <option value="">Chọn Tỉnh/Thành</option>
-                {provinces.map((province) => (
-                  <option key={province.code} value={province.code}>
-                    {province.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block mb-1">Quận/Huyện</label>
-              <select
-                value={selectedDistrict}
-                onChange={(e) => setSelectedDistrict(e.target.value)}
-                disabled={!selectedProvince}
-                className="w-full p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black disabled:bg-gray-600"
-              >
-                <option value="">Chọn Quận/Huyện</option>
-                {districts.map((district) => (
-                  <option key={district.code} value={district.code}>
-                    {district.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block mb-1">Phường/Xã</label>
-              <select
-                disabled={!selectedDistrict}
-                className="w-full p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black disabled:bg-gray-600"
-              >
-                <option value="">Chọn Phường/Xã</option>
-                {wards.map((ward) => (
-                  <option key={ward.code} value={ward.code}>
-                    {ward.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="relative">
-              <label className="block mb-1">* Số nhà, đường</label>
+          <div className="bg-customGray p-4 md:p-6 rounded-lg space-y-4">
+            <label className="font-medium text-white block mb-2">
+              <span className="text-red-600">*</span> Địa chỉ sự kiện:
+            </label>
+            <div className="mb-4">
+              <label className="font-medium text-white block mb-2">
+                <span className="text-red-500">*</span> Tên địa điểm
+              </label>
               <input
                 type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                className="w-full p-3 bg-white border border-gray-500 rounded-lg text-black"
-                placeholder="Số nhà, đường"
-                maxLength={90} // Set the max length to 90 characters
+                className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
+                placeholder="Tên địa điểm"
+                maxLength={80}
               />
-              <div
-                className={`absolute bottom-1 right-2 text-sm ${
-                  inputValue.length > 90 ? 'text-red-500' : 'text-gray-400'
-                }`}
-              >
-                {inputValue.length} / 90
             </div>
-    
+  
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block mb-1">Tỉnh/Thành</label>
+                <select
+                  value={selectedProvince}
+                  onChange={(e) => {
+                    setSelectedProvince(e.target.value);
+                    setSelectedDistrict('');
+                  }}
+                  className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
+                >
+                  <option value="">Chọn Tỉnh/Thành</option>
+                  {provinces.map((province) => (
+                    <option key={province.code} value={province.code}>
+                      {province.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+  
+              <div>
+                <label className="block mb-1">Quận/Huyện</label>
+                <select
+                  value={selectedDistrict}
+                  onChange={(e) => setSelectedDistrict(e.target.value)}
+                  disabled={!selectedProvince}
+                  className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black disabled:bg-gray-600"
+                >
+                  <option value="">Chọn Quận/Huyện</option>
+                  {districts.map((district) => (
+                    <option key={district.code} value={district.code}>
+                      {district.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+  
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block mb-1">Phường/Xã</label>
+                <select
+                  disabled={!selectedDistrict}
+                  className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black disabled:bg-gray-600"
+                >
+                  <option value="">Chọn Phường/Xã</option>
+                  {wards.map((ward) => (
+                    <option key={ward.code} value={ward.code}>
+                      {ward.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+  
+              <div className="relative">
+                <label className="block mb-1">* Số nhà, đường</label>
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className="w-full p-2 md:p-3 bg-white border border-gray-500 rounded-lg text-black"
+                  placeholder="Số nhà, đường"
+                  maxLength={90}
+                />
+                <div
+                  className={`absolute bottom-1 right-2 text-sm ${
+                    inputValue.length > 90 ? 'text-red-500' : 'text-gray-400'
+                  }`}
+                >
+                  {inputValue.length} / 90
+                </div>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
-
+  
           {/* Event Type */}
-          <div className="bg-customGray p-6 rounded-lg">
-          <label className="font-medium text-white">
-            <span className="text-red-500">*</span> Thể loại sự kiện
-          </label>
+          <div className="bg-customGray p-4 md:p-6 rounded-lg">
+            <label className="font-medium text-white">
+              <span className="text-red-500">*</span> Thể loại sự kiện
+            </label>
             <select
               value={eventType}
               onChange={(e) => setEventType(e.target.value)}
-              className="w-full mt-2 p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
+              className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
             >
               <option value="">Vui lòng chọn</option>
               <option value="Conference">Hội thảo</option>
@@ -303,26 +305,26 @@ const EventCreationOrganizerPage: React.FC = () => {
               <option value="Concert">Buổi hòa nhạc</option>
             </select>
           </div>
-
+  
           {/* Event Description */}
-          <div className="bg-customGray p-6 rounded-lg">
-          <label className="font-medium text-white">
-            <span className="text-red-500">*</span> Thông tin sự kiện
-          </label>
+          <div className="bg-customGray p-4 md:p-6 rounded-lg">
+            <label className="font-medium text-white">
+              <span className="text-red-500">*</span> Thông tin sự kiện
+            </label>
             <textarea
               value={eventDescription}
               onChange={(e) => setEventDescription(e.target.value)}
-              className="w-full mt-2 p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
+              className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
               placeholder="Mô tả sự kiện"
-              rows={5}
+              rows={4}
             ></textarea>
           </div>
-
+  
           {/* Submit Button */}
           <div className="text-right">
             <button
               type="submit"
-              className="bg-green-600 px-6 py-3 rounded-md font-semibold hover:bg-green-700"
+              className="bg-green-600 px-4 md:px-6 py-3 rounded-md font-semibold hover:bg-green-700"
             >
               Tiếp tục
             </button>
@@ -331,6 +333,7 @@ const EventCreationOrganizerPage: React.FC = () => {
       </div>
     </div>
   );
+  
 };
 
 export default EventCreationOrganizerPage;
