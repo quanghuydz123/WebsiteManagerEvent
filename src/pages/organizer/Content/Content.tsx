@@ -4,6 +4,7 @@ import Header from '../../../components/Header/Header';
 import DashboardPage from '../../admin/dashboradPage/DashboardPage';
 import EventPage from '../EventPage/EventPage';
 import EventCreationOrganizerPage from '../EventCreationOrganizerPage/EventCreationOrganizerPage';
+import OrganizerTerms from '../Policy/Policy';
 
 
 const Content = ({ isOpen }: { isOpen: boolean }) => {
@@ -28,8 +29,7 @@ const Content = ({ isOpen }: { isOpen: boolean }) => {
           <Route path='EventPage' element={<EventPage />} />
           <Route path='Dashboard' element={<DashboardPage />} />
           <Route path='CreateEvent' element={<EventCreationOrganizerPage/>} />
-
-          
+          <Route path='Policy' element={<OrganizerTerms/>}/>
         </Routes>
       </div>
     </div>

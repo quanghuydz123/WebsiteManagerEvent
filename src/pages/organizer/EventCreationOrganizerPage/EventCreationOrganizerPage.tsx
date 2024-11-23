@@ -117,39 +117,48 @@ const EventCreationOrganizerPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-custom-gradient text-white">
-      {/* Navigation Step Bar */}
-      <div className="px-4 py-2 flex flex-wrap justify-between items-center bg-black text-white">
-        <div>
-          <h1 className="text-lg md:text-xl font-semibold">Tạo sự kiện</h1>
+  {/* Navigation Step Bar */}
+  <div className="px-4 py-2 flex flex-wrap justify-between items-center bg-black text-white">
+    <div>
+      <h1 className="text-lg md:text-xl font-semibold">Tạo sự kiện</h1>
+    </div>
+    {/* Step Bar */}
+    <div className="flex flex-wrap justify-center space-x-4 md:space-x-8 mt-2 md:mt-0">
+      {[
+        { step: 1, label: "Thông tin sự kiện" },
+        { step: 2, label: "Thời gian & Loại vé" },
+        { step: 3, label: "Cài đặt" },
+        { step: 4, label: "Thông tin thanh toán" },
+      ].map(({ step, label }) => (
+        <div
+          key={step}
+          className={`flex items-center ${
+            step !== 1 ? "hidden md:flex" : "flex"
+          }`}
+        >
+          <span
+            className={`${
+              step === 1 ? "bg-green-500" : "bg-gray-700"
+            } text-white rounded-full w-8 h-8 flex items-center justify-center`}
+          >
+            {step}
+          </span>
+          <span className="ml-2 text-sm md:text-base">{label}</span>
         </div>
-        <div className="flex flex-wrap justify-center space-x-4 md:space-x-8 mt-2 md:mt-0">
-          {[
-            { step: 1, label: "Thông tin sự kiện" },
-            { step: 2, label: "Thời gian & Loại vé" },
-            { step: 3, label: "Cài đặt" },
-            { step: 4, label: "Thông tin thanh toán" },
-          ].map(({ step, label }) => (
-            <div key={step} className="flex items-center">
-              <span
-                className={`${
-                  step === 1 ? "bg-green-500" : "bg-gray-700"
-                } text-white rounded-full w-8 h-8 flex items-center justify-center`}
-              >
-                {step}
-              </span>
-              <span className="ml-2 text-sm md:text-base">{label}</span>
-            </div>
-          ))}
-        </div>
-        <div className="flex space-x-2 md:space-x-4 mt-2 md:mt-0">
-          <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md">
-            Lưu
-          </button>
-          <button className="bg-green-600 text-white px-2 md:px-4 py-2 rounded-md">
-            Tiếp tục
-          </button>
-        </div>
-      </div>
+      ))}
+    </div>
+    {/* Action Buttons */}
+    <div className="flex space-x-2 md:space-x-4 mt-2 md:mt-0">
+      <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md">
+        Lưu
+      </button>
+      <button className="bg-green-600 text-white px-2 md:px-4 py-2 rounded-md">
+        Tiếp tục
+      </button>
+    </div>
+  </div>
+
+
   
       <div className="p-4 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-8">

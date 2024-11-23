@@ -23,6 +23,7 @@ const menuItems = [
     {
       icon: FaBookOpen, 
       name: 'Điều khoản cho Ban tổ chức',
+      key: 'Policy'
     },
     {
         icon: FaSignOutAlt, 
