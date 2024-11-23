@@ -1,6 +1,7 @@
 export const colors ={
-    primary:'#5569FF',
-    white:'#FFFFFF',
+    primary:'rgb(45, 194, 117)',
+    primaryLight:'#FFD6E7',
+    white:'#fefefe',
     white2:'#fcfcfc',
     colorText:'#120D26',
     text2:'#747688',
@@ -10,8 +11,18 @@ export const colors ={
     gray4:'#9D9898',
     gray5:"#D9D9D9",
     gray6:'#FAFAFA',
+    gray7:'#e9e9e9',
     link:'#5669FF',
-    danger:'#e74c3c',
-    danger2:'#F0635A',
-    black:'#000000'
+    danger:'rgb(200,66,79)',
+    danger2:'rgb(255,184,188)',
+    black:'#000000',
+    blue:'#1b96f3',
+    orange:'#fc8527',
+    green:'#56da78',
+    backgroundSearchInput:'rgb(228, 230, 235)',
+    background:'#262626',  
+    background1:'rgb(55,55,60)',   
+    background2:'rgb(46,47,50)',   
+ 
+    backgroundBluishWhite:'rgb(245, 247, 252)'
 }

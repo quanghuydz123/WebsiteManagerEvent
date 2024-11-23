@@ -102,7 +102,7 @@ opacity: 0;overflow: hidden;transition: all .3s;}
 
 .main .content{width: 82%;flex:0 0 82%;transition: all 0.3s }
 .main .content.toggle{width: 100%;flex:0 0 100%}
-.right-content{padding: 95px 0px; width: 100%;}
+.right-content{padding: 95px 0px; width: 100%}
 
 .dashboardBoxWapper{gap:20px;width: 100%;}
 
