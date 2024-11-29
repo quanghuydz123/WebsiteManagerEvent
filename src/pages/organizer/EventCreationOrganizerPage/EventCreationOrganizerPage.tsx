@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import axios from 'axios';
+import EventCreationTimePage from './EventCreationTimePage';
 
 interface Province {
   code: number;
@@ -35,7 +36,17 @@ const EventCreationOrganizerPage: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState('');
 
   const [inputValue, setInputValue] = useState('');
+  const [currentStep, setCurrentStep] = useState(1);
+
+  // Tiến hành chuyển sang Bước 2 khi nhấn nút "Tiếp tục"
+  const handleNextStep = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (currentStep === 1) {
+      setCurrentStep(2); // Chuyển sang bước 2
+    }
+  };
   
+
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
@@ -127,18 +138,17 @@ const EventCreationOrganizerPage: React.FC = () => {
       {[
         { step: 1, label: "Thông tin sự kiện" },
         { step: 2, label: "Thời gian & Loại vé" },
-        { step: 3, label: "Cài đặt" },
-        { step: 4, label: "Thông tin thanh toán" },
+        
       ].map(({ step, label }) => (
         <div
           key={step}
           className={`flex items-center ${
-            step !== 1 ? "hidden md:flex" : "flex"
+            step !== currentStep ? "hidden md:flex" : "flex"
           }`}
         >
           <span
             className={`${
-              step === 1 ? "bg-green-500" : "bg-gray-700"
+              step === currentStep ? "bg-green-500" : "bg-gray-700"
             } text-white rounded-full w-8 h-8 flex items-center justify-center`}
           >
             {step}
@@ -152,14 +162,15 @@ const EventCreationOrganizerPage: React.FC = () => {
       <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md">
         Lưu
       </button>
-      <button className="bg-green-600 text-white px-2 md:px-4 py-2 rounded-md">
+      <button onClick={handleNextStep} className="bg-green-600 text-white px-2 md:px-4 py-2 rounded-md">
         Tiếp tục
       </button>
     </div>
   </div>
 
 
-  
+      {/* Step 1: Event Information */}
+      {currentStep === 1 && (
       <div className="p-4 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-8">
           {/* Image Upload Section */}
@@ -340,7 +351,17 @@ const EventCreationOrganizerPage: React.FC = () => {
           </div>
         </form>
       </div>
+       )}
+       {/* Step 2: Time & Ticket Type */}
+      {currentStep === 2 && (
+        <EventCreationTimePage
+          eventType={eventType}
+          setEventType={setEventType}
+          handleSubmit={handleSubmit}
+        />
+      )}
     </div>
+    
   );
   
 };

@@ -11,10 +11,7 @@ const menuItems = [
       name: 'Sự kiện đã tạo',
       key: 'EventPage',
     },
-    {
-      icon: FaFileExport, 
-      name: 'Quản lý xuất file',
-    },
+   
     {
       icon: FaEdit, 
       name: 'Tạo sự kiện',
