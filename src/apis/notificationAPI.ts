@@ -1,18 +1,18 @@
 import { webInfo } from "../constrants/webInfo"
 import axiosClient from "./axiosClient"
 
-class UserApi {
-    HandleUser = async (
+class NotificationAPI {
+    HandleNotification = async (
         url:string,
         data?:any,
         method?: 'get' | 'post' | 'put' | 'delete'
     )=>{
-        return await axiosClient(`/users${url}`,{
+        return await axiosClient(`/notification${url}`,{
             method: method ?? 'get',
             data
         })
-    }   
+    }
 }
 
-const userAPI = new UserApi()
-export default userAPI
+const notificationAPI = new NotificationAPI()
+export default notificationAPI

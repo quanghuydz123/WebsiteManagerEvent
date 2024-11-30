@@ -16,7 +16,7 @@ import { Divider } from "@mui/material";
 import AvatarComponent from "../Avatar/AvatarComponent";
 import NotificationComponent from "../Notification/NotificationComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthState, setIsLogin } from "../../reduxs/reducers/authReducers";
+import { AuthState, removeAuth } from "../../reduxs/reducers/authReducers";
 interface Props{
     isToggle:boolean,
     setIsToggle:(val:boolean)=>void,
@@ -51,26 +51,26 @@ const Header = (props:Props) => {
         setIsOpenNotifications(null);
     };
     const handleLogout = ()=>{
-        navigate('/login')
-        dispatch(setIsLogin({isLogin:false}))
+        dispatch(removeAuth())
+        navigate('/')
+        // dispatch(setIsLogin({isLogin:false}))
     }
     return (
         <>
-            <header className="d-flex align-items-center" style={{ backgroundColor: '#000', borderBottom: '1px solid #616161 !important' }}>
+            <header className="d-flex align-items-center justify-end bg-gradient-to-b from-green-900 via-black to-purple-900"  style={{borderBottom: '1px solid #616161 !important' }}>
                 <div className="container-fluid w-100">
                     <div className="row d-flex align-items-center w-100 ">
                         {/*logo*/}
-                        <div className="col-sm-2 part1">
+                        {/* <div className="col-sm-2 part1">
                            
                         </div>
                         {windowWidth > 992 && <div className="col-sm-3 d-flex align-items-center part2 pl-2 res-hide">
                             <Button className="rounded-circl mr-3 ml-3" onClick={()=>setIsToggle(!isToggle)}>
                                 {isToggle ? <MdOutlineMenu className="icon"/>: <MdMenuOpen className="icon"/>}
                             </Button>
-                            {/* <SearchBox /> */}
-                        </div>}
+                        </div>} */} 
 
-                        <div className="col-sm-7 d-flex align-items-center part3 justify-content-end">
+                        <div className="col-sm-12 d-flex align-items-center part3 justify-content-end">
                             
 
                             <Button className="rounded-circl mr-2" onClick={handleOpenNotification}>
@@ -78,9 +78,9 @@ const Header = (props:Props) => {
 
                             </Button>
 
-                           {windowWidth < 992 && <Button className="rounded-circl mr-2" onClick={()=>setIsOpenNav(!isOpenNav)}>
+                           {/* {windowWidth < 992 && <Button className="rounded-circl mr-2" onClick={()=>setIsOpenNav(!isOpenNav)}>
                                 <MdOutlineMenu className="icon" />
-                            </Button>}
+                            </Button>} */}
                             <Menu
                                 anchorEl={isOpenNotifications}
                                 id="notification"
@@ -150,7 +150,7 @@ const Header = (props:Props) => {
                                     <h4 className=" text-white">Quang Huy</h4>
                                     <p className="mb-0">examp@gmail.com</p>
                                 </div>
-                            </Button>
+                            </Button>   
                             <Menu
                                 anchorEl={anchorEl}
                                 id="account-menu"

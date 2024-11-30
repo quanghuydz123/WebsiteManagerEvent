@@ -17,7 +17,7 @@ import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
 import AppTheme from './theme/AppTheme';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeAuth, setIsLogin } from '../../reduxs/reducers/authReducers';
+import { removeAuth } from '../../reduxs/reducers/authReducers';
 import { IconButton, InputAdornment, OutlinedInput } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Grid from '@mui/material/Grid';
@@ -134,7 +134,7 @@ export default function LoginPage(props: any) {
         return isValid;
     };
     const loginGoogle = () => {
-        dispatch(setIsLogin({ isLogin: true }))
+        
     }
     const handleOnchange = (e: any, name: 'email' | 'password') => {
         const target = e.target as HTMLInputElement;

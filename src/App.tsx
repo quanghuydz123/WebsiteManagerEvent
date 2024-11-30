@@ -14,18 +14,18 @@ function App() {
   const auth = useSelector((state: any) => state.auth);
   
   // Check the login status when the app is loaded
-  useEffect(() => {
-    if (auth?.authData?.isLogin) {
-      setIsLogin(true);
-    } else {
-      setIsLogin(false);
-    }
-  }, [auth]);
+  // useEffect(() => {
+  //   if (auth?.authData?.isLogin) {
+  //     setIsLogin(true);
+  //   } else {
+  //     setIsLogin(false);
+  //   }
+  // }, [auth]);
 
   return (
     <>
       {/* If the user is logged in, show the authenticated routes */}
-      {isLogin ? (
+      {true ? (
         <section>
           <Routes>
           <Route path='/' element={<LoginPage />} />
@@ -39,7 +39,7 @@ function App() {
       ) : (
         
         <Routes>
-          <Route path='/login' element={<LoginPage />} />
+          <Route path='/' element={<LoginPage />} />
           {/* <Route path='*' element={<Navigate to='/login' replace />} /> */}
         </Routes>
       )}

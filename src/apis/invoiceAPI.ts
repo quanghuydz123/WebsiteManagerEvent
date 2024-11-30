@@ -1,18 +1,18 @@
 import { webInfo } from "../constrants/webInfo"
 import axiosClient from "./axiosClient"
 
-class UserApi {
-    HandleUser = async (
+class InvoiceAPI {
+    HandleInvoice = async (
         url:string,
         data?:any,
         method?: 'get' | 'post' | 'put' | 'delete'
     )=>{
-        return await axiosClient(`/users${url}`,{
+        return await axiosClient(`/invoices${url}`,{
             method: method ?? 'get',
             data
         })
     }   
 }
 
-const userAPI = new UserApi()
-export default userAPI
+const invoiceAPI = new InvoiceAPI()
+export default invoiceAPI

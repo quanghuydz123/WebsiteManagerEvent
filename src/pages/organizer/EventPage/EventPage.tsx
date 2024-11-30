@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import EventCard from './EventCart';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addAuth, AuthState } from '../../../reduxs/reducers/authReducers';
 
 // Dữ liệu giả lập cho các sự kiện
 const cartItems = [
@@ -11,6 +13,9 @@ const cartItems = [
 ];
 
 const EventPage = () => {
+  const auth:AuthState = useSelector((state: any) => state.auth);
+  const dispatch = useDispatch()
+  console.log("auth",auth)
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-custom-gradient text-white">
