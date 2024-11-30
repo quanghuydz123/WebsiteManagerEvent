@@ -24,32 +24,32 @@ const TicketTable = ({ variants }: { variants: any }) => {
 
   return (
     <motion.div variants={variants} className="flex-1 rounded-xl p-5 dark:bg-slate-600 ">
-      <table className="min-w-full">
+      <table className="min-w-full text-[19px]">
         <thead>
-          <tr className="text-sm md:text-base">
-            <th className="px-4 py-2 text-left font-semibold ">Loại vé</th>
-            <th className="px-4 py-2 text-left font-semibold ">Giá bán</th>
-            <th className="px-4 py-2 text-left font-semibold ">Đã bán</th>
-            <th className="px-4 py-2 text-left font-semibold ">Khóa</th>
-            <th className="px-4 py-2 text-left font-semibold ">Tỉ lệ bán</th>
+          <tr className=" md:text-base text-[19px]">
+            <th className="px-4 py-2 text-left text-[19px] ">Loại vé</th>
+            <th className="px-4 py-2 text-left text-[19px] ">Giá bán</th>
+            <th className="px-4 py-2 text-left text-[19px] ">Đã bán</th>
+            <th className="px-4 py-2 text-left text-[19px] ">Khóa</th>
+            <th className="px-4 py-2 text-left text-[19px] ">Tỉ lệ bán</th>
           </tr>
         </thead>
         <tbody>
           {ticketData.map((item, index) => (
             <tr className="border-b border-slate-200 text-sm md:text-base" key={index}>
-              <td className="px-4 py-3 font-medium">{item.type}</td>
-              <td className="px-4 py-3 font-medium flex items-center">
-                <FaDollarSign className="mr-2 text-green-500" />
+              <td className="px-4 py-3 font-medium text-[19px]">{item.type}</td>
+              <td className="px-4 py-3 font-medium flex items-center text-[19px]">
+                <FaDollarSign className="mr-2 text-green-500 " />
                 <span>{item.price.toLocaleString()} đ</span>
             </td>
 
-              <td className="px-4 py-3 font-medium">
+              <td className="px-4 py-3 font-medium text-[19px]">
                 {item.sold} / {item.total}
               </td>
-              <td className="px-4 py-3 font-medium flex items-center">
+              <td className="px-4 py-3 font-medium flex items-center text-[19px]">
                 {item.locked} <FaLock className="ml-1 text-red-500" />
               </td>
-              <td className="px-4 py-3 font-medium">
+              <td className="px-4 py-3 font-medium text-[19px]">
                 <div className="w-full bg-gray-300 rounded-full h-2.5">
                   <div
                     className={`h-2.5 rounded-full ${getProgressBarColor(item.sellRatio)}`}
