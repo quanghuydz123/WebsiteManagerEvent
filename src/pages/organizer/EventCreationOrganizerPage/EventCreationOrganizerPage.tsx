@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 import EventCreationTimePage from './EventCreationTimePage';
@@ -19,6 +20,12 @@ interface Ward {
 }
 
 const EventCreationOrganizerPage: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentStep = new URLSearchParams(location.search).get('step') || '1';
+  const isStep1 = currentStep === '1';
+  const isStep2 = currentStep === '2';
+
   const [eventName, setEventName] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [eventType, setEventType] = useState('');
@@ -36,14 +43,15 @@ const EventCreationOrganizerPage: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState('');
 
   const [inputValue, setInputValue] = useState('');
-  const [currentStep, setCurrentStep] = useState(1);
 
   // Tiến hành chuyển sang Bước 2 khi nhấn nút "Tiếp tục"
-  const handleNextStep = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (currentStep === 1) {
-      setCurrentStep(2); // Chuyển sang bước 2
+  const handleNextStep = () => {
+    if (isStep1) {
+      navigate('/organizer/CreateEvent?step=2'); // Go to Step 2
     }
+  };
+  const handleStepClick = (step: number) => {
+    navigate(`/organizer/CreateEvent?step=${step}`);
   };
   
 
@@ -142,13 +150,14 @@ const EventCreationOrganizerPage: React.FC = () => {
       ].map(({ step, label }) => (
         <div
           key={step}
+          onClick={() => handleStepClick(step)}
           className={`flex items-center ${
-            step !== currentStep ? "hidden md:flex" : "flex"
+            step !== +currentStep ? "hidden md:flex" : "flex"
           }`}
         >
           <span
             className={`${
-              step === currentStep ? "bg-green-500" : "bg-gray-700"
+              step === +currentStep ? "bg-green-500" : "bg-gray-700"
             } text-white rounded-full w-8 h-8 flex items-center justify-center`}
           >
             {step}
@@ -162,7 +171,9 @@ const EventCreationOrganizerPage: React.FC = () => {
       <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md">
         Lưu
       </button>
-      <button onClick={handleNextStep} className="bg-green-600 text-white px-2 md:px-4 py-2 rounded-md">
+      <button  onClick={handleNextStep}
+            className={`bg-green-600 text-white px-2 md:px-4 py-2 rounded-md ${isStep2 ? 'cursor-not-allowed opacity-50' : ''}`}
+            disabled={isStep2} >
         Tiếp tục
       </button>
     </div>
@@ -170,7 +181,7 @@ const EventCreationOrganizerPage: React.FC = () => {
 
 
       {/* Step 1: Event Information */}
-      {currentStep === 1 && (
+      {isStep1 && (
       <div className="p-4 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-8">
           {/* Image Upload Section */}
@@ -353,7 +364,7 @@ const EventCreationOrganizerPage: React.FC = () => {
       </div>
        )}
        {/* Step 2: Time & Ticket Type */}
-      {currentStep === 2 && (
+      {isStep2 && (
         <EventCreationTimePage
           eventType={eventType}
           setEventType={setEventType}

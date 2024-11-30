@@ -27,7 +27,6 @@ const Content = ({ isOpen }: { isOpen: boolean }) => {
         />
         <Routes>
           <Route path='EventPage' element={<EventPage />} />
-          <Route path='Dashboard' element={<DashboardPage />} />
           <Route path='CreateEvent' element={<EventCreationOrganizerPage/>} />
           <Route path='Policy' element={<OrganizerTerms/>}/>
         </Routes>
