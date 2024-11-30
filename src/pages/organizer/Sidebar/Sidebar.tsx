@@ -50,7 +50,7 @@ const SidebarComponent = ({ isOpen, toggleSidebar, setIsOpen }: { isOpen: any, t
     ${isOpen ? "w-56" : "w-20 items-center"}`}>
       {/* Sidebar logo */}
       <div className="flex items-center justify-center ">
-      <Link to={'/organizer/dashboard'}>
+      <Link to={'/organizer/EventPage'}>
         <img
           className={`logo transition-all ${isOpen ? "w-100" : "w-100"}`}
           src="https://cdn.saffire.com/images.ashx?t=ig&rid=FFEA&i=Event_Hub(3)(1).png"

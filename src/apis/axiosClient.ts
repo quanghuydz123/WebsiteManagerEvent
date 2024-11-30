@@ -21,7 +21,7 @@ axiosClient.interceptors.request.use(async (config:any)=>
         ...config.headers
     }
 
-    config.data
+    // config.data
 
     return config
 })

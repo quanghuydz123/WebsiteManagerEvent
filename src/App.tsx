@@ -8,11 +8,11 @@ import { AuthState } from './reduxs/reducers/authReducers';
 import AdminHome from './pages/admin/AdminHome/AdminHome';
 import OrganizerHome from './pages/organizer/OrganizerHome/OrganizerHome';
 import EventManagementHome from './pages/organizer/EventManagement/EventManagementHome/EventManagementHome';
+import 'ckeditor5/ckeditor5.css';
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
-  const auth = useSelector((state: any) => state.auth);
-  
+  const {authData }:{authData:AuthState} = useSelector((state: any) => state.auth);
   // Check the login status when the app is loaded
   // useEffect(() => {
   //   if (auth?.authData?.isLogin) {
@@ -25,10 +25,10 @@ function App() {
   return (
     <>
       {/* If the user is logged in, show the authenticated routes */}
-      {true ? (
+      {authData.accesstoken ? (
         <section>
           <Routes>
-          <Route path='/' element={<LoginPage />} />
+          {/* <Route path='/' element={<LoginPage />} /> */}
             <Route path='/organizer/*' element={<OrganizerHome />} />
             <Route path='/admin/*' element={<AdminHome />} />
             <Route path='/organizer/EventPage/:idEvent/*' element={<EventManagementHome />} />
@@ -40,8 +40,8 @@ function App() {
         
         <Routes>
           <Route path='/' element={<LoginPage />} />
-          {/* <Route path='*' element={<Navigate to='/login' replace />} /> */}
-        </Routes>
+          <Route path='*' element={<h1>404 - Page Not Found</h1>} />
+          </Routes>
       )}
     </>
   );

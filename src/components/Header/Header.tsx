@@ -28,12 +28,13 @@ interface Props{
 const Header = (props:Props) => {
     const {isToggle,setIsToggle,windowWidth,setIsOpenNav,isOpenNav,bgColor} = props
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const {authData }:{authData:AuthState} = useSelector((state: any) => state.auth);
+
     const [isOpenNotifications,setIsOpenNotifications] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const openNotification = Boolean(isOpenNotifications);
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const auth:AuthState = useSelector((state:any) => state.auth)
     // React.useEffect(()=>{
     //     dispatch(removeAuth())
     // },[])
@@ -145,10 +146,10 @@ const Header = (props:Props) => {
 
                             </Menu>
                             <Button className="myAcc d-flex align-items-center" onClick={handleOpenMyAcc}>
-                                <AvatarComponent />
+                                <AvatarComponent photoUrl={authData?.photoUrl}/>
                                 <div className="userInfo res-hide text-white">
-                                    <h4 className=" text-white">Quang Huy</h4>
-                                    <p className="mb-0">examp@gmail.com</p>
+                                    <h4 className=" text-white">{authData?.fullname ?? 'Người dùng'}</h4>
+                                    <p className="mb-0">{authData.email}</p>
                                 </div>
                             </Button>   
                             <Menu

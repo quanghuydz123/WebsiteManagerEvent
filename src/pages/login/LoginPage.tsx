@@ -17,12 +17,17 @@ import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
 import AppTheme from './theme/AppTheme';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeAuth } from '../../reduxs/reducers/authReducers';
+import { addAuth, removeAuth } from '../../reduxs/reducers/authReducers';
 import { IconButton, InputAdornment, OutlinedInput } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Grid from '@mui/material/Grid';
 import { Grid2 } from '@mui/material';
 import TextComponent from '../../components/TextComponent';
+import { apis } from '../../constrants/apis';
+import eventAPI from '../../apis/eventAPI';
+import { Validate } from '../../utils/validate';
+import authenticationAPI from '../../apis/authApi';
+import LoadingModal from '../../modals/LoadingModal';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -71,17 +76,19 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function LoginPage(props: any) {
-    const [emailError, setEmailError] = React.useState(false);
-    const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-    const [passwordError, setPasswordError] = React.useState(false);
-    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+    // const [emailError, setEmailError] = React.useState(false);
+    // const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+    // const [passwordError, setPasswordError] = React.useState(false);
+    // const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const [email, setEmail] = React.useState('')
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const [errorMessage,setErrorMessage] = React.useState('')
     const [password, setPassword] = React.useState('')
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const [isLoading,setIsLoading] = React.useState(false)
     const auth = useSelector((state: any) => state.auth)
     // React.useEffect(()=>{
     //     dispatch(removeAuth())
@@ -107,34 +114,9 @@ export default function LoginPage(props: any) {
         // });
         event.preventDefault();
     };
-    const handleLogin = () => {
-        // const email = document.getElementById('email') as HTMLInputElement;
-        // const password = document.getElementById('password') as HTMLInputElement;
-
-        let isValid = true;
-
-        if (!email || !/\S+@\S+\.\S+/.test(email)) {
-            setEmailError(true);
-            setEmailErrorMessage('Hãy nhập định dạng Email');
-            isValid = false;
-        } else {
-            setEmailError(false);
-            setEmailErrorMessage('');
-        }
-
-        if (!password || password.length < 6) {
-            setPasswordError(true);
-            setPasswordErrorMessage('Mật khẩu phải 6 chứ số trở lên.');
-            isValid = false;
-        } else {
-            setPasswordError(false);
-            setPasswordErrorMessage('');
-        }
-
-        return isValid;
-    };
+   
     const loginGoogle = () => {
-        
+        navigate('/organizer/EventPage')    
     }
     const handleOnchange = (e: any, name: 'email' | 'password') => {
         const target = e.target as HTMLInputElement;
@@ -142,6 +124,37 @@ export default function LoginPage(props: any) {
             setEmail(target.value)
         } else if (name === 'password') {
             setPassword(target.value)
+        }
+    }
+
+    const handleCallAPILogin = async () => {    
+        const emailValidation = Validate.email(email)
+        if(email && password){
+          if (emailValidation) {
+            try {
+                setIsLoading(true)
+              const res:any = await authenticationAPI.HandleAuthentication(apis.auth.login(), { email, password }, 'post');
+              if(res && res.status===200){
+                dispatch(addAuth({...res.data,loginMethod:'account'}))
+                navigate('/organizer/EventPage')    
+              }
+              setIsLoading(false)
+            } catch (error:any) {
+                setIsLoading(false)
+              const errorMessage = JSON.parse(error.message)
+              if(errorMessage.statusCode === 403){
+                setErrorMessage(errorMessage.message)
+              }else{
+                setErrorMessage('Đăng nhập thất bại')
+              }
+            }
+          }
+          else {
+            setErrorMessage('Email không đúng dịnh dạng!!!')
+          }
+        }
+        else {
+          setErrorMessage('Hãy nhập đầy đủ thông tin')
         }
     }
     return (
@@ -203,8 +216,8 @@ export default function LoginPage(props: any) {
                                     <FormControl>
                                         <FormLabel htmlFor="email">Email</FormLabel>
                                         <TextField
-                                            error={emailError}
-                                            helperText={emailErrorMessage}
+                                            // error={emailError}
+                                            // helperText={emailErrorMessage}
                                             id="email"
                                             type="email"
                                             name="email"
@@ -216,7 +229,7 @@ export default function LoginPage(props: any) {
                                             fullWidth
                                             variant="outlined"
                                             value={email}
-                                            color={emailError ? 'error' : 'primary'}
+                                            // color={emailError ? 'error' : 'primary'}
                                             sx={{ ariaLabel: 'email' }}
                                         />
                                     </FormControl>
@@ -240,7 +253,7 @@ export default function LoginPage(props: any) {
                                             value={password}
                                             name="password"
                                             placeholder="••••••"
-                                            error={passwordError}
+                                            // error={passwordError}
                                             endAdornment={
                                                 <InputAdornment position="end">
                                                     <IconButton
@@ -259,11 +272,12 @@ export default function LoginPage(props: any) {
                                         control={<Checkbox value="remember" color="primary" />}
                                         label="Nhớ mật khẩu"
                                     />
+                                    {errorMessage && <p className='mb-0 text-center text-red-500'>{errorMessage}</p>}
                                     <Button
                                         type="submit"
                                         fullWidth
                                         variant="contained"
-                                        onClick={handleLogin}
+                                        onClick={handleCallAPILogin}
                                     >
                                         Đăng nhập
                                     </Button>
@@ -278,6 +292,7 @@ export default function LoginPage(props: any) {
                                     Đăng nhập bằng google
                                 </Button>
                             </Card>
+                            <LoadingModal visible={isLoading} />
                         </SignInContainer>
                     </AppTheme>
                 </Grid2>
