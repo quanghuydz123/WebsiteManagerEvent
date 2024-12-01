@@ -8,8 +8,8 @@ interface CircularProgressProps {
 }
 const CircularOrogressComponent = ({
     percentage = 0,
-    size = 120,
-    strokeWidth = 10,
+    size = 150,
+    strokeWidth = 16,
     showPercentage = true,
 }: CircularProgressProps) => {
     const [progress, setProgress] = useState(0)

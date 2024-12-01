@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
-import Modal from './EventShowModal';
 import { FaCalendarAlt, FaSyncAlt } from 'react-icons/fa'; // Import các icon
 import { motion } from 'framer-motion'; // Import motion for animation
 import { FaDollarSign, FaTicketAlt } from 'react-icons/fa'; // Thêm các icon mới cho doanh thu và vé
-import CardItem from './CardItem'; // Import CardItem component
-import Card from './Card';
-import CustomLineChart from './CustomLineChart';
-import TicketTable from './TicketTable';
+import Card from './SummaryPage/Card';
+
 import { useParams, useSearchParams } from 'react-router-dom';
+import Modal from './SummaryPage/EventShowModal';
+import CustomLineChart from './SummaryPage/CustomLineChart';
+import TicketTable from './SummaryPage/TicketTable';
+import CheckinTable from './CheckinTable';
 
 interface ShowTime {
   id: number;
   time: string;
 }
 
-const SummaryPage: React.FC = () => {
+const CheckInPage: React.FC = () => {
   const [selectedShow, setSelectedShow] = useState<ShowTime | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchParams] = useSearchParams(); // Hook để làm việc với query string
     const id = searchParams.get('id'); // Lấy giá trị của tham số 'id'
   const data = useParams();
-  console.log("data",searchParams.get('id'))
   // Dữ liệu các suất diễn (thông tin mẫu)
   const shows: ShowTime[] = [
     { id: 1, time: '10:00 AM' },
@@ -67,7 +67,7 @@ const SummaryPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-custom-gradient text-white p-6">
       {/* Tiêu đề */}
-      <h1 className="text-3xl font-bold mb-6">Tổng kết</h1>
+      <h1 className="text-3xl font-bold mb-6">Check-in</h1>
 
       {/* Thông tin sự kiện */}
       <div className="p-6 rounded-lg mb-6">
@@ -98,7 +98,7 @@ const SummaryPage: React.FC = () => {
       />
 
       {/* Thêm phần doanh thu */}
-      <h1 className="text-2xl font-bold mb-6">Doanh thu:</h1>
+      <h1 className="text-2xl font-bold mb-6">Tổng quan:</h1>
       
       {/* Cards for revenue, tickets sold, and total tickets */}
       <motion.div
@@ -108,18 +108,16 @@ const SummaryPage: React.FC = () => {
         animate="show"
       >
         <Card cartItems={[
-    { title: "Doanh thu", value1: 120000, value2: 330000, icon: <FaDollarSign />,type:'revenue' },
-    { title: "Số vé đã bán", value1: 60, value2: 240, icon: <FaTicketAlt />, type:'ticketSold' },
-  ]}/>
+    { title: "Đã check-in", value1: 20, value2: 240, icon: <FaTicketAlt />,type:'check-in'}]}/>
       </motion.div>
-      {/* Biểu đồ doanh thu */}
+      {/* Biểu đồ doanh thu
       <h1 className="text-2xl font-bold mt-6 mb-4">Biểu đồ doanh thu</h1>
-      <CustomLineChart variants={itemVariants} />
+      <CustomLineChart variants={itemVariants} /> */}
       {/* Bảng doanh thu vé */}
-      <h1 className="text-2xl font-bold mt-6 mb-4">Chi tiết vé bán được</h1>
-      <TicketTable variants={undefined} />
+      <h1 className="text-2xl font-bold mt-6 mb-4">Chi tiết check-in</h1>
+      <CheckinTable variants={undefined}/>
     </div>
   );
 };
 
-export default SummaryPage;
+export default CheckInPage;

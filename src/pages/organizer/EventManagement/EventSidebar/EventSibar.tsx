@@ -3,6 +3,7 @@ import { RiArrowLeftWideFill, RiArrowRightWideFill } from "react-icons/ri";
 import { FaUser,FaShoppingCart, FaBook, FaClipboardList, FaTachometerAlt, FaChartLine, FaCog, FaSignOutAlt, FaTags, FaListAlt, FaBookOpen, FaCalendarAlt, FaEdit, FaFileExport } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import MenuItem from '../../../../components/SideBar/MenuItem';
+import { FaCheckCircle } from "react-icons/fa";
 
 const menuItems = [
   {
@@ -16,15 +17,16 @@ const menuItems = [
     key: 'Order',
   },
   {
+    icon: FaCheckCircle,  
+    name: 'Check-in',
+    key: 'Checkin',
+  },
+  {
     icon: FaEdit, 
     name: 'Chỉnh sửa',
     key: 'Edit',
   },
-  {
-    icon: FaUser,  
-    name: 'Member',
-    key: 'Member',
-  },
+  
   {
     icon: FaTags,  
     name: 'Voucher',

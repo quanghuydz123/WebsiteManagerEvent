@@ -26,7 +26,9 @@ interface EventCardProps {
   cartItems: EventModelNew[];  // Mảng các sự kiện
   eventActions: EventActionType[];  // Mảng các hành động
 }
-
+const renderTextStatus = (statusEvent:string)=>{
+  
+}
 const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
   return (
     <motion.div
@@ -56,11 +58,19 @@ const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
               <h2 className="text-2xl font-semibold text-white">{event.title}</h2>
               <SpaceComponent height={16} />
 
+              <RowComponent>
               <div>
                 <div className='inline-block pt-1 pb-1 pl-2 pr-2' style={{ backgroundColor: colors.primary, borderRadius: 100 }}>
                   <p style={{ color: colors.white }}>{event.category.name}</p>
                 </div>
               </div>
+              <SpaceComponent width={12}/>
+              <div>
+                <div className='inline-block pt-1 pb-1 pl-2 pr-2' style={{ backgroundColor: colors.primary, borderRadius: 100 }}>
+                  <p style={{ color: colors.white }}>{event.category.name}</p>
+                </div>
+              </div>
+              </RowComponent>
               <SpaceComponent height={16} />
               <RowComponent>
                 <CiCalendar size={20} />

@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 
 import { FaLock, FaDollarSign } from "react-icons/fa"; // Import icons for lock and dollar
 
-const TicketTable = ({ variants }: { variants: any }) => {
+const CheckinTable = ({ variants }: { variants: any }) => {
   // Fake data for ticket types
   const [ticketData, setTicketData] = useState<any[]>([
-    { type: "Vé hạng A", price: 300000, sold: 50, total: 100,sellRatio: 50 },
-    { type: "Vé hạng B", price: 200000, sold: 40, total: 100,  sellRatio: 40 },
-    { type: "Vé hạng C", price: 100000, sold: 30, total: 100,sellRatio: 30 },
+    { type: "Vé hạng A", price: 300000, sold: 50, total: 100, sellRatio: 50 },
+    { type: "Vé hạng B", price: 200000, sold: 40, total: 100, sellRatio: 40 },
+    { type: "Vé hạng C", price: 100000, sold: 30, total: 100,  sellRatio: 30 },
     { type: "Vé VIP", price: 500000, sold: 20, total: 50,  sellRatio: 40 },
     { type: "Vé thường", price: 150000, sold: 60, total: 150, sellRatio: 40 },
   ]);
@@ -29,9 +29,8 @@ const TicketTable = ({ variants }: { variants: any }) => {
           <tr className=" md:text-base text-[19px]">
             <th className="px-4 py-2 text-left text-[19px] ">Loại vé</th>
             <th className="px-4 py-2 text-left text-[19px] ">Giá bán</th>
-            <th className="px-4 py-2 text-left text-[19px] ">Đã bán</th>
-            {/* <th className="px-4 py-2 text-left text-[19px] ">Khóa</th> */}
-            <th className="px-4 py-2 text-left text-[19px] ">Tỉ lệ bán</th>
+            <th className="px-4 py-2 text-left text-[19px] ">Đã check-in</th>
+            <th className="px-4 py-2 text-left text-[19px] ">Tỷ lệ check-in</th>
           </tr>
         </thead>
         <tbody>
@@ -66,4 +65,4 @@ const TicketTable = ({ variants }: { variants: any }) => {
   );
 };
 
-export default TicketTable;
+export default CheckinTable;

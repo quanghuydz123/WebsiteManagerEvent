@@ -1,13 +1,23 @@
 import { motion } from "framer-motion";
 import { FaDollarSign, FaTicketAlt } from 'react-icons/fa';
 import CardItem from "./CardItem";
-
-const Cards = () => {
+import { ReactNode } from "react";
+interface Props {
+  cartItems:{
+    title:string,
+    value1:number,
+    value2:number,
+    icon:ReactNode,
+    type:'revenue' | 'ticketSold' | 'check-in'
+  }[]
+}
+const   Cards = (props:Props) => {
+  const {cartItems} = props
   // Fake Data
-  const cartItems = [
-    { id: 1, title: "Doanh thu", value1: 0, value2: 330000, icon: <FaDollarSign /> },
-    { id: 2, title: "Số vé đã bán", value1: 1000, value2: 100000, icon: <FaTicketAlt /> },
-  ];
+  // const cartItems = [
+  //   { id: 1, title: "Doanh thu", value1: 0, value2: 330000, icon: <FaDollarSign /> },
+  //   { id: 2, title: "Số vé đã bán", value1: 1000, value2: 100000, icon: <FaTicketAlt /> },
+  // ];
 
   // Animation variants
   const containerVariants = {

@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/system';
-import { Route, Routes, Navigate } from 'react-router-dom';
-import { Header, SideBarComponent } from './components';
-import { CreateEventPage, DashboardPage, EventPage, LoginPage } from './pages';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import {  LoginPage } from './pages';
 import { useSelector } from 'react-redux';
 import { AuthState } from './reduxs/reducers/authReducers';
-import AdminHome from './pages/admin/AdminHome/AdminHome';
 import OrganizerHome from './pages/organizer/OrganizerHome/OrganizerHome';
 import EventManagementHome from './pages/organizer/EventManagement/EventManagementHome/EventManagementHome';
 import 'ckeditor5/ckeditor5.css';
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate();
+
   const {authData }:{authData:AuthState} = useSelector((state: any) => state.auth);
   // Check the login status when the app is loaded
   // useEffect(() => {
@@ -21,7 +20,13 @@ function App() {
   //     setIsLogin(false);
   //   }
   // }, [auth]);
-
+  useEffect(() => {
+    if (authData?.accesstoken) {
+      navigate('/organizer/EventPage'); 
+    } else {
+      navigate('/'); 
+    }
+  }, [authData]);
   return (
     <>
       {/* If the user is logged in, show the authenticated routes */}

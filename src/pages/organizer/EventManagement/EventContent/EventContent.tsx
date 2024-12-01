@@ -5,6 +5,8 @@ import SummaryPage from '../Page/SummaryPage/SummaryPage';
 import OrderPage from '../Page/OrderPage';
 import MemberPage from '../Page/MemberPage';
 import VoucherPage from '../Page/VoucherPage';
+import EditPage from '../Page/EditPage';
+import CheckInPage from '../Page/CheckInPage';
 
 
 const EventContent = ({ isOpen }: { isOpen: boolean }) => {
@@ -27,8 +29,9 @@ const EventContent = ({ isOpen }: { isOpen: boolean }) => {
         <Routes>
           <Route path="Summary" element={<SummaryPage />} />
           <Route path="Order" element={<OrderPage variants={undefined} />} />
-          <Route path="Member" element={<MemberPage variants={undefined} />} /> 
+          <Route path="Checkin" element={<CheckInPage />} /> 
           <Route path="Voucher" element={<VoucherPage variants={undefined} />} /> 
+          <Route path="Edit" element={<EditPage />}/>
           {/* <Route path="Summary" element={<SummaryPage />} /> */}
 
           {/* <Route path="EventPage/Edit" element={<EditPage />} /> 
