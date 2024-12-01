@@ -5,48 +5,48 @@ import { Link, useNavigate } from 'react-router-dom';
 import MenuItem from '../../../../components/SideBar/MenuItem';
 import { FaCheckCircle } from "react-icons/fa";
 
-const menuItems = [
-  {
-    icon: FaChartLine,
-    name: 'Tổng kết',
-    key: 'Summary',
-  },
-  {
-    icon: FaShoppingCart, 
-    name: 'Danh sách đơn hàng',
-    key: 'Order',
-  },
-  {
-    icon: FaCheckCircle,  
-    name: 'Check-in',
-    key: 'Checkin',
-  },
-  {
-    icon: FaEdit, 
-    name: 'Chỉnh sửa',
-    key: 'Edit',
-  },
-  
-  {
-    icon: FaTags,  
-    name: 'Voucher',
-    key: 'Voucher',
-  },
-  {
-    icon: FaClipboardList,  
-    name: 'Marketing',
-    key: 'Marketing',
-  },
-  {
-    icon: FaSignOutAlt, 
-    name: 'Logout',
-    isLogout: true,
-  },
-];
 
-const EventSidebar = ({ isOpen, toggleSidebar, setIsOpen }: { isOpen: any, toggleSidebar: any, setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
+
+const EventSidebar = ({ isOpen, toggleSidebar, setIsOpen,idShowTime,idEvent }: { isOpen: any, toggleSidebar: any, setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,idShowTime:string,idEvent:string }) => {
   const navigate = useNavigate();
-
+  const menuItems = [
+    {
+      icon: FaChartLine,
+      name: 'Tổng kết',
+      key: 'Summary' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
+    },
+    {
+      icon: FaShoppingCart, 
+      name: 'Danh sách đơn hàng',
+      key: 'Order' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
+    },
+    {
+      icon: FaCheckCircle,  
+      name: 'Check-in',
+      key: 'Checkin' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
+    },
+    {
+      icon: FaEdit, 
+      name: 'Chỉnh sửa',
+      key: 'Edit' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
+    },
+    
+    {
+      icon: FaTags,  
+      name: 'Voucher',
+      key: 'Voucher' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
+    },
+    {
+      icon: FaClipboardList,  
+      name: 'Marketing',
+      key: 'Marketing' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
+    },
+    {
+      icon: FaSignOutAlt, 
+      name: 'Logout',
+      isLogout: true,
+    },
+  ];
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 800) {
@@ -59,7 +59,6 @@ const EventSidebar = ({ isOpen, toggleSidebar, setIsOpen }: { isOpen: any, toggl
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
   return (
     <div className={`fixed left-0 top-0 h-full bg-gradient-to-b from-[#1a251f] via-[#1d1b20] to-[#231a27] text-white transition-all flex flex-col duration-300
     ${isOpen ? "w-56" : "w-20 items-center"}`}>

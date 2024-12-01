@@ -26,10 +26,30 @@ interface EventCardProps {
   cartItems: EventModelNew[];  // Mảng các sự kiện
   eventActions: EventActionType[];  // Mảng các hành động
 }
-const renderTextStatus = (statusEvent:string)=>{
-  
-}
+
 const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
+  const renderTextStatus = (statusEvent: 'PendingApproval' | "NotStarted" | 'Ongoing' | 'Ended' | 'Cancelled' | 'OnSale' | 'SoldOut' | 'SaleStopped' | 'NotYetOnSale')=>{
+    let text = 'Sắp diễn ra'
+    if(statusEvent === 'Ended'){
+      text = 'Đã kết thúc'
+    }else if(statusEvent === 'PendingApproval'){
+      text = 'Đang chờ chấp nhập'
+    }else if(statusEvent === 'Cancelled'){
+      text = 'Đã bị hủy'
+    }
+    return text
+  }
+  const renderColorStatusEvent = (statusEvent: 'PendingApproval' | "NotStarted" | 'Ongoing' | 'Ended' | 'Cancelled' | 'OnSale' | 'SoldOut' | 'SaleStopped' | 'NotYetOnSale')=>{
+    let color = colors.orange
+    if(statusEvent === 'Ended'){
+      color = colors.danger
+    }else if(statusEvent === 'PendingApproval'){
+      color = colors.warning
+    }else if(statusEvent === 'Cancelled'){
+      color = colors.danger2
+    }
+    return color
+  }
   return (
     <motion.div
       className="bg-gray-800 p-6 rounded-lg w-full"
@@ -66,8 +86,8 @@ const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
               </div>
               <SpaceComponent width={12}/>
               <div>
-                <div className='inline-block pt-1 pb-1 pl-2 pr-2' style={{ backgroundColor: colors.primary, borderRadius: 100 }}>
-                  <p style={{ color: colors.white }}>{event.category.name}</p>
+                <div className='inline-block pt-1 pb-1 pl-2 pr-2' style={{ backgroundColor: renderColorStatusEvent(event.statusEvent), borderRadius: 100 }}>
+                  <p style={{ color: colors.white }}>{renderTextStatus(event.statusEvent)}</p>
                 </div>
               </div>
               </RowComponent>
@@ -105,7 +125,7 @@ const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
               //   </Link>
               // </button>
               <Link
-                to={action.url}
+                to={action.url + `?idEvent=${event?._id}&idShowTime=${event?.showTimes[0]?._id ?? ''}`}
                 style={{ textDecoration: 'none' }}
                 className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-700 transition duration-200"
               >

@@ -11,6 +11,7 @@ import { PaginationComponent, SearchComponent, SpaceComponent } from '../../../c
 import { EventModelNew } from '../../../models/EventModelNew';
 import { apis } from '../../../constrants/apis';
 import organizerAPI from '../../../apis/organizerAPI';
+import { constantState } from '../../../reduxs/reducers/constantReducers';
 
 // Dữ liệu giả lập cho các sự kiện
 // const cartItems = [
@@ -21,6 +22,7 @@ import organizerAPI from '../../../apis/organizerAPI';
 
 const EventPage = () => {
   const {authData}:{authData:AuthState} = useSelector((state: any) => state.auth);
+  const {constantData}:{constantData:constantState} = useSelector((state: any) => state.constant);
   const [activeTab, setActiveTab] = useState("all")
   const [currentPage, setCurrentPage] = useState(1);
   const [eventsCreated,setEventsCreated] = useState<EventModelNew[]>([])
@@ -50,7 +52,6 @@ const EventPage = () => {
       console.log("lỗi tại EventPage",errorMessage.statusCode)
     }
   }
-  console.log("activeTab",activeTab)
   const tabs = [
     { id: "all", label: "Tất cả" },
     { id: "upcoming", label: "SẮP DIỄN RA" },
@@ -65,7 +66,6 @@ const EventPage = () => {
   const cn = (...inputs: ClassValue[]) => {
     return twMerge(clsx(inputs))
   }
-
   return (
     <div className="min-h-screen bg-custom-gradient text-white">
       <div className="flex items-center justify-between p-4 rounded mb-4">
@@ -112,10 +112,10 @@ const EventPage = () => {
             cartItems={eventsCreated}  // Truyền từng sự kiện vào EventCard
             eventActions={[
               { label: "Tổng kết",url:'/organizer/EventPage/:idEvent/Summary' },
-              { label: "Chỉnh sửa",url:'/organizer/EventPage/:idEvent/Edit ' },
-              { label: "CheckIn",url:'/organizer/EventPage/:idEvent/Checkin '},
-              { label: "Giảm giá",url:'/organizer/EventPage/:idEvent/Voucher ' },
-              { label: "Markerting",url:'/organizer/EventPage/:idEvent/Markerting ' },
+              { label: "Chỉnh sửa",url:'/organizer/EventPage/:idEvent/Edit' },
+              { label: "CheckIn",url:'/organizer/EventPage/:idEvent/Checkin'},
+              { label: "Giảm giá",url:'/organizer/EventPage/:idEvent/Voucher' },
+              { label: "Markerting",url:'/organizer/EventPage/:idEvent/Markerting' },    
             ]}
           /> : <>
          

@@ -10,7 +10,7 @@ import 'ckeditor5/ckeditor5.css';
 function App() {
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
-
+  const [isFrist,setIsFrist] = useState(true)
   const {authData }:{authData:AuthState} = useSelector((state: any) => state.auth);
   // Check the login status when the app is loaded
   // useEffect(() => {
@@ -20,13 +20,16 @@ function App() {
   //     setIsLogin(false);
   //   }
   // }, [auth]);
-  useEffect(() => {
-    if (authData?.accesstoken) {
-      navigate('/organizer/EventPage'); 
-    } else {
-      navigate('/'); 
-    }
-  }, [authData]);
+    // useEffect(() => {
+    //   if(isFrist){
+    //     if (authData?.accesstoken) {
+    //       navigate('/organizer/EventPage'); 
+    //     } else {
+    //       navigate('/'); 
+    //     }
+    //   }
+    //   setIsFrist(false)
+    // }, [authData,isFrist]);
   return (
     <>
       {/* If the user is logged in, show the authenticated routes */}

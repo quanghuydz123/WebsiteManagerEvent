@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from './EventShowModal';
 import { FaCalendarAlt, FaSyncAlt } from 'react-icons/fa'; // Import các icon
 import { motion } from 'framer-motion'; // Import motion for animation
@@ -18,14 +18,19 @@ const SummaryPage: React.FC = () => {
   const [selectedShow, setSelectedShow] = useState<ShowTime | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchParams] = useSearchParams(); // Hook để làm việc với query string
-    const id = searchParams.get('id'); // Lấy giá trị của tham số 'id'
+  const id = searchParams.get('id'); // Lấy giá trị của tham số 'id'
   const data = useParams();
-  console.log("data",searchParams.get('id'))
+
+  useEffect(() => {
+    const idEvent = searchParams.get('idEvent')
+    const idShowTime = searchParams.get('idShowTime')
+    // console.log("idEvent,idShowTime",idEvent,idShowTime)
+  }, [])
   // Dữ liệu các suất diễn (thông tin mẫu)
   const shows: ShowTime[] = [
     { id: 1, time: '10:00 AM' },
     { id: 2, time: '02:00 PM' },
-    { id: 3, time: '06:00 PM'},
+    { id: 3, time: '06:00 PM' },
   ];
 
   // Mở modal
@@ -73,7 +78,7 @@ const SummaryPage: React.FC = () => {
       <div className="p-6 rounded-lg mb-6">
         <div className="flex justify-between items-center border-b border-gray-300 pb-4"> {/* Đường kẻ dưới */}
           <div className="flex items-center">
-            <FaCalendarAlt className="mr-2 text-xl" /> 
+            <FaCalendarAlt className="mr-2 text-xl" />
             <p className="text-xl mt-3">
               <strong>Ngày tổ chức:</strong> 20/12/2024
             </p>
@@ -83,7 +88,7 @@ const SummaryPage: React.FC = () => {
             onClick={openModal}
             className="bg-green-600 text-white text-xl px-4 py-2 rounded-md hover:bg-green-700 flex items-center"
           >
-            <FaSyncAlt className="mr-2 text-xl" /> 
+            <FaSyncAlt className="mr-2 text-xl" />
             Chọn suất diễn khác
           </button>
         </div>
@@ -99,7 +104,7 @@ const SummaryPage: React.FC = () => {
 
       {/* Thêm phần doanh thu */}
       <h1 className="text-2xl font-bold mb-6">Doanh thu:</h1>
-      
+
       {/* Cards for revenue, tickets sold, and total tickets */}
       <motion.div
         className="translate-all flex flex-wrap gap-3 p-4 duration-300 sm:px-7"
@@ -108,9 +113,9 @@ const SummaryPage: React.FC = () => {
         animate="show"
       >
         <Card cartItems={[
-    { title: "Doanh thu", value1: 120000, value2: 330000, icon: <FaDollarSign />,type:'revenue' },
-    { title: "Số vé đã bán", value1: 60, value2: 240, icon: <FaTicketAlt />, type:'ticketSold' },
-  ]}/>
+          { title: "Doanh thu", value1: 120000, value2: 330000, icon: <FaDollarSign />, type: 'revenue' },
+          { title: "Số vé đã bán", value1: 60, value2: 240, icon: <FaTicketAlt />, type: 'ticketSold' },
+        ]} />
       </motion.div>
       {/* Biểu đồ doanh thu */}
       <h1 className="text-2xl font-bold mt-6 mb-4">Biểu đồ doanh thu</h1>
