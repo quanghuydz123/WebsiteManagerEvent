@@ -79,7 +79,17 @@ export const apis = {
         getAll:()=>`/get-all`,
     },
     organizer:{
-        getAll:({limit}:{limit?:string})=>`/get-all?limit=${limit}`
+        getAll:({limit}:{limit?:string})=>`/get-all?limit=${limit}`,
+        getEventCreatedOrganizerByIdForOrganizer:({idUser,limit,page,filterStatus}:{idUser:string,limit:string,page:string,filterStatus?:string})=>
+        {
+            const params = new URLSearchParams();
+            if (idUser !== undefined) params.append('idUser', idUser);
+            if (limit !== undefined) params.append('limit', limit);
+            if (page !== undefined) params.append('page', page);
+            if (filterStatus !== undefined) params.append('filterStatus', filterStatus);
+
+            return `/get-eventCreatedOrganizerByIdForOrganizer?${params.toString()}`
+        }
     },
     invoice:{
         createInvoice:()=>`/create-paymentInvoiceTicket`,

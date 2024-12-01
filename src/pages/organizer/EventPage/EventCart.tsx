@@ -4,6 +4,9 @@ import { colors } from '../../../constrants/color';
 import { CiCalendar } from "react-icons/ci";
 import { RowComponent, SpaceComponent } from '../../../components';
 import { FaLocationDot } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
+import { EventModelNew } from '../../../models/EventModelNew';
+import { DateTime } from '../../../utils/DateTime';
 
 // Dữ liệu sự kiện kiểu EventItemType
 interface EventItemType {
@@ -15,11 +18,12 @@ interface EventItemType {
 
 interface EventActionType {
   label: string;
-  onClick: () => void;
+  // onClick: () => void;
+  url: string
 }
 
 interface EventCardProps {
-  cartItems: EventItemType[];  // Mảng các sự kiện
+  cartItems: EventModelNew[];  // Mảng các sự kiện
   eventActions: EventActionType[];  // Mảng các hành động
 }
 
@@ -41,9 +45,9 @@ const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
             {/* Cột ảnh */}
             <div className="w-full sm:w-1/2">
               <img
-                src={event.image}
+                src={event.photoUrl}
                 alt={event.title}
-                className="rounded-md w-full h-90 object-cover"
+                className="rounded-md w-full object-fill"
               />
             </div>
 
@@ -51,25 +55,27 @@ const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
             <div className="w-full  flex flex-col">
               <h2 className="text-2xl font-semibold text-white">{event.title}</h2>
               <SpaceComponent height={16} />
-              
+
               <div>
-                <div className='inline-block pt-1 pb-1 pl-2 pr-2' style={{ backgroundColor: colors.primary,borderRadius:100 }}>
-                  <p style={{ color: colors.white }}>Thể thao</p>
+                <div className='inline-block pt-1 pb-1 pl-2 pr-2' style={{ backgroundColor: colors.primary, borderRadius: 100 }}>
+                  <p style={{ color: colors.white }}>{event.category.name}</p>
                 </div>
               </div>
               <SpaceComponent height={16} />
               <RowComponent>
                 <CiCalendar size={20} />
                 <SpaceComponent width={4} />
-                <p className="text-sm font-medium	" style={{ color: colors.primary }}>{event.date}</p>
+                <p className="text-sm font-medium	" style={{ color: colors.primary }}>
+                  {`${DateTime.GetTime(event.showTimes[0].startDate)} - ${DateTime.GetTime(event.showTimes[0].endDate)} ${DateTime.GetDateNew1(event.showTimes[0].startDate,event.showTimes[0].endDate)}`}
+                </p>
               </RowComponent>
               <SpaceComponent height={16} />
               <RowComponent styles={{ alignItems: 'flex-start' }}>
                 <FaLocationDot />
                 <SpaceComponent width={4} />
                 <div>
-                  <p className="text-sm font-medium" style={{ color: colors.primary }}>{event.location}</p>
-                  <p className="text-sm" style={{ color: colors.primary }}>{'4 Phạm Ngọc Thạch, Bến Nghé, Quận 1, Thành Phố Hồ Chí Minh'}</p>
+                  <p className="text-sm font-medium" style={{ color: colors.primary }}>{event?.Location}</p>
+                  <p className="text-xs " style={{ color: colors.primary }}>{event?.Address}</p>
                 </div>
               </RowComponent>
 
@@ -79,13 +85,22 @@ const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
           {/* Hàng 2: Các nút chức năng */}
           <div className="flex gap-6">
             {eventActions.map((action, idx) => (
-              <button
-                key={idx}
-                onClick={action.onClick}
+              // <button
+              //   key={idx}
+              //   onClick={action.onClick}
+              //   className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-700 transition duration-200"
+              // >
+              //   <Link to={action.url}>
+              //     {action.label}
+              //   </Link>
+              // </button>
+              <Link
+                to={action.url}
+                style={{ textDecoration: 'none' }}
                 className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-700 transition duration-200"
               >
                 {action.label}
-              </button>
+              </Link>
             ))}
           </div>
         </div>
