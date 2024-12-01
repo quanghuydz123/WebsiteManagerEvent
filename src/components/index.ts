@@ -9,6 +9,7 @@ import SearchComponent from './SearchComponent'
 import RowComponent from './RowComponent'
 import SpaceComponent from './SpaceComponent'
 import CircularOrogressComponent from './CircularOrogressComponent'
+import PaginationComponent from './PaginationComponent'
 
 export {
     SideBarComponent,
@@ -20,5 +21,6 @@ export {
     SearchComponent,
     RowComponent,
     SpaceComponent,
-    CircularOrogressComponent
+    CircularOrogressComponent,
+    PaginationComponent
 }

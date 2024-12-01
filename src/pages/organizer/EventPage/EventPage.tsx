@@ -7,27 +7,60 @@ import { addAuth, AuthState } from '../../../reduxs/reducers/authReducers';
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { CiSearch } from "react-icons/ci";
-import { SearchComponent } from '../../../components';
+import { PaginationComponent, SearchComponent, SpaceComponent } from '../../../components';
+import { EventModelNew } from '../../../models/EventModelNew';
+import { apis } from '../../../constrants/apis';
+import organizerAPI from '../../../apis/organizerAPI';
 
 // Dữ liệu giả lập cho các sự kiện
-const cartItems = [
-  { title: 'Sự kiện 1', image: 'https://salt.tkbcdn.com/ts/ds/5a/fd/95/e16ce8800ce8d0b9662bb0df01830185.jpg', date: '2024-12-01', location: 'Hà Nội' },
-  { title: 'Sự kiện 2', image: 'https://salt.tkbcdn.com/ts/ds/62/52/5d/d2b0dca65de299347bc36d04765aaeed.jpg', date: '2024-12-15', location: 'Hồ Chí Minh' },
-  { title: 'Sự kiện 3', image: 'https://salt.tkbcdn.com/ts/ds/20/f6/82/65d28f94512e511e56be3e53e88eb8ab.jpg', date: '2024-12-20', location: 'Đà Nẵng' },
-];
+// const cartItems = [
+//   { title: 'Sự kiện 1', image: 'https://salt.tkbcdn.com/ts/ds/5a/fd/95/e16ce8800ce8d0b9662bb0df01830185.jpg', date: '2024-12-01', location: 'Hà Nội' },
+//   { title: 'Sự kiện 2', image: 'https://salt.tkbcdn.com/ts/ds/62/52/5d/d2b0dca65de299347bc36d04765aaeed.jpg', date: '2024-12-15', location: 'Hồ Chí Minh' },
+//   { title: 'Sự kiện 3', image: 'https://salt.tkbcdn.com/ts/ds/20/f6/82/65d28f94512e511e56be3e53e88eb8ab.jpg', date: '2024-12-20', location: 'Đà Nẵng' },
+// ];
 
 const EventPage = () => {
-  const auth: AuthState = useSelector((state: any) => state.auth);
+  const {authData}:{authData:AuthState} = useSelector((state: any) => state.auth);
   const [activeTab, setActiveTab] = useState("all")
+  const [currentPage, setCurrentPage] = useState(1);
+  const [eventsCreated,setEventsCreated] = useState<EventModelNew[]>([])
+  const [totalPages,setTotalPages] = useState(1)
+  const [isLoadingGetEvents,setIsLoadingGetEvents] = useState(false)
+  useEffect(()=>{
+    handleCallAPIGetEventsCreated()
+  },[authData.id,currentPage,activeTab])
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const handleCallAPIGetEventsCreated = async ()=>{
+    const api = apis.organizer.getEventCreatedOrganizerByIdForOrganizer({idUser:authData.id,limit:'3',page:currentPage.toString(),filterStatus:activeTab})
+    setIsLoadingGetEvents(true)
+    try {
+        const res:any = await organizerAPI.HandleOrganizer(api)
+        if(res && res.data && res.status === 200){
+          setEventsCreated(res.data)
+          setTotalPages(res.pagination.totalPages)
+        }
+        setIsLoadingGetEvents(false)
 
+    } catch (error:any) { 
+      setIsLoadingGetEvents(false)
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại EventPage",errorMessage.statusCode)
+    }
+  }
+  console.log("activeTab",activeTab)
   const tabs = [
     { id: "all", label: "Tất cả" },
     { id: "upcoming", label: "SẮP DIỄN RA" },
     { id: "past", label: "ĐÃ QUA" },
     { id: "pending", label: "CHỜ DUYỆT" },
+    { id: "canceled", label: "ĐÃ HỦY" },
+
   ]
   const dispatch = useDispatch()
-  console.log("auth", auth)
+  console.log("auth", authData.id)
   const navigate = useNavigate();
   const cn = (...inputs: ClassValue[]) => {
     return twMerge(clsx(inputs))
@@ -73,30 +106,37 @@ const EventPage = () => {
         }}
       >
         {/* Lặp qua các sự kiện và hiển thị chúng */}
-        {cartItems.map((event, index) => (
-          <EventCard
-            key={index}
-            cartItems={[event]}  // Truyền từng sự kiện vào EventCard
+        
+          {(eventsCreated && eventsCreated.length > 0) ? <EventCard
+            // key={index}
+            cartItems={eventsCreated}  // Truyền từng sự kiện vào EventCard
             eventActions={[
-              { label: "Tổng kết", onClick: () => navigate('/organizer/EventPage/:idEvent/Summary?id=asdasd ') },
-              { label: "Chỉnh sửa", onClick: () => navigate('/organizer/EventPage/:idEvent/Edit') },
-              { label: "CheckIn", onClick: () => navigate('/organizer/EventPage/:idEvent/Member') },
-              { label: "Giảm giá", onClick: () => navigate('/organizer/EventPage/:idEvent/Voucher') },
-              { label: "Markerting", onClick: () => navigate('/organizer/EventPage/:idEvent/Markerting') },
+              { label: "Tổng kết",url:'/organizer/EventPage/:idEvent/Summary' },
+              { label: "Chỉnh sửa",url:'/organizer/EventPage/:idEvent/Edit ' },
+              { label: "CheckIn",url:'/organizer/EventPage/:idEvent/Member '},
+              { label: "Giảm giá",url:'/organizer/EventPage/:idEvent/Voucher ' },
+              { label: "Markerting",url:'/organizer/EventPage/:idEvent/Markerting ' },
             ]}
-          />
-        ))}
+          /> : <>
+         
+          </>}
+       
+        
       </motion.div>
 
       {/* Nếu không có sự kiện nào */}
-      {cartItems.length === 0 && (
+      {eventsCreated.length === 0 && (
         <div className="flex justify-center items-center min-h-[50vh]">
           <div className="text-center">
             <div className="w-16 h-16 bg-white rounded-full mx-auto mb-4" />
-            <p className="text-gray-300">Chưa có sự kiện nào được tạo</p>
+            <p className="text-gray-300">Chưa có sự kiện nào ở đây !!!</p>
           </div>
         </div>
       )}
+      <PaginationComponent  currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}  />
+        <SpaceComponent height={30}/>
     </div>
   );
 };
