@@ -126,12 +126,12 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ eventType
                     >
                         <div>
                             {/* Time Event Section */}
-                            <label className="font-semibold text-white">
+                            <label className="font-semibold text-black">
                                 <span className="text-red-500">*</span> Thời gian sự kiện
                             </label>
                             <section className="flex flex-row gap-4">
                                 <div className="flex-1">
-                                    <label className="text-white dark:text-gray-400 text-sm font-semibold">Thời gian bắt đầu</label>
+                                    <label className="text-black dark:text-gray-400 text-sm font-semibold">Thời gian bắt đầu</label>
                                     <input
                                         type="datetime-local"
                                         value={performance.startTime}
@@ -141,7 +141,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ eventType
                                 </div>
 
                                 <div className="flex-1">
-                                    <label className="text-white dark:text-gray-400 text-sm font-semibold">Thời gian kết thúc</label>
+                                    <label className="text-black dark:text-gray-400 text-sm font-semibold">Thời gian kết thúc</label>
                                     <input
                                         type="datetime-local"
                                         value={performance.endTime}
@@ -158,7 +158,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ eventType
                             {/* Ticket Type Section */}
                             <div className="flex flex-col mt-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="font-semibold text-white">
+                                    <label className="font-semibold text-black">
                                         <span className="text-red-500">*</span> Loại vé
                                     </label>
                                     <AddButton

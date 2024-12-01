@@ -7,6 +7,7 @@ import CardItem from './CardItem'; // Import CardItem component
 import Card from './Card';
 import CustomLineChart from './CustomLineChart';
 import TicketTable from './TicketTable';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 interface ShowTime {
   id: number;
@@ -16,7 +17,10 @@ interface ShowTime {
 const SummaryPage: React.FC = () => {
   const [selectedShow, setSelectedShow] = useState<ShowTime | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [searchParams] = useSearchParams(); // Hook để làm việc với query string
+    const id = searchParams.get('id'); // Lấy giá trị của tham số 'id'
+  const data = useParams();
+  console.log("data",searchParams.get('id'))
   // Dữ liệu các suất diễn (thông tin mẫu)
   const shows: ShowTime[] = [
     { id: 1, time: '10:00 AM' },

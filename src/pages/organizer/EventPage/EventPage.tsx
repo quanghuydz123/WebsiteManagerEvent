@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import EventCard from './EventCart';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addAuth, AuthState } from '../../../reduxs/reducers/authReducers';
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+import { CiSearch } from "react-icons/ci";
+import { SearchComponent } from '../../../components';
 
 // Dữ liệu giả lập cho các sự kiện
 const cartItems = [
@@ -13,29 +17,50 @@ const cartItems = [
 ];
 
 const EventPage = () => {
-  const auth:AuthState = useSelector((state: any) => state.auth);
+  const auth: AuthState = useSelector((state: any) => state.auth);
+  const [activeTab, setActiveTab] = useState("all")
+
+  const tabs = [
+    { id: "all", label: "Tất cả" },
+    { id: "upcoming", label: "SẮP DIỄN RA" },
+    { id: "past", label: "ĐÃ QUA" },
+    { id: "pending", label: "CHỜ DUYỆT" },
+  ]
   const dispatch = useDispatch()
-  console.log("auth",auth)
+  console.log("auth", auth)
   const navigate = useNavigate();
+  const cn = (...inputs: ClassValue[]) => {
+    return twMerge(clsx(inputs))
+  }
+
   return (
     <div className="min-h-screen bg-custom-gradient text-white">
       <div className="flex items-center justify-between p-4 rounded mb-4">
         <h1 className="text-xl font-bold">Sự kiện đã tạo</h1>
         <div className="flex-1 flex justify-end">
-          <input
-            type="text"
-            placeholder="Tìm kiếm sự kiện"
-            className="p-2 rounded w-1/3 bg-white text-black"
-          />
+          <SearchComponent />
         </div>
       </div>
 
       <div className="flex items-center space-x-2 mb-4">
-        <button className="px-4 py-2 rounded bg-green-700 hover:bg-green-600">Tất cả</button>
-        <button className="px-4 py-2 rounded bg-green-500 hover:bg-green-400">Sắp diễn ra</button>
-        <button className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600">Đã qua</button>
-        <button className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600">Chờ duyệt</button>
-        <button className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600">Nháp</button>
+        <div className="w-full max-w-3xl mx-auto">
+          <div className="flex rounded-lg bg-white shadow-sm p-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ease-in-out",
+                  activeTab === tab.id
+                    ? "bg-emerald-500 text-white shadow-sm"
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <motion.div
@@ -53,11 +78,11 @@ const EventPage = () => {
             key={index}
             cartItems={[event]}  // Truyền từng sự kiện vào EventCard
             eventActions={[
-              { label: "Tổng kết", onClick: () => navigate('/organizer/EventPage/:idEvent/Summary')},
-              { label: "Chỉnh sửa", onClick: () => navigate('/organizer/EventPage/:idEvent/Edit')},
-              { label: "Member", onClick: () => navigate('/organizer/EventPage/:idEvent/Member')},
-              { label: "Voucher", onClick: () => navigate('/organizer/EventPage/:idEvent/Voucher') },
-              { label: "Markerting",onClick: () => navigate('/organizer/EventPage/:idEvent/Markerting')},
+              { label: "Tổng kết", onClick: () => navigate('/organizer/EventPage/:idEvent/Summary?id=asdasd ') },
+              { label: "Chỉnh sửa", onClick: () => navigate('/organizer/EventPage/:idEvent/Edit') },
+              { label: "CheckIn", onClick: () => navigate('/organizer/EventPage/:idEvent/Member') },
+              { label: "Giảm giá", onClick: () => navigate('/organizer/EventPage/:idEvent/Voucher') },
+              { label: "Markerting", onClick: () => navigate('/organizer/EventPage/:idEvent/Markerting') },
             ]}
           />
         ))}

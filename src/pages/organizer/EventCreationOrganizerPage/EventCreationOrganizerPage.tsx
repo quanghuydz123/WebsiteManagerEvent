@@ -65,6 +65,9 @@ import {
   Underline,
   Undo
 } from 'ckeditor5';
+import { CategoryModel } from '../../../models/CategoryModel';
+import { apis } from '../../../constrants/apis';
+import categoryAPI from '../../../apis/categoryAPI';
 interface Province {
   code: number;
   name: string;
@@ -351,7 +354,6 @@ const EventCreationOrganizerPage: React.FC = () => {
   const [eventType, setEventType] = useState('');
   const [eventDescription, setEventDescription] = useState('');
 
-
   const [eventBackground, setEventBackground] = useState<File | null>(null);
 
 
@@ -365,6 +367,7 @@ const EventCreationOrganizerPage: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
 
   // Tiến hành chuyển sang Bước 2 khi nhấn nút "Tiếp tục"
+  const [categories,setCategories] = useState<CategoryModel[]>([])
   const handleNextStep = () => {
     if (isStep1) {
       navigate('/organizer/CreateEvent?step=2'); // Go to Step 2
@@ -385,6 +388,7 @@ const EventCreationOrganizerPage: React.FC = () => {
       }
     };
     fetchProvinces();
+    handleCallAPIGetCategories()
   }, []);
   useEffect(() => {
     if (selectedProvince) {
@@ -432,6 +436,18 @@ const EventCreationOrganizerPage: React.FC = () => {
       });
     }
   };
+  const handleCallAPIGetCategories = async ()=>{
+    const api = apis.category.getAll()
+    try {
+      const res = await categoryAPI.HandleCategory(api)
+      if(res && res.data && res.status === 200){
+        setCategories(res.data)
+      }
+    } catch (error:any) {
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi gi get category",errorMessage.statusCode)
+    }
+  }
   const validateImageDimensions = (
     file: File,
     width: number,
@@ -650,9 +666,9 @@ const EventCreationOrganizerPage: React.FC = () => {
                 className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
               >
                 <option value="">Vui lòng chọn</option>
-                <option value="Conference">Hội thảo</option>
-                <option value="Workshop">Workshop</option>
-                <option value="Concert">Buổi hòa nhạc</option>
+                {categories.map((category)=>{
+                  return <option value={`${category._id}`}>{category.name}</option>
+                })}
               </select>
             </div>
 
@@ -673,14 +689,14 @@ const EventCreationOrganizerPage: React.FC = () => {
             </div>
 
             {/* Submit Button */}
-              <div className="text-right">
+              {/* <div className="text-right">
                 <button
                   type="submit"
                 className="bg-green-600 px-4 md:px-6 py-3 rounded-md font-semibold hover:bg-green-700"
               >
                 Tiếp tục
               </button>
-            </div>
+            </div> */}
           </form>
         </div>
       )}
