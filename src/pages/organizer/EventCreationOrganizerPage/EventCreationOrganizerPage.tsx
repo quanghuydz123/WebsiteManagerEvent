@@ -475,12 +475,12 @@ const EventCreationOrganizerPage: React.FC = () => {
     <div className="min-h-screen bg-custom-gradient text-white">
 
       {/* Navigation Step Bar */}
-      <div className="px-4 py-2 flex flex-wrap justify-between items-center bg-black text-white">
+      <div className="px-4 py-2 flex flex-wrap justify-between items-center  text-white">
         <div>
-          <h1 className="text-lg md:text-xl font-semibold">Tạo sự kiện</h1>
+          <h1 className="text-lg md:text-3xl font-semibold">Tạo sự kiện</h1>
         </div>
         {/* Step Bar */}
-        <div className="flex flex-wrap justify-center space-x-4 md:space-x-8 mt-2 md:mt-0">
+        <div className="flex flex-wrap justify-center space-x-4 md:space-x-8 mt-2 md:mt-0 text-xl">
           {[
             { step: 1, label: "Thông tin sự kiện" },
             { step: 2, label: "Thời gian & Loại vé" },
@@ -498,17 +498,17 @@ const EventCreationOrganizerPage: React.FC = () => {
               >
                 {step}
               </span>
-              <span className="ml-2 text-sm md:text-base">{label}</span>
+              <span className="ml-2 text-xl ">{label}</span>
             </div>
           ))}
         </div>
         {/* Action Buttons */}
         <div className="flex space-x-2 md:space-x-4 mt-2 md:mt-0">
-          <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md">
+          <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md text-xl">
             Lưu
           </button>
           <button onClick={handleNextStep}
-            className={`bg-green-600 text-white px-2 md:px-4 py-2 rounded-md ${isStep2 ? 'cursor-not-allowed opacity-50' : ''}`}
+            className={`bg-green-600 text-white px-2 md:px-4 py-2 rounded-md text-xl ${isStep2 ? 'cursor-not-allowed opacity-50' : ''}`}
             disabled={isStep2} >
             Tiếp tục
           </button>

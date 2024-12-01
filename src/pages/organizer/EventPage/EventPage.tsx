@@ -69,7 +69,7 @@ const EventPage = () => {
   return (
     <div className="min-h-screen bg-custom-gradient text-white">
       <div className="flex items-center justify-between p-4 rounded mb-4">
-        <h1 className="text-xl font-bold">Sự kiện đã tạo</h1>
+        <h1 className="text-3xl font-bold">Sự kiện đã tạo</h1>
         <div className="flex-1 flex justify-end">
           <SearchComponent />
         </div>
@@ -83,7 +83,7 @@ const EventPage = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ease-in-out",
+                  "flex-1 px-4 py-2 text-[17px] font-medium rounded-md transition-all duration-200 ease-in-out",
                   activeTab === tab.id
                     ? "bg-emerald-500 text-white shadow-sm"
                     : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
@@ -129,7 +129,7 @@ const EventPage = () => {
         <div className="flex justify-center items-center min-h-[50vh]">
           <div className="text-center">
             <div className="w-16 h-16 bg-white rounded-full mx-auto mb-4" />
-            <p className="text-gray-300">Chưa có sự kiện nào ở đây !!!</p>
+            <p className="text-gray-300 text-xl">Chưa có sự kiện nào ở đây !!!</p>
           </div>
         </div>
       )}

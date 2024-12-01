@@ -9,7 +9,7 @@ const SearchComponent = () => {
             <input
                 type="text"
                 placeholder="Tìm kiếm sự kiện"
-                className="border-none outline-none w-full"
+                className="border-none outline-none w-full text-[17px]"
             />
         </div>
     )
