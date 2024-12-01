@@ -5,6 +5,9 @@ import DashboardPage from '../../admin/dashboradPage/DashboardPage';
 import EventPage from '../EventPage/EventPage';
 import EventCreationOrganizerPage from '../EventCreationOrganizerPage/EventCreationOrganizerPage';
 import OrganizerTerms from '../Policy/Policy';
+import AdvertisingPage from '../Policy/AdvertisingPage';
+import BusinessPage from '../Policy/BusinessPage';
+import ContentImagePage from '../Policy/ContentImagePage';
 
 
 const Content = ({ isOpen }: { isOpen: boolean }) => {
@@ -28,7 +31,10 @@ const Content = ({ isOpen }: { isOpen: boolean }) => {
         <Routes>
           <Route path='EventPage' element={<EventPage />} />
           <Route path='CreateEvent' element={<EventCreationOrganizerPage/>} />
-          <Route path='Policy' element={<OrganizerTerms/>}/>
+          <Route path='Policy/*' element={<OrganizerTerms/>}/>
+          <Route path="/business" element={<BusinessPage />} />
+          <Route path="/advertising" element={<AdvertisingPage />} />
+          <Route path="/contentImage" element={<ContentImagePage />} />
         </Routes>
       </div>
     </div>
