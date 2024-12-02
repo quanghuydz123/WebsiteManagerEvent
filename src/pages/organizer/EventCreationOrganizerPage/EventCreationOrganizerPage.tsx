@@ -63,11 +63,13 @@ import {
   TextTransformation,
   TodoList,
   Underline,
-  Undo
+  Undo,
+  Base64UploadAdapter
 } from 'ckeditor5';
 import { CategoryModel } from '../../../models/CategoryModel';
 import { apis } from '../../../constrants/apis';
 import categoryAPI from '../../../apis/categoryAPI';
+import { getBase64 } from '../../../utils/utils';
 interface Province {
   code: number;
   name: string;
@@ -354,7 +356,7 @@ const EventCreationOrganizerPage: React.FC = () => {
   const [eventType, setEventType] = useState('');
   const [eventDescription, setEventDescription] = useState('');
 
-  const [eventBackground, setEventBackground] = useState<File | null>(null);
+  const [eventBackground, setEventBackground] = useState<string>('');
 
 
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -422,15 +424,16 @@ const EventCreationOrganizerPage: React.FC = () => {
     }
   }, [selectedDistrict]);
 
-  const handleBackgroundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBackgroundChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      validateImageDimensions(file, 1280, 720, (isValid) => {
+      validateImageDimensions(file, 1280, 720, async (isValid) => {
         if (isValid) {
-          setEventBackground(file);
+          const data:any = await getBase64(file)
+          setEventBackground(data);
 
         } else {
-          setEventBackground(null);
+          setEventBackground('');
           alert('Ảnh nền phải có kích thước 1280x720 pixel.');
         }
       });
@@ -536,7 +539,7 @@ const EventCreationOrganizerPage: React.FC = () => {
                   />
                   {eventBackground ? (
                     <img
-                      src={URL.createObjectURL(eventBackground)}
+                      src={eventBackground}
                       alt="Event Background Preview"
                       className="h-full w-full object-cover rounded-lg"
                     />
