@@ -84,7 +84,47 @@ interface Ward {
   code: number;
   name: string;
 }
-
+interface DataEventCreate {
+  showTimes: {
+    startDate: Date;
+    endDate: Date;
+    typeTickets: {
+      name: string;
+      description: string;
+      price: string;
+      amount: number;
+      startSaleTime: Date;
+      endSaleTime: Date;
+    }[];
+  }[];
+  event: {
+    title: string;
+    description: string;
+    photoUrl: string;
+    addressDetails: {
+      province: {
+        name: string;
+        code: number;
+      };
+      districts: {
+        name: string;
+        code: number;
+      };
+      ward: {
+        name: string;
+        code: number;
+      };
+      houseNumberAndStreet: string;
+    };
+    Location: string;
+    position: {
+      lat: number;
+      lng: number;
+    };
+    category: string;
+  };
+  idUser: string;
+}
 const EventCreationOrganizerPage: React.FC = () => {
   const editorConfig: any = {
     toolbar: {
@@ -350,7 +390,7 @@ const EventCreationOrganizerPage: React.FC = () => {
   const currentStep = new URLSearchParams(location.search).get('step') || '1';
   const isStep1 = currentStep === '1';
   const isStep2 = currentStep === '2';
-
+  const [dateEventCreate,setDataEventCreate] = useState<DataEventCreate>()
   const [eventName, setEventName] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [eventType, setEventType] = useState('');

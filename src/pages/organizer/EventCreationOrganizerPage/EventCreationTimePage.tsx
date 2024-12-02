@@ -49,7 +49,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ eventType
             } else {
                 updatedPerformances[index].errorMessage = '';  // Clear error message if validation passes
             }
-
+            console.log("updatedPerformances",new Date(updatedPerformances[0].startTime))
             return updatedPerformances;
         });
     };

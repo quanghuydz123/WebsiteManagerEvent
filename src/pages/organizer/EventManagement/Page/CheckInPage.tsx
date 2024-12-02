@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaCalendarAlt, FaSyncAlt } from 'react-icons/fa'; // Import các icon
 import { motion } from 'framer-motion'; // Import motion for animation
 import { FaDollarSign, FaTicketAlt } from 'react-icons/fa'; // Thêm các icon mới cho doanh thu và vé
 import Card from './SummaryPage/Card';
 
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Modal from './SummaryPage/EventShowModal';
 import CustomLineChart from './SummaryPage/CustomLineChart';
 import TicketTable from './SummaryPage/TicketTable';
 import CheckinTable from './CheckinTable';
+import { ShowTimeModel } from '../../../../models/ShowTimeModel';
+import { apis } from '../../../../constrants/apis';
+import { SalesSummary } from '../../../../models/SalesSumary';
+import ticketAPI from '../../../../apis/ticketAPI';
+import eventAPI from '../../../../apis/eventAPI';
+import { DateTime } from '../../../../utils/DateTime';
+import LoadingModal from '../../../../modals/LoadingModal';
 
 interface ShowTime {
   id: number;
@@ -22,12 +29,58 @@ const CheckInPage: React.FC = () => {
     const id = searchParams.get('id'); // Lấy giá trị của tham số 'id'
   const data = useParams();
   // Dữ liệu các suất diễn (thông tin mẫu)
+  const navigate = useNavigate()
+  const idEventParams = searchParams.get('idEvent')
+  const idShowTimeParams = searchParams.get('idShowTime')
+  const [idShowTime,setIdShowTime] = useState('')
+  const [allShowTime,setAllShowTime] = useState<ShowTimeModel[]>([])
+  const [isLoading,setIsLoading] =  useState(false)
+  const [salesSummary,setSalesSummary] = useState<SalesSummary>()
+  useEffect(() => {
+    if(idShowTimeParams){
+      setIdShowTime(idShowTimeParams)
+    }
+    if(idEventParams){
+      handleCallAPIGetAllShowTimeByIdEvent()
+    }
+  }, [idShowTimeParams])
+  useEffect(()=>{
+    if(idShowTime){
+      handleCallAPIGetSummaryByIdShowTime()
+    }
+  },[idShowTime])
   const shows: ShowTime[] = [
     { id: 1, time: '10:00 AM' },
     { id: 2, time: '02:00 PM' },
     { id: 3, time: '06:00 PM'},
   ];
-
+  const handleCallAPIGetSummaryByIdShowTime = async ()=>{
+    const api = apis.ticket.getSalesSumaryByIdShowTime({idShowTime:idShowTime ?? ''})
+    setIsLoading(true)
+    try {
+      const res = await ticketAPI.HandleTicket(api)
+      if(res && res.data && res.status === 200){
+        setSalesSummary(res.data)
+      }
+      setIsLoading(false)
+    } catch (error:any) {
+      setIsLoading(false)
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại SummaryPage",errorMessage.statusCode)
+    }
+  }
+  const handleCallAPIGetAllShowTimeByIdEvent = async ()=>{
+    const api = apis.event.getShowTimesEventForOrganizer({idEvent:idEventParams ?? ''})
+    try {
+      const res:any = await eventAPI.HandleEvent(api)
+      if(res && res.data && res.status === 200){
+        setAllShowTime(res.data)
+      }
+    } catch (error:any) {
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại SummaryPage",errorMessage.statusCode)
+    }
+  }
   // Mở modal
   const openModal = () => setIsModalOpen(true);
 
@@ -35,8 +88,8 @@ const CheckInPage: React.FC = () => {
   const closeModal = () => setIsModalOpen(false);
 
   // Chọn suất diễn
-  const handleSelectShow = (show: ShowTime) => {
-    setSelectedShow(show);
+  const handleSelectShow = (idShowTime: string) => {
+    setIdShowTime(idShowTime)
     closeModal(); // Đóng modal khi chọn suất diễn
   };
 
@@ -74,8 +127,8 @@ const CheckInPage: React.FC = () => {
         <div className="flex justify-between items-center border-b border-gray-300 pb-4"> {/* Đường kẻ dưới */}
           <div className="flex items-center">
             <FaCalendarAlt className="mr-2 text-xl" /> 
-            <p className="text-xl mt-3">
-              <strong>Ngày tổ chức:</strong> 20/12/2024
+            <p className="text-xl">
+            <strong>Suất diễn:</strong> {`${DateTime.GetTime(allShowTime.find((item)=>item._id===idShowTime)?.startDate ?? new Date())} : ${DateTime.GetTime(allShowTime.find((item)=>item._id===idShowTime)?.endDate ?? new Date())} ${DateTime.GetDateNew1(allShowTime.find((item)=>item._id===idShowTime)?.startDate ?? new Date(),allShowTime.find((item)=>item._id===idShowTime)?.endDate  ?? new Date() )}`}
             </p>
           </div>
 
@@ -84,7 +137,7 @@ const CheckInPage: React.FC = () => {
             className="bg-green-600 text-white text-xl px-4 py-2 rounded-md hover:bg-green-700 flex items-center"
           >
             <FaSyncAlt className="mr-2 text-xl" /> 
-            Chọn suất diễn khác
+            Chọn suất diễn khác ({(allShowTime.length)})
           </button>
         </div>
       </div>
@@ -93,9 +146,11 @@ const CheckInPage: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         closeModal={closeModal}
-        shows={shows}
+        shows={allShowTime}
         onSelectShow={handleSelectShow}
+        idShowTimeSelected={idShowTime}
       />
+
 
       {/* Thêm phần doanh thu */}
       <h1 className="text-2xl font-bold mb-6">Tổng quan:</h1>
@@ -107,15 +162,17 @@ const CheckInPage: React.FC = () => {
         initial="hidden"
         animate="show"
       >
-        <Card cartItems={[
-    { title: "Đã check-in", value1: 20, value2: 240, icon: <FaTicketAlt />,type:'check-in'}]}/>
+        <Card cartItems={[ 
+    { title: "Đã check-in", value1: salesSummary?.totalTicketSoldAndtotalRevenue.totalTicketsCheckedIn ?? 0, value2: salesSummary?.totalTicketSoldAndtotalRevenue.totalTicketsSold ?? 0, icon: <FaTicketAlt />,type:'check-in'}]}/>
       </motion.div>
       {/* Biểu đồ doanh thu
       <h1 className="text-2xl font-bold mt-6 mb-4">Biểu đồ doanh thu</h1>
       <CustomLineChart variants={itemVariants} /> */}
       {/* Bảng doanh thu vé */}
       <h1 className="text-2xl font-bold mt-6 mb-4">Chi tiết check-in</h1>
-      <CheckinTable variants={undefined}/>
+      <CheckinTable TypeTicketSoldAndtotalRevenue={salesSummary?.typeTicketSoldAndtotalRevenue ?? []}/>
+      <LoadingModal visible={isLoading}/>
+
     </div>
   );
 };

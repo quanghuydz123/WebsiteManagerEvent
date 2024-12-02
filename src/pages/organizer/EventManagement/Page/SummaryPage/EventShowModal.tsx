@@ -1,19 +1,21 @@
 import React from 'react';
 import { FaTimes } from 'react-icons/fa'; // Import dấu X
+import { ShowTimeModel } from '../../../../../models/ShowTimeModel';
+import { DateTime } from '../../../../../utils/DateTime';
+import { SpaceComponent } from '../../../../../components';
+import { colors } from '../../../../../constrants/color';
 
-interface ShowTime {
-  id: number;
-  time: string;
-}
+
 
 interface ModalProps {
   isOpen: boolean;
   closeModal: () => void;
-  shows: ShowTime[];
-  onSelectShow: (show: ShowTime) => void;
+  shows: ShowTimeModel[];
+  onSelectShow: (idShowTime: string) => void;
+  idShowTimeSelected:string
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, closeModal, shows, onSelectShow }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, closeModal, shows, onSelectShow,idShowTimeSelected }) => {
   if (!isOpen) return null;
 
   return (
@@ -28,27 +30,30 @@ const Modal: React.FC<ModalProps> = ({ isOpen, closeModal, shows, onSelectShow }
         </button>
 
         <h3 className="text-2xl font-semibold mb-6 text-center text-white">Chọn suất diễn</h3>
-
+        <SpaceComponent height={12}/>
         <ul className="space-y-4">
           {shows.map((show) => (
             <li
-              key={show.id}
+              key={show._id}
               className="cursor-pointer hover:bg-green-600 p-4 rounded-xl transition duration-300 ease-in-out text-white"
-              onClick={() => onSelectShow(show)}
+              style={{
+                backgroundColor:idShowTimeSelected === show._id ? colors.primary : ''
+              }}
+              onClick={() => onSelectShow(show._id)}
             >
-              {show.time} 
+              {`${DateTime.GetTime(show.startDate)} : ${DateTime.GetTime(show.endDate)} ${DateTime.GetDateNew1(show.startDate,show.endDate)}`}
             </li>
           ))}
         </ul>
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <button
-            onClick={() => onSelectShow(shows[0])}
+            onClick={() => onSelectShow('ok')}
             className="bg-green-600 text-white px-8 py-4 text-xl rounded-lg w-full hover:bg-green-700 transition-colors duration-200"
           >
             Xác nhận
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

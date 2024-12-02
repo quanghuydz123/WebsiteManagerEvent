@@ -71,7 +71,8 @@ export const apis = {
             updateEvent:()=>`/update-event`,
             incViewEvent:()=>`/incView-event`,
             getDescriptionEvent:({idEvent}:{idEvent:string})=>`/get-description-byIdEvent?idEvent=${idEvent}`,
-            getShowTimesEvent:({idEvent}:{idEvent:string})=>`/get-showTimes-byIdEvent?idEvent=${idEvent}`
+            getShowTimesEvent:({idEvent}:{idEvent:string})=>`/get-showTimes-byIdEvent?idEvent=${idEvent}`,
+            getShowTimesEventForOrganizer:({idEvent}:{idEvent:string})=>`/get-showTimes-byIdEventForOrganizer?idEvent=${idEvent}`
             
     },
     category:{
@@ -110,7 +111,10 @@ export const apis = {
             if (typeFilter !== undefined) params.append('typeFilter', typeFilter);
             return `/get-byIdUser?${params.toString()}`
         },
-        getByIdInvoice:({idInvoice}:{idInvoice:string})=>`/get-byIdInvoice?idInvoice=${idInvoice}`
+        getByIdInvoice:({idInvoice}:{idInvoice:string})=>`/get-byIdInvoice?idInvoice=${idInvoice}`,
+        getSalesSumaryByIdShowTime:({idShowTime}:{idShowTime:string})=>`/get-sales-summary-byIdShowTime?idShowTime=${idShowTime}`,
+        getByIdShowTime:({idShowTime,page,limit}:{idShowTime:string,page:string,limit:string})=>`/get-byIdShowTime?idShowTime=${idShowTime}&page=${page}&limit=${limit}`,
+
     },
     comment:{
         commentEvent:()=>`/comment-event`,

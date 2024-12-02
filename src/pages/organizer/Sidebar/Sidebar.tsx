@@ -68,8 +68,8 @@ const SidebarComponent = ({ isOpen, toggleSidebar, setIsOpen }: { isOpen: any, t
               name={item.name}
               isOpen={isOpen}
               isLogout={item.isLogout}
-              url={`/organizer/${item.key}`}
-              // onClicked={() => { navigate("/organizer/" + item.key) }}
+              // url={`/organizer/${item.key}`}
+              onClicked={() => { navigate("/organizer/" + item.key) }}
              // className="hover:bg-green-700 px-4 py-2 rounded transition duration-200"
             />
           ))

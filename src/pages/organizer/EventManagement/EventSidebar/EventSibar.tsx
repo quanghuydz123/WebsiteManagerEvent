@@ -83,8 +83,8 @@ const EventSidebar = ({ isOpen, toggleSidebar, setIsOpen,idShowTime,idEvent }: {
               name={item.name}
               isOpen={isOpen}
               isLogout={item.isLogout}
-              url={`/organizer/EventPage/:idEvent/${item.key}`}
-              // onClicked={() => { navigate("/organizer/EventPage/:idEvent/" + item.key) }}
+              // url={`/organizer/EventPage/:idEvent/${item.key}`}
+              onClicked={() => { navigate("/organizer/EventPage/:idEvent/" + item.key) }}
             />
           ))
         }

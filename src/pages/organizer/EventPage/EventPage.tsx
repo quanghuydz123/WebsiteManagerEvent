@@ -113,6 +113,7 @@ const EventPage = () => {
             eventActions={[
               { label: "Tổng kết",url:'/organizer/EventPage/:idEvent/Summary' },
               { label: "Chỉnh sửa",url:'/organizer/EventPage/:idEvent/Edit' },
+              { label: "Đơn hàng",url:'/organizer/EventPage/:idEvent/Order' },
               { label: "CheckIn",url:'/organizer/EventPage/:idEvent/Checkin'},
               { label: "Giảm giá",url:'/organizer/EventPage/:idEvent/Voucher' },
               { label: "Markerting",url:'/organizer/EventPage/:idEvent/Markerting' },    

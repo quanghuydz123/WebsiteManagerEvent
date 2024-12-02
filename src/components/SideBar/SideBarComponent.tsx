@@ -67,8 +67,8 @@ const SidebarComponent = ({ isOpen, toggleSidebar, setIsOpen }: {isOpen:any, tog
             name={item.name}
             isOpen={isOpen}
             isLogout={item.isLogout}
-            url={`/admin/${item.name}`}
-            // onClicked= {()=>{navigate("/admin/"+item.name)}}
+            // url={`/admin/${item.name}`}
+            onClicked= {()=>{navigate("/admin/"+item.name)}}
           />
         ))
         }

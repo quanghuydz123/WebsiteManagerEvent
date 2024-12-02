@@ -7,7 +7,14 @@ import CardItem from './CardItem'; // Import CardItem component
 import Card from './Card';
 import CustomLineChart from './CustomLineChart';
 import TicketTable from './TicketTable';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { apis } from '../../../../../constrants/apis';
+import ticketAPI from '../../../../../apis/ticketAPI';
+import { SalesSummary } from '../../../../../models/SalesSumary';
+import { ShowTimeModel } from '../../../../../models/ShowTimeModel';
+import eventAPI from '../../../../../apis/eventAPI';
+import { DateTime } from '../../../../../utils/DateTime';
+import LoadingModal from '../../../../../modals/LoadingModal';
 
 interface ShowTime {
   id: number;
@@ -18,21 +25,62 @@ const SummaryPage: React.FC = () => {
   const [selectedShow, setSelectedShow] = useState<ShowTime | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchParams] = useSearchParams(); // Hook để làm việc với query string
+  const [salesSummary,setSalesSummary] = useState<SalesSummary>()
   const id = searchParams.get('id'); // Lấy giá trị của tham số 'id'
   const data = useParams();
-
+  const navigate = useNavigate()
+  const idEventParams = searchParams.get('idEvent')
+  const idShowTimeParams = searchParams.get('idShowTime')
+  const [idShowTime,setIdShowTime] = useState('')
+  const [allShowTime,setAllShowTime] = useState<ShowTimeModel[]>([])
+  const [isLoading,setIsLoading] =  useState(false)
   useEffect(() => {
-    const idEvent = searchParams.get('idEvent')
-    const idShowTime = searchParams.get('idShowTime')
-    // console.log("idEvent,idShowTime",idEvent,idShowTime)
-  }, [])
+    if(idShowTimeParams){
+      setIdShowTime(idShowTimeParams)
+    }
+    if(idEventParams){
+      handleCallAPIGetAllShowTimeByIdEvent()
+    }
+  }, [idShowTimeParams])
+  useEffect(()=>{
+    if(idShowTime){
+      handleCallAPIGetSummaryByIdShowTime()
+    }
+  },[idShowTime])
   // Dữ liệu các suất diễn (thông tin mẫu)
   const shows: ShowTime[] = [
     { id: 1, time: '10:00 AM' },
     { id: 2, time: '02:00 PM' },
     { id: 3, time: '06:00 PM' },
   ];
-
+  const handleCallAPIGetSummaryByIdShowTime = async ()=>{
+    const api = apis.ticket.getSalesSumaryByIdShowTime({idShowTime:idShowTime ?? ''})
+    setIsLoading(true)
+    try {
+      const res = await ticketAPI.HandleTicket(api)
+      if(res && res.data && res.status === 200){
+        setSalesSummary(res.data)
+      }
+      setIsLoading(false)
+    } catch (error:any) {
+      setIsLoading(false)
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại SummaryPage",errorMessage.statusCode)
+    }
+  }
+  const handleCallAPIGetAllShowTimeByIdEvent = async ()=>{
+    const api = apis.event.getShowTimesEventForOrganizer({idEvent:idEventParams ?? ''})
+    try {
+      const res:any = await eventAPI.HandleEvent(api)
+      if(res && res.data && res.status === 200){
+        setAllShowTime(res.data)
+      }
+    } catch (error:any) {
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại SummaryPage",errorMessage.statusCode)
+    }
+  }
+  console.log(allShowTime)
   // Mở modal
   const openModal = () => setIsModalOpen(true);
 
@@ -40,8 +88,8 @@ const SummaryPage: React.FC = () => {
   const closeModal = () => setIsModalOpen(false);
 
   // Chọn suất diễn
-  const handleSelectShow = (show: ShowTime) => {
-    setSelectedShow(show);
+  const handleSelectShow = (idShowTime: string) => {
+    setIdShowTime(idShowTime)
     closeModal(); // Đóng modal khi chọn suất diễn
   };
 
@@ -72,15 +120,17 @@ const SummaryPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-custom-gradient text-white p-6">
       {/* Tiêu đề */}
-      <h1 className="text-3xl font-bold mb-6">Tổng kết</h1>
+      <h1 className="text-3xl font-bold mb-6" onClick={()=>{
+        navigate('/organizer/EventPage/:idEvent/Summary?idEvent=666b0dcfedb7fe46ae8ecdd9&idShowTime=123123')
+      }}>Tổng kết</h1>
 
       {/* Thông tin sự kiện */}
       <div className="p-6 rounded-lg mb-6">
         <div className="flex justify-between items-center border-b border-gray-300 pb-4"> {/* Đường kẻ dưới */}
-          <div className="flex items-center">
+          <div className="flex items-center ">
             <FaCalendarAlt className="mr-2 text-xl" />
-            <p className="text-xl mt-3">
-              <strong>Ngày tổ chức:</strong> 20/12/2024
+            <p className="text-xl">
+              <strong>Suất diễn:</strong> {`${DateTime.GetTime(allShowTime.find((item)=>item._id===idShowTime)?.startDate ?? new Date())} : ${DateTime.GetTime(allShowTime.find((item)=>item._id===idShowTime)?.endDate ?? new Date())} ${DateTime.GetDateNew1(allShowTime.find((item)=>item._id===idShowTime)?.startDate ?? new Date(),allShowTime.find((item)=>item._id===idShowTime)?.endDate  ?? new Date() )}`}
             </p>
           </div>
 
@@ -89,7 +139,7 @@ const SummaryPage: React.FC = () => {
             className="bg-green-600 text-white text-xl px-4 py-2 rounded-md hover:bg-green-700 flex items-center"
           >
             <FaSyncAlt className="mr-2 text-xl" />
-            Chọn suất diễn khác
+            Chọn suất diễn khác ({(allShowTime.length)})
           </button>
         </div>
       </div>
@@ -98,8 +148,9 @@ const SummaryPage: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         closeModal={closeModal}
-        shows={shows}
+        shows={allShowTime}
         onSelectShow={handleSelectShow}
+        idShowTimeSelected={idShowTime}
       />
 
       {/* Thêm phần doanh thu */}
@@ -113,8 +164,8 @@ const SummaryPage: React.FC = () => {
         animate="show"
       >
         <Card cartItems={[
-          { title: "Doanh thu", value1: 120000, value2: 330000, icon: <FaDollarSign />, type: 'revenue' },
-          { title: "Số vé đã bán", value1: 60, value2: 240, icon: <FaTicketAlt />, type: 'ticketSold' },
+          { title: "Doanh thu", value1: salesSummary?.totalTicketSoldAndtotalRevenue?.totalRevenueSold ?? 0, value2: salesSummary?.totalTicketSoldAndtotalRevenue?.totalRevenue ?? 0, icon: <FaDollarSign />, type: 'revenue' },
+          { title: "Số vé đã bán", value1: salesSummary?.totalTicketSoldAndtotalRevenue.totalTicketsSold ?? 0, value2: salesSummary?.totalTicketSoldAndtotalRevenue.totalAmount ?? 0, icon: <FaTicketAlt />, type: 'ticketSold' },
         ]} />
       </motion.div>
       {/* Biểu đồ doanh thu */}
@@ -122,7 +173,8 @@ const SummaryPage: React.FC = () => {
       <CustomLineChart variants={itemVariants} />
       {/* Bảng doanh thu vé */}
       <h1 className="text-2xl font-bold mt-6 mb-4">Chi tiết vé bán được</h1>
-      <TicketTable variants={undefined} />
+      <TicketTable TypeTicketSoldAndtotalRevenue={salesSummary?.typeTicketSoldAndtotalRevenue ?? []}/>
+      <LoadingModal visible={isLoading}/>
     </div>
   );
 };

@@ -125,6 +125,7 @@ const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
               //   </Link>
               // </button>
               <Link
+                target="_blank"
                 to={action.url + `?idEvent=${event?._id}&idShowTime=${event?.showTimes[0]?._id ?? ''}`}
                 style={{ textDecoration: 'none' }}
                 className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-700 transition duration-200"
