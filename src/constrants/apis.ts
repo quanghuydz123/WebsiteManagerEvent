@@ -72,7 +72,9 @@ export const apis = {
             incViewEvent:()=>`/incView-event`,
             getDescriptionEvent:({idEvent}:{idEvent:string})=>`/get-description-byIdEvent?idEvent=${idEvent}`,
             getShowTimesEvent:({idEvent}:{idEvent:string})=>`/get-showTimes-byIdEvent?idEvent=${idEvent}`,
-            getShowTimesEventForOrganizer:({idEvent}:{idEvent:string})=>`/get-showTimes-byIdEventForOrganizer?idEvent=${idEvent}`
+            getShowTimesEventForOrganizer:({idEvent}:{idEvent:string})=>`/get-showTimes-byIdEventForOrganizer?idEvent=${idEvent}`,
+            createEvent:()=>`/create-event`,
+            getEventByIdForOrganizer:({idEvent}:{idEvent:string})=>`/get-event-byIdForOrganizer${idEvent}`
             
     },
     category:{

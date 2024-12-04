@@ -85,19 +85,19 @@ const EventCard: React.FC<EventCardProps> = ({ cartItems, eventActions }) => {
                 </div>
               </div>
               <SpaceComponent width={12}/>
-              <div>
+              {(event.showTimes && event.showTimes.length > 0) &&<div>
                 <div className='inline-block pt-1 pb-1 pl-2 pr-2' style={{ backgroundColor: renderColorStatusEvent(event.statusEvent), borderRadius: 100 }}>
                   <p style={{ color: colors.white }}>{renderTextStatus(event.statusEvent)}</p>
                 </div>
-              </div>
+              </div>}
               </RowComponent>
               <SpaceComponent height={16} />
               <RowComponent>
                 <CiCalendar size={20} />
                 <SpaceComponent width={4} />
-                <p className="text-sm font-medium	" style={{ color: colors.primary }}>
+                {event.showTimes && event.showTimes.length > 0  ? <p className="text-sm font-medium	" style={{ color: colors.primary }}>
                   {`${DateTime.GetTime(event.showTimes[0].startDate)} - ${DateTime.GetTime(event.showTimes[0].endDate)} ${DateTime.GetDateNew1(event.showTimes[0].startDate,event.showTimes[0].endDate)}`}
-                </p>
+                </p>: <>Chưa có suất diễn nào</>}
               </RowComponent>
               <SpaceComponent height={16} />
               <RowComponent styles={{ alignItems: 'flex-start' }}>

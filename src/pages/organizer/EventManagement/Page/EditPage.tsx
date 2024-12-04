@@ -68,6 +68,7 @@ import EventCreationTimePage from '../../EventCreationOrganizerPage/EventCreatio
 import categoryAPI from '../../../../apis/categoryAPI';
 import { apis } from '../../../../constrants/apis';
 import { CategoryModel } from '../../../../models/CategoryModel';
+import { DataEventCreate } from '../../EventCreationOrganizerPage/EventCreationOrganizerPage';
 
 interface Province {
   code: number;
@@ -364,9 +365,37 @@ const EditPage: React.FC = () => {
 
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-
   const [inputValue, setInputValue] = useState('');
-
+  const [dataEventCreate, setDataEventCreate] = useState<DataEventCreate>({
+    idUser:'',
+    event:{
+      addressDetails:{
+        districts:{
+          code:0,
+          name:''
+        },
+        province:{
+          code:0,
+          name:''
+        },
+        ward:{
+          code:0,
+          name:''
+        },
+        houseNumberAndStreet:''
+      },
+      category:'',
+      description:"<p><strong>Giới thiệu sự kiện:</strong></p><p>[Tóm tắt ngắn gọn về sự kiện: Nội dung chính của sự kiện, điểm đặc sắc nhất và lý do khiến người tham gia không nên bỏ lỡ]</p><p><strong>Chi tiết sự kiện:</strong></p><ul><li><strong>Chương trình chính:</strong> [Liệt kê những hoạt động nổi bật trong sự kiện: các phần trình diễn, khách mời đặc biệt, lịch trình các tiết mục cụ thể nếu có.]</li><li><strong>Khách mời:</strong> [Thông tin về các khách mời đặc biệt, nghệ sĩ, diễn giả sẽ tham gia sự kiện. Có thể bao gồm phần mô tả ngắn gọn về họ và những gì họ sẽ mang lại cho sự kiện.]</li><li><strong>Trải nghiệm đặc biệt:</strong> [Nếu có các hoạt động đặc biệt khác như workshop, khu trải nghiệm, photo booth, khu vực check-in hay các phần quà/ưu đãi dành riêng cho người tham dự.]</li></ul><p><strong>Điều khoản và điều kiện:</strong></p><p>[TnC] sự kiện</p><p>Lưu ý về điều khoản trẻ em</p><p>Lưu ý về điều khoản VAT</p>",
+      Location:'',
+      photoUrl:'',
+      position:{
+        lat:0,
+        lng:0
+      },
+      title:''
+    },
+    showTimes:[]
+  })
   // Tiến hành chuyển sang Bước 2 khi nhấn nút "Tiếp tục"
   const [categories,setCategories] = useState<CategoryModel[]>([])
   const handleNextStep = () => {
@@ -704,9 +733,8 @@ const EditPage: React.FC = () => {
       {/* Step 2: Time & Ticket Type */}
       {isStep2 && (
         <EventCreationTimePage
-          eventType={eventType}
-          setEventType={setEventType}
-          handleSubmit={handleSubmit}
+          dataEventCreate={dataEventCreate}
+          setDataEventCreate={setDataEventCreate}
         />
       )}
     </div>

@@ -72,7 +72,6 @@ const OrderPage = ({ variants }: { variants: any }) => {
       console.log("lỗi tại OrderPage",errorMessage.statusCode)
     }
   }
-  console.log(invoices)
   const handleCallAPIGetAllShowTimeByIdEvent = async ()=>{
     const api = apis.event.getShowTimesEventForOrganizer({idEvent:idEventParams ?? ''})
     try {
