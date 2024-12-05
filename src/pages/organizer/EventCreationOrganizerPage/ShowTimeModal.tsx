@@ -29,6 +29,8 @@ const ShowTimeModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit,type,sh
     useEffect(()=>{
         if(type==='update'){
             setShowTime(showTimeSeleted)
+        }else{
+            setShowTime(initShowTime)
         }
       },[showTimeSeleted,isOpen])
     // Kiểm tra tên vé có vượt quá 50 ký tự
@@ -101,7 +103,7 @@ const ShowTimeModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit,type,sh
             <div className="bg-gray-800 text-white w-full max-w-7xl rounded-xl shadow-lg text-lg overflow-y-auto max-h-screen">
                 {/* Header */}
                 <div className="flex justify-between items-center p-6 border-b border-gray-600 sticky top-0 bg-gray-800 z-10 rounded-t-xl">
-                    <h2 className="text-2xl font-semibold">Tạo suất diễn mới</h2>
+                    <h2 className="text-2xl font-semibold">{type==='create' ? 'Tạo suất diễn mới' : 'Cập nhập suất diễn'}</h2>
                     <button
                         onClick={() => {
                             setShowTime(initShowTime)

@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import ShowTimeModal from './ShowTimeModal';
 import { apis } from '../../../constrants/apis';
 import typeTicketAPI from '../../../apis/typeTicketAPI';
+import showTimeAPI from '../../../apis/showTimeAPI';
 
 interface EventCreationTimePageProps {
     dataEventCreate: DataEventCreate,
@@ -306,28 +307,76 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
         })
         setModalOpen(true)
     }
-    const handSubmitShowTime = (showTime:ShowTimeModel)=>{
+    const handSubmitShowTime = async (showTime:ShowTimeModel)=>{
        if(modalShowTimeState.type==='create'){
-        setDataEventCreate(prev => {
-            return {
-                ...prev,
-                showTimes: [
-                    ...prev.showTimes,
-                    showTime
-                ]
+            if(isEdit){
+                delete (showTime as Partial<ShowTimeModel>)._id;
+                const api = apis.showTime.createShowTime()
+                try {
+                    const res = await showTimeAPI.HandleShowTime(api,{startDate:showTime.startDate,endDate:showTime.endDate,idEvent:idEvent},'post')
+                    if(res && res.data && res.status===200){
+                        showTime._id = res.data._id
+                        setDataEventCreate(prev => {
+                            return {    
+                                ...prev,
+                                showTimes: [
+                                    ...prev.showTimes,
+                                    showTime
+                                ]
+                            }
+                        })
+                        toast.success('Thêm suất diễn thành công')
+                    }
+                } catch (error:any) {
+                    const errorMessage = JSON.parse(error.message)
+                    console.log("Thêm suất diễn không thành công", errorMessage)
+                    toast.error(errorMessage.message ?? 'Thêm suất diễn không thành công')
+                    }
+
+            }else{
+                setDataEventCreate(prev => {
+                    return {
+                        ...prev,
+                        showTimes: [
+                            ...prev.showTimes,
+                            showTime
+                        ]
+                    }
+                })
+                toast.success('Thêm suất diễn thành công')
             }
-        })
-        toast.success('Thêm suất diễn thành công')
        }else{
-        setDataEventCreate(prev => {
-            const updateShowTime = [...prev.showTimes]
-            updateShowTime[modalShowTimeState.indexShowTimeSelected] = showTime
-            return {
-                ...prev,
-                showTimes: updateShowTime
+        if(isEdit){
+            const api = apis.showTime.updateShowTime()
+            try {
+                const res = await showTimeAPI.HandleShowTime(api,{...showTime,idShowTime:showTime._id,idEvent:idEvent},'put')
+                if(res && res.status === 200 && res.data){
+                    setDataEventCreate(prev => {
+                        const updateShowTime = [...prev.showTimes]
+                        updateShowTime[modalShowTimeState.indexShowTimeSelected] = showTime
+                        return {
+                            ...prev,
+                            showTimes: updateShowTime
+                        }
+                    })
+                    toast.success('Cập nhập suất diễn thành công')
+                }
+            } catch (error:any) {
+                const errorMessage = JSON.parse(error.message)
+                console.log("Cập nhập suất diễn không thành công", errorMessage)
+                toast.error(errorMessage.message ?? 'Cập nhập suất diễn không thành công')
             }
-        })
-        toast.success('Cập nhập suất diễn thành công')
+        }else{
+            setDataEventCreate(prev => {
+                const updateShowTime = [...prev.showTimes]
+                updateShowTime[modalShowTimeState.indexShowTimeSelected] = showTime
+                return {
+                    ...prev,
+                    showTimes: updateShowTime
+                }
+            })
+            toast.success('Cập nhập suất diễn thành công')
+        }
        }
     }
     const handleSubmitTicket = async (val:TypeTicketModel)=>{
@@ -422,8 +471,23 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
     }
     const handleDelete = async ()=>{
         if (deleteState.content === 'showTime') {
+           if(isEdit){
+                const api = apis.showTime.deleteShowTime()
+                try {
+                    const res = await showTimeAPI.HandleShowTime(api,{idShowTime:deleteState.showTimeDelete._id,idEvent:idEvent},'delete')
+                    if(res && res.status === 200){
+                        deletePerformance(deleteState.indexShowTimeSelected)
+                        toast.success('Xóa suất diễn thành công !!!')
+                    }
+                } catch (error:any) {
+                    const errorMessage = JSON.parse(error.message)
+                    toast.error(errorMessage.message ?? 'Xóa suất diễn không thành công')
+                    console.log("Lỗi khi xóa suất diễn", errorMessage)
+                }
+           }else{
             deletePerformance(deleteState.indexShowTimeSelected)
             toast.success('Xóa suất diễn thành công !!!')
+           }
 
         } else {
           if(isEdit){
@@ -436,7 +500,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                 }
             } catch (error:any) {
                 const errorMessage = JSON.parse(error.message)
-                toast.error(errorMessage.message ?? 'Cập nhập xóa không thành công')
+                toast.error(errorMessage.message ?? ' xóa không thành công')
                 console.log("lỗi khi xóa loại vé", errorMessage)
             }
           }else{
@@ -493,6 +557,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                                                 ...prev,
                                                 content: 'showTime',
                                                 indexShowTimeSelected: indexShowTime,
+                                                showTimeDelete:performance,
                                                 message: 'Bạn có muốn xóa suất diễn này !!!'
                                             }
                                         })

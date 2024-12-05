@@ -128,6 +128,11 @@ export const apis = {
         createTypeTicket:()=>`/create-typeTicket`,
         updateTypeTicket:()=>`/update-typeTicket`,
         deleteTypeTicket:()=>`/delete-typeTicket`
-    }
+    },
+    showTime:{
+        createShowTime:()=>`/create-showTime`,
+        updateShowTime:()=>`/update-showTime`,
+        deleteShowTime:()=>`/delete-showTime`
+    },
 
 }

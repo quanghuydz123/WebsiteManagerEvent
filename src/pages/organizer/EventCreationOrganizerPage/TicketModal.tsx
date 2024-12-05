@@ -423,7 +423,6 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
     if(error === ''){
         setTypeTicket(initTypeTicket)
         onSubmit(typeTicket)
-
         onClose()
     }
    
@@ -434,7 +433,7 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
       <div className="bg-gray-800 text-white w-full max-w-7xl rounded-xl shadow-lg text-lg overflow-y-auto max-h-screen">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-600 sticky top-0 bg-gray-800 z-10 rounded-t-xl">
-          <h2 className="text-2xl font-semibold">Tạo loại vé mới</h2>
+          <h2 className="text-2xl font-semibold">{type==='create' ? 'Tạo loại vé mới' : 'Cập nhập loại vé'}</h2>
           <button
             onClick={()=>{
               setTypeTicket(initTypeTicket)
