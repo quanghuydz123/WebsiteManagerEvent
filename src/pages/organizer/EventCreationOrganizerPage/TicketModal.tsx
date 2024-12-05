@@ -415,6 +415,10 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
         error = 'Thời gian kết thúc bán vé phải nhỏ hơn thời gian bắt đầu của suất diễn'
       }
     }
+    if(typeTicket.name === ''){
+      error = 'Hãy nhập tên vé !!!'
+
+    }
     setErrorMessage(error)
     if(error === ''){
         setTypeTicket(initTypeTicket)

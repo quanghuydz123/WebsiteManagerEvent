@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import axios from 'axios';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -69,6 +69,11 @@ import categoryAPI from '../../../../apis/categoryAPI';
 import { apis } from '../../../../constrants/apis';
 import { CategoryModel } from '../../../../models/CategoryModel';
 import { DataEventCreate } from '../../EventCreationOrganizerPage/EventCreationOrganizerPage';
+import eventAPI from '../../../../apis/eventAPI';
+import { AuthState } from '../../../../reduxs/reducers/authReducers';
+import { useSelector } from 'react-redux';
+import { getBase64 } from '../../../../utils/utils';
+import { toast } from 'react-toastify';
 
 interface Province {
   code: number;
@@ -350,25 +355,26 @@ const EditPage: React.FC = () => {
   const currentStep = new URLSearchParams(location.search).get('step') || '1';
   const isStep1 = currentStep === '1';
   const isStep2 = currentStep === '2';
-
+  const [searchParams] = useSearchParams(); // Hook để làm việc với query string
+  const idEventParams = searchParams.get('idEvent')
+  const idShowTimeParams = searchParams.get('idShowTime')
   const [eventName, setEventName] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [eventType, setEventType] = useState('');
   const [eventDescription, setEventDescription] = useState('');
-
   const [eventBackground, setEventBackground] = useState<File | null>(null);
+  const {authData}:{authData:AuthState} = useSelector((state: any) => state.auth);
 
 
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
 
-  const [selectedProvince, setSelectedProvince] = useState('');
-  const [selectedDistrict, setSelectedDistrict] = useState('');
   const [inputValue, setInputValue] = useState('');
-  const [dataEventCreate, setDataEventCreate] = useState<DataEventCreate>({
-    idUser:'',
+  const [dataEvent, setDataEvent] = useState<DataEventCreate>({
+    idUser:authData.id,
     event:{
+      _id:'',
       addressDetails:{
         districts:{
           code:0,
@@ -396,15 +402,19 @@ const EditPage: React.FC = () => {
     },
     showTimes:[]
   })
-  // Tiến hành chuyển sang Bước 2 khi nhấn nút "Tiếp tục"
+  
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedWard, setSelectedWard] = useState('');
+
   const [categories,setCategories] = useState<CategoryModel[]>([])
   const handleNextStep = () => {
     if (isStep1) {
-      navigate('/organizer/EventPage/:idEvent/Edit?step=2'); // Go to Step 2
+      navigate(`/organizer/EventPage/:idEvent/Edit?step=2&idEvent=${idEventParams}&idShowTime=${idShowTimeParams}`); // Go to Step 2
     }
   };
   const handleStepClick = (step: number) => {
-    navigate(`/organizer/EventPage/:idEvent/Edit?step=${step}`);
+    navigate(`/organizer/EventPage/:idEvent/Edit?step=${step}&idEvent=${idEventParams}&idShowTime=${idShowTimeParams}`);
   };
 
 
@@ -420,6 +430,51 @@ const EditPage: React.FC = () => {
     fetchProvinces();
     handleCallAPIGetCategories()
   }, []);
+  useEffect(()=>{
+    if(idEventParams){
+      handleCallAPIGetEventById()
+      handleCallAPIShowTimeByIdEvent()
+    }
+  },[idEventParams])
+  
+  const handleCallAPIGetEventById = async ()=>{
+    const api = apis.event.getEventByIdForOrganizer({idEvent:idEventParams ?? ''})
+    try {
+      const res:any = await eventAPI.HandleEvent(api)
+      if(res && res.data && res.status === 200){
+        setDataEvent(prev =>{
+          return {
+            ...prev,
+            event:res.data
+          }
+        })
+        setSelectedProvince(res.data.addressDetails.province.code)
+        setSelectedDistrict(res.data.addressDetails.districts.code)
+
+      }
+    } catch (error:any) {
+      // const errorMessage = JSON.parse(error.message)
+      // console.log("lỗi tại EventPage",errorMessage)
+    }
+  }
+  const handleCallAPIShowTimeByIdEvent = async ()=>{
+    const api = apis.event.getShowTimesEvent({idEvent:idEventParams ?? ''})
+    try {
+      const res:any = await eventAPI.HandleEvent(api)
+      if(res && res.data && res.status === 200){
+        setDataEvent(prev =>{
+          return {
+            ...prev,
+            showTimes:res.data
+          }
+        })
+      }
+    } catch (error:any) {
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại EventPage",errorMessage)
+    }
+  }
+  
   useEffect(() => {
     if (selectedProvince) {
       const fetchDistricts = async () => {
@@ -452,15 +507,43 @@ const EditPage: React.FC = () => {
     }
   }, [selectedDistrict]);
 
-  const handleBackgroundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBackgroundChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      validateImageDimensions(file, 1280, 720, (isValid) => {
+      if (!file.type.startsWith("image/")) {
+        console.error("File is not an image");
+        return;
+      }
+      validateImageDimensions(file, 1280, 720, async (isValid) => {
         if (isValid) {
-          setEventBackground(file);
+          try {
+            const data: any = await getBase64(file)
+          setDataEvent((prev) => {
+            return {
+              ...prev,
+              event: {
+                ...prev.event,
+                photoUrl: data,
+              },
+            }
+          })
+          } catch (error) {
+            console.error("Error converting file to base64", error);
+
+          }
+          // setEventBackground(data);
+          
 
         } else {
-          setEventBackground(null);
+          setDataEvent((prev) => {
+            return {
+              ...prev,
+              event: {
+                ...prev.event,
+                photoUrl: '',
+              },
+            }
+          })
           alert('Ảnh nền phải có kích thước 1280x720 pixel.');
         }
       });
@@ -475,7 +558,7 @@ const EditPage: React.FC = () => {
       }
     } catch (error:any) {
       const errorMessage = JSON.parse(error.message)
-      console.log("lỗi gi get category",errorMessage.statusCode)
+      console.log("lỗi gi get category",errorMessage)
     }
   }
   const validateImageDimensions = (
@@ -499,7 +582,72 @@ const EditPage: React.FC = () => {
     e.preventDefault();
     // Handle form submission logic here
   };
+  const handleCallApiGetLatAndLong = async ()=>{
+    const api = `https://geocode.search.hereapi.com/v1/geocode?q=${[
+      dataEvent?.event?.addressDetails?.houseNumberAndStreet,
+      dataEvent?.event?.addressDetails?.ward?.name,
+      dataEvent?.event?.addressDetails?.districts?.name,
+      dataEvent?.event?.addressDetails?.province?.name
+  ].filter(Boolean).join(', ')}&limit=20&lang=vi-VI&in=countryCode:VNM&apiKey=${process.env.REACT_APP_API_KEY_REVGEOCODE}`
+    try {
+      const res = await axios(api)
+      if(res && res.data.items.length > 0 && res.status === 200){
+        const address = res.data.items[0].address
+        if(address.street && address.district && address.city){
+          // setDataEventCreate(prev => {
+          //   return {
+          //     ...prev,
+          //     event:{
+          //       ...prev.event,
+          //       position:res.data.items[0].position
+          //     }
+          //   }
+          // })
+          handleCallAPIUpdateEvent(res.data.items[0].position)
+        }else{
+          // ToastMessaging.Error({message:'Hãy nhập đầy đủ thông tin địa chỉ sự kiện (tên đường,xã,huyện,tỉnh,....)'})
+          toast.error('Hãy nhập đầy đủ thông tin địa chỉ sự kiện (tên đường,xã,huyện,tỉnh,....')
 
+          // handleOnchageValue('Address','') 
+        }
+      }else{
+        toast.error('vị trí nhập không hợp lệ vui lòng nhập lại')
+
+        // console.log("vị trí chọn không hợp lệ")
+        // ToastMessaging.Error({message:'vị trí nhập không hợp lệ vui lòng nhập lại'})
+        // handleOnchageValue('Address','') 
+      }
+    } catch (error:any) {
+      console.log(error)
+    }
+  }
+  const handleCallAPIUpdateEvent = async (position:number) =>{
+    const api = apis.event.updateEvent()
+    try {
+      const res = await eventAPI.HandleEvent(api,{
+        ...dataEvent.event,
+        idEvent: dataEvent.event._id,
+        position: position,
+    },'put')
+      if(res && res.status === 200){
+        toast.success('Cập nhập thành công')
+      }
+    } catch (error:any) {
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại EditPage",errorMessage)
+      toast.error('Cập nhập thất bại')
+    }
+  }
+  const clickUpdateEvent = async ()=>{
+    if(!dataEvent.event.title || !dataEvent.event.Location || !dataEvent.event.category ||!dataEvent.event.photoUrl){
+      toast.error('Hãy nhập đầy đủ thông tin !!!')
+    }else if(!dataEvent.event.addressDetails.districts.name || !dataEvent.event.addressDetails.province.name || !dataEvent.event.addressDetails.ward.name){
+      toast.error('Hãy nhập đẩy đủ địa chỉ sự kiện !!!')
+    }else{
+      handleCallApiGetLatAndLong()
+    }
+
+  }
   return (
 
     <div className="min-h-screen bg-custom-gradient text-white">
@@ -507,7 +655,7 @@ const EditPage: React.FC = () => {
       {/* Navigation Step Bar */}
       <div className="px-4 py-2 flex flex-wrap justify-between items-center  text-white">
         <div>
-          <h1 className="text-lg md:text-3xl font-semibold">Tạo sự kiện</h1>
+          <h1 className="text-lg md:text-3xl font-semibold">Chỉnh sửa sự kiện</h1>
         </div>
         {/* Step Bar */}
         <div className="flex flex-wrap justify-center space-x-4 md:space-x-8 mt-2 md:mt-0 text-xl">
@@ -534,9 +682,9 @@ const EditPage: React.FC = () => {
         </div>
         {/* Action Buttons */}
         <div className="flex space-x-2 md:space-x-4 mt-2 md:mt-0">
-          <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md text-xl">
+         {!isStep2 && <button onClick={()=>clickUpdateEvent()} className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md text-xl">
             Lưu
-          </button>
+          </button>}
           <button onClick={handleNextStep}
             className={`bg-green-600 text-white px-2 md:px-4 py-2 rounded-md text-xl ${isStep2 ? 'cursor-not-allowed opacity-50' : ''}`}
             disabled={isStep2} >
@@ -557,18 +705,18 @@ const EditPage: React.FC = () => {
               </label>
               <section className="flex justify-center">
                 {/* Event Background Upload */}
-                <div className="bg-customGray2 border border-gray-500 rounded-lg p-4 flex flex-col items-center justify-center text-center w-full h-52 md:w-[900px] md:h-[400px] relative">
+                <div className="bg-customGray2 border border-gray-500 rounded-lg p-1 flex flex-col items-center justify-center text-center w-full h-52 md:w-[900px] md:h-[450px] relative">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleBackgroundChange}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                   />
-                  {eventBackground ? (
+                  {dataEvent?.event?.photoUrl ? (
                     <img
-                      src={URL.createObjectURL(eventBackground)}
+                      src={dataEvent?.event?.photoUrl}
                       alt="Event Background Preview"
-                      className="h-full w-full object-cover rounded-lg"
+                      className="h-full w-full object-fill rounded-lg"
                     />
                   ) : (
                     <>
@@ -582,13 +730,22 @@ const EditPage: React.FC = () => {
 
             {/* Event Name */}
             <div className="bg-customGray p-4 md:p-6 rounded-lg">
-              <label className="font-medium text-white">
+            <label className="font-medium text-white">
                 <span className="text-red-500">*</span> Tên sự kiện
               </label>
               <input
                 type="text"
-                value={eventName}
-                onChange={(e) => setEventName(e.target.value)}
+                value={dataEvent?.event.title}
+                onChange={(e) =>{
+                  setDataEvent((prev) => {
+                    return {
+                      ...prev,
+                      event: {
+                        ...prev.event,
+                        title: e.target.value, // Cập nhật giá trị title
+                      },
+                    }
+                  })}}
                 className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
                 placeholder="Tên sự kiện"
               />
@@ -596,7 +753,7 @@ const EditPage: React.FC = () => {
 
             {/* Event Location */}
             <div className="bg-customGray p-4 md:p-6 rounded-lg space-y-4">
-              <label className="font-medium text-white block mb-2">
+            <label className="font-medium text-white block mb-2">
                 <span className="text-red-600">*</span> Địa chỉ sự kiện:
               </label>
               <div className="mb-4">
@@ -607,18 +764,52 @@ const EditPage: React.FC = () => {
                   type="text"
                   className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
                   placeholder="Tên địa điểm"
-                  maxLength={80}
+                  maxLength={100}
+                  value={dataEvent.event.Location}
+                  onChange={(e) =>{
+                    setDataEvent((prev) => {
+                      return {
+                        ...prev,
+                        event: {
+                          ...prev.event,
+                          Location: e.target.value,
+                        },
+                      }
+                    })}}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
+              <div>
                   <label className="block mb-1">Tỉnh/Thành</label>
                   <select
-                    value={selectedProvince}
+                    value={dataEvent.event.addressDetails.province.code}  
                     onChange={(e) => {
                       setSelectedProvince(e.target.value);
                       setSelectedDistrict('');
+                      setDataEvent((prev) => {
+                        return {
+                          ...prev,
+                          event: {
+                            ...prev.event,
+                            addressDetails: {
+                              ...prev.event.addressDetails,
+                              province:{
+                                code:Number(e.target.value),
+                                name:provinces.filter((province)=>province.code===Number(e.target.value))[0].name
+                              },
+                              districts:{
+                                code:0,
+                                name:''
+                              },
+                              ward:{
+                                code:0,
+                                name:''
+                              }
+                            }
+                          },
+                        }
+                      })
                     }}
                     className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
                   >
@@ -634,8 +825,29 @@ const EditPage: React.FC = () => {
                 <div>
                   <label className="block mb-1">Quận/Huyện</label>
                   <select
-                    value={selectedDistrict}
-                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                    value={dataEvent.event.addressDetails.districts.code}
+                    onChange={(e) => {
+                      setSelectedDistrict(e.target.value)
+                      setDataEvent((prev) => {
+                        return {
+                          ...prev,
+                          event: {
+                            ...prev.event,
+                            addressDetails: {
+                              ...prev.event.addressDetails,
+                              districts:{
+                                code:Number(e.target.value),
+                                name:districts.filter((district)=>district.code===Number(e.target.value))[0].name
+                              },
+                              ward:{
+                                code:0,
+                                name:''
+                              }
+                            }
+                          },
+                        }
+                      })
+                    }}
                     disabled={!selectedProvince}
                     className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black disabled:bg-gray-600"
                   >
@@ -654,6 +866,24 @@ const EditPage: React.FC = () => {
                   <label className="block mb-1">Phường/Xã</label>
                   <select
                     disabled={!selectedDistrict}
+                    value={dataEvent.event.addressDetails.ward.code}
+                    onChange={(e)=>{
+                      setDataEvent((prev) => {
+                        return {
+                          ...prev,
+                          event: {
+                            ...prev.event,
+                            addressDetails: {
+                              ...prev.event.addressDetails,
+                              ward:{
+                                code:Number(e.target.value),
+                                name:wards.filter((ward)=>ward.code===Number(e.target.value))[0].name
+                              }
+                            }
+                          },
+                        }
+                      })
+                    }}
                     className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black disabled:bg-gray-600"
                   >
                     <option value="">Chọn Phường/Xã</option>
@@ -666,11 +896,24 @@ const EditPage: React.FC = () => {
                 </div>
 
                 <div className="relative">
-                  <label className="block mb-1">* Số nhà, đường</label>
+                <label className="block mb-1">* Số nhà, đường</label>
                   <input
                     type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    value={dataEvent.event.addressDetails.houseNumberAndStreet}
+                    onChange={(e) =>{
+                      setDataEvent((prev) => {
+                        return {
+                          ...prev,
+                          event: {
+                            ...prev.event,
+                            addressDetails: {
+                              ...prev.event.addressDetails,
+                              houseNumberAndStreet:e.target.value,
+                            }
+                          },
+                        }
+                      })
+                    }}
                     className="w-full p-2 md:p-3 bg-white border border-gray-500 rounded-lg text-black"
                     placeholder="Số nhà, đường"
                     maxLength={90}
@@ -687,16 +930,25 @@ const EditPage: React.FC = () => {
 
             {/* Event Type */}
             <div className="bg-customGray p-4 md:p-6 rounded-lg">
-              <label className="font-medium text-white">
+            <label className="font-medium text-white">
                 <span className="text-red-500">*</span> Thể loại sự kiện
               </label>
               <select
-                value={eventType}
-                onChange={(e) => setEventType(e.target.value)}
+                value={dataEvent.event.category}
+                onChange={(e) =>{
+                  setDataEvent((prev) => {
+                    return {
+                      ...prev,
+                      event: {
+                        ...prev.event,
+                        category: e.target.value,
+                      },
+                    }
+                  })}}
                 className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
               >
                 <option value="">Vui lòng chọn</option>
-                {categories.map((category)=>{
+                {categories.map((category) => {
                   return <option value={`${category._id}`}>{category.name}</option>
                 })}
               </select>
@@ -710,11 +962,17 @@ const EditPage: React.FC = () => {
               <CKEditor
                 editor={ClassicEditor}
                 config={editorConfig}
-                data={"<p><strong>Giới thiệu sự kiện:</strong></p><p>[Tóm tắt ngắn gọn về sự kiện: Nội dung chính của sự kiện, điểm đặc sắc nhất và lý do khiến người tham gia không nên bỏ lỡ]</p><p><strong>Chi tiết sự kiện:</strong></p><ul><li><strong>Chương trình chính:</strong> [Liệt kê những hoạt động nổi bật trong sự kiện: các phần trình diễn, khách mời đặc biệt, lịch trình các tiết mục cụ thể nếu có.]</li><li><strong>Khách mời:</strong> [Thông tin về các khách mời đặc biệt, nghệ sĩ, diễn giả sẽ tham gia sự kiện. Có thể bao gồm phần mô tả ngắn gọn về họ và những gì họ sẽ mang lại cho sự kiện.]</li><li><strong>Trải nghiệm đặc biệt:</strong> [Nếu có các hoạt động đặc biệt khác như workshop, khu trải nghiệm, photo booth, khu vực check-in hay các phần quà/ưu đãi dành riêng cho người tham dự.]</li></ul><p><strong>Điều khoản và điều kiện:</strong></p><p>[TnC] sự kiện</p><p>Lưu ý về điều khoản trẻ em</p><p>Lưu ý về điều khoản VAT</p>"}
+                data={dataEvent.event.description}
                 onChange={(event, editor) => {
-                  console.log(editor.getData())
-                }}
-
+                  setDataEvent((prev) => {
+                    return {
+                      ...prev,
+                      event: {
+                        ...prev.event,
+                        description: editor.getData(),
+                      },
+                    }
+                  })}}
               />
             </div>
 
@@ -733,8 +991,10 @@ const EditPage: React.FC = () => {
       {/* Step 2: Time & Ticket Type */}
       {isStep2 && (
         <EventCreationTimePage
-          dataEventCreate={dataEventCreate}
-          setDataEventCreate={setDataEventCreate}
+          dataEventCreate={dataEvent}
+          setDataEventCreate={setDataEvent}
+          isEdit={true}
+          idEvent={idEventParams ?? ''}
         />
       )}
     </div>

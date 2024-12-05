@@ -13,14 +13,21 @@ import { DateTime } from '../../../utils/DateTime';
 import { initTypeTicket, TypeTicketModel } from '../../../models/TypeTicketModel';
 import AlertComponent from '../../../components/AlertComponent';
 import { initShowTime, ShowTimeModel } from '../../../models/ShowTimeModel';
+import { toast } from 'react-toastify';
+import ShowTimeModal from './ShowTimeModal';
+import { apis } from '../../../constrants/apis';
+import typeTicketAPI from '../../../apis/typeTicketAPI';
 
 interface EventCreationTimePageProps {
     dataEventCreate: DataEventCreate,
     setDataEventCreate: React.Dispatch<React.SetStateAction<DataEventCreate>>;
+    isEdit?:boolean,
+    idEvent:string
 }
-
-const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEventCreate, setDataEventCreate }) => {
+const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEventCreate, setDataEventCreate,isEdit,idEvent}) => {
     const [isModalOpen, setModalOpen] = useState(false);
+    const [isModalShowTimeOpen, setModalShowTimeOpen] = useState(false);
+
     const [modalState, setModalState] = useState<{
         type: 'create' | 'update',
         indexShowTimeSelected: number,
@@ -34,18 +41,31 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
         typeTicketSelected: initTypeTicket,
         showTimeSelected:initShowTime
     })
+    const [modalShowTimeState, setModalShowTimeState] = useState<{
+        type: 'create' | 'update',
+        indexShowTimeSelected: number,
+        showTimeSelected:ShowTimeModel
+    }>({
+        type: 'create',
+        indexShowTimeSelected: -1,
+        showTimeSelected:initShowTime
+    })
     const [errorMessage, setErrorMessage] = useState<string[]>([])
     const [isAlertOpen, setIsAlertOpen] = useState(false)
     const [deleteState, setDeleteState] = useState<{
         content: 'showTime' | 'typeTicket',
         indexShowTimeSelected: number,
         indexTypeTicketSelected: number,
-        message: string
+        message: string,
+        showTimeDelete:ShowTimeModel,
+        typeTicketDelete:TypeTicketModel
     }>({
         content: 'showTime',
         indexShowTimeSelected: -1,
         indexTypeTicketSelected: -1,
-        message: ''
+        message: '',
+        typeTicketDelete: initTypeTicket,
+        showTimeDelete:initShowTime
     })
     // const [performances, setPerformances] = useState<{
     //     startTime: string, endTime: string, ticketTypes: {
@@ -67,15 +87,22 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
         //     ];
         //     return newPerformances;
         // });
-        setDataEventCreate(prev => {
+        setModalShowTimeState(prev =>{
             return {
                 ...prev,
-                showTimes: [
-                    ...prev.showTimes,
-                    { startDate: new Date(), endDate: new Date(), typeTickets: [], isOpen: false, _id: '', status: "OnSale", errorMessage: '' }
-                ]
+                type:'create'
             }
         })
+        setModalShowTimeOpen(true)
+        // setDataEventCreate(prev => {
+        //     return {
+        //         ...prev,
+        //         showTimes: [
+        //             ...prev.showTimes,
+        //             { startDate: new Date(), endDate: new Date(), typeTickets: [], isOpen: false, _id: '', status: "OnSale", errorMessage: '' }
+        //         ]
+        //     }
+        // })
     };
     // Toggle the accordion for each performance
     const toggleAccordion = (index: number) => {
@@ -197,7 +224,6 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
             }
         })
     };
-
     // Delete a performance event
     const deletePerformance = (index: number) => {
         // if (performances[index]) {
@@ -258,7 +284,9 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                         content: 'typeTicket',
                         indexShowTimeSelected: indexShowTime,
                         indexTypeTicketSelected: indexTypeTicket,
-                        message: 'Bạn có muốn xóa loại vé này !!!'
+                        message: 'Bạn có muốn xóa loại vé này !!!',
+                        showTimeDelete:showTime,
+                        typeTicketDelete:typeTicket
                     })
                     setIsAlertOpen(true)
                 }}>
@@ -277,6 +305,147 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
             }
         })
         setModalOpen(true)
+    }
+    const handSubmitShowTime = (showTime:ShowTimeModel)=>{
+       if(modalShowTimeState.type==='create'){
+        setDataEventCreate(prev => {
+            return {
+                ...prev,
+                showTimes: [
+                    ...prev.showTimes,
+                    showTime
+                ]
+            }
+        })
+        toast.success('Thêm suất diễn thành công')
+       }else{
+        setDataEventCreate(prev => {
+            const updateShowTime = [...prev.showTimes]
+            updateShowTime[modalShowTimeState.indexShowTimeSelected] = showTime
+            return {
+                ...prev,
+                showTimes: updateShowTime
+            }
+        })
+        toast.success('Cập nhập suất diễn thành công')
+       }
+    }
+    const handleSubmitTicket = async (val:TypeTicketModel)=>{
+        
+            if (modalState.type === 'create') {
+                
+                if(isEdit){
+                    delete (val as Partial<TypeTicketModel>)._id;
+                    const api = apis.typeTicket.createTypeTicket()
+                    try {
+                        const res = await typeTicketAPI.HandleTypeTicket(api,{...val,idEvent:idEvent,idShowTime:modalState.showTimeSelected._id},'post')
+                        if(res && res.data && res.status === 200){
+                            val._id = res.data._id  
+                            setDataEventCreate(prev => {
+                                const updatedPerformances = [...prev.showTimes];
+                                const selectedPerformance = updatedPerformances[modalState.indexShowTimeSelected];
+            
+                                const updatedTypeTickets = [...selectedPerformance.typeTickets, val];
+            
+                                updatedPerformances[modalState.indexShowTimeSelected] = {
+                                    ...selectedPerformance,
+                                    typeTickets: updatedTypeTickets
+                                };
+                                return {
+                                    ...prev,
+                                    showTimes: updatedPerformances
+                                }
+                            })
+                            toast.success('Tạo loại vé thành công')
+                        }
+                    } catch (error:any) {
+                        const errorMessage = JSON.parse(error.message)
+                        console.log("Thêm loại vé không thành công", errorMessage)
+                        toast.error(errorMessage.message ?? 'Thêm loại loại vé không thành công')
+                    }
+                }
+                else
+                {
+                    setDataEventCreate(prev => {
+                        const updatedPerformances = [...prev.showTimes];
+                        const selectedPerformance = updatedPerformances[modalState.indexShowTimeSelected];
+    
+                        const updatedTypeTickets = [...selectedPerformance.typeTickets, val];
+    
+                        updatedPerformances[modalState.indexShowTimeSelected] = {
+                            ...selectedPerformance,
+                            typeTickets: updatedTypeTickets
+                        };
+                        return {
+                            ...prev,
+                            showTimes: updatedPerformances
+                        }
+                    })
+                    toast.success('Tạo loại vé thành công')
+                }
+            } else {
+                if(isEdit){
+                    const api = apis.typeTicket.updateTypeTicket()
+                    try {
+                        const res = await typeTicketAPI.HandleTypeTicket(api,{...val,idTypeTicket:val._id,idShowTime:modalState.showTimeSelected._id,idEvent:idEvent},'put')
+                        if(res && res.data && res.status === 200){
+                            toast.success('Cập nhập thành công')
+                            setDataEventCreate(prev => {
+                                const updatedPerformances = [...prev.showTimes];
+                                updatedPerformances[modalState.indexShowTimeSelected].typeTickets[modalState.indexTypeTicketSelected] = val
+                                return {
+                                    ...prev,
+                                    showTimes: updatedPerformances
+                                }
+                            })
+                        }
+                    } catch (error:any) {
+                        const errorMessage = JSON.parse(error.message)
+                         console.log("lỗi khi tạo chỉnh sửa", errorMessage)
+                         toast.error(errorMessage.message ?? 'Cập nhập loại vé không thành công')
+                        }
+                }
+               else{
+                    setDataEventCreate(prev => {
+                        const updatedPerformances = [...prev.showTimes];
+                        updatedPerformances[modalState.indexShowTimeSelected].typeTickets[modalState.indexTypeTicketSelected] = val
+                        return {
+                            ...prev,
+                            showTimes: updatedPerformances
+                        }
+                    })
+                    toast.success('Cập nhập vé thành công')
+
+               }
+            
+        }
+    }
+    const handleDelete = async ()=>{
+        if (deleteState.content === 'showTime') {
+            deletePerformance(deleteState.indexShowTimeSelected)
+            toast.success('Xóa suất diễn thành công !!!')
+
+        } else {
+          if(isEdit){
+            const api = apis.typeTicket.deleteTypeTicket()
+            try {
+                const res = await typeTicketAPI.HandleTypeTicket(api,{idEvent:idEvent,idTypeTicket:deleteState.typeTicketDelete._id,idShowTime:deleteState.showTimeDelete._id},'delete')
+                if(res && res.status === 200){
+                    toast.success('Xóa loại vé thành công !!!')
+                    handleDeleteTicket(deleteState.indexShowTimeSelected, deleteState.indexTypeTicketSelected)
+                }
+            } catch (error:any) {
+                const errorMessage = JSON.parse(error.message)
+                toast.error(errorMessage.message ?? 'Cập nhập xóa không thành công')
+                console.log("lỗi khi xóa loại vé", errorMessage)
+            }
+          }else{
+            handleDeleteTicket(deleteState.indexShowTimeSelected, deleteState.indexTypeTicketSelected)
+            toast.success('Xóa loại vé thành công !!!')
+          }
+
+        }
+        setIsAlertOpen(false)
     }
     return (
         <div className="flex flex-col items-center justify-center py-4"> {/* Center content vertically */}
@@ -314,7 +483,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                                 </button>
 
                                 {/* Title */}
-                                <span className="ml-2" style={{ color: colors.primary }}>{`Tạo suất diễn ${indexShowTime + 1}`}</span>
+                                <span className="ml-2" style={{ color: colors.primary }}>{`Suất diễn: ${DateTime.GetTime(performance.startDate)} - ${DateTime.GetTime(performance.endDate)} ${DateTime.GetDateNew1(performance.startDate,performance.endDate)}`}</span>
 
                                 {/* Delete Button */}
                                 <button
@@ -360,6 +529,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                                 <div className="flex-1">
                                     <label className="text-black dark:text-gray-400 text-sm font-semibold">Thời gian bắt đầu</label>
                                     <input
+                                        disabled
                                         type="datetime-local"
                                         value={DateTime.formatLocalDateTime(performance.startDate)}
                                         onChange={(e) => handleInputChange(indexShowTime, 'startTime', e.target.value)}
@@ -370,6 +540,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                                 <div className="flex-1">
                                     <label className="text-black dark:text-gray-400 text-sm font-semibold">Thời gian kết thúc</label>
                                     <input
+                                        disabled
                                         type="datetime-local"
                                         value={DateTime.formatLocalDateTime(performance.endDate)}
                                         onChange={(e) => handleInputChange(indexShowTime, 'endTime', e.target.value)}
@@ -381,6 +552,23 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                                     )}
                                 </div>
                             </section>
+                            <SpaceComponent height={12} />
+
+                            <AddButton
+                                text="Cập nhập suất diễn"
+                                onClick={() => {
+                                    setModalShowTimeState(prev => {
+                                        return {
+                                            ...prev,
+                                            indexShowTimeSelected:indexShowTime,
+                                            showTimeSelected:performance,
+                                            type:'update'
+                                        }
+                                    })
+                                    setModalShowTimeOpen(true)
+                                }}
+                                className="text-lg font-semibold "
+                            />
                             <SpaceComponent height={12} />
                             {errorMessage[indexShowTime] && <p className='text-red-600 text-center' >{errorMessage[indexShowTime]}</p>}
                             {/* Ticket Type Section */}
@@ -396,9 +584,11 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                                     />
                                 </div>
                                 {
-                                    (performance.typeTickets && performance.typeTickets.length) && performance.typeTickets.map((typeTicket, indexTypeTicket) => {
-                                        return renderTypeTicket(performance,typeTicket, indexTypeTicket, indexShowTime)
-                                    })
+                                   <div className="mt-4 overflow-y-auto" style={{ maxHeight: '400px' }}>
+                                        {performance.typeTickets.map((typeTicket, indexTypeTicket) => {
+                                            return renderTypeTicket(performance, typeTicket, indexTypeTicket, indexShowTime);
+                                        })}
+                                    </div>
                                 }
 
                             </div>
@@ -412,49 +602,21 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                 title='Thông báo'
                 onClose={() => setIsAlertOpen(false)}
                 onCancel={() => setIsAlertOpen(false)}
-                onConfirm={() => {
-                    if (deleteState.content === 'showTime') {
-                        deletePerformance(deleteState.indexShowTimeSelected)
-
-                    } else {
-                        handleDeleteTicket(deleteState.indexShowTimeSelected, deleteState.indexTypeTicketSelected)
-                    }
-                    setIsAlertOpen(false)
-                }}
+                onConfirm={() => handleDelete()}
+            />
+            <ShowTimeModal 
+            isOpen={isModalShowTimeOpen}
+            onClose={()=>setModalShowTimeOpen(false)}
+            onSubmit={(val)=>handSubmitShowTime(val)}
+            showTimeSeleted={modalShowTimeState.showTimeSelected}
+            type={modalShowTimeState.type}
             />
             <TicketModal
                 isOpen={isModalOpen}
                 onClose={() => setModalOpen(false)}
                 value={modalState.typeTicketSelected}
                 showTimeSelected={modalState.showTimeSelected}
-                onSubmit={(val) => {
-                    if (modalState.type === 'create') {
-                        setDataEventCreate(prev => {
-                            const updatedPerformances = [...prev.showTimes];
-                            const selectedPerformance = updatedPerformances[modalState.indexShowTimeSelected];
-
-                            const updatedTypeTickets = [...selectedPerformance.typeTickets, val];
-
-                            updatedPerformances[modalState.indexShowTimeSelected] = {
-                                ...selectedPerformance,
-                                typeTickets: updatedTypeTickets
-                            };
-                            return {
-                                ...prev,
-                                showTimes: updatedPerformances
-                            }
-                        })
-                    } else {
-                        setDataEventCreate(prev => {
-                            const updatedPerformances = [...prev.showTimes];
-                            updatedPerformances[modalState.indexShowTimeSelected].typeTickets[modalState.indexTypeTicketSelected] = val
-                            return {
-                                ...prev,
-                                showTimes: updatedPerformances
-                            }
-                        })
-                    }
-                }}
+                onSubmit={(val) => handleSubmitTicket(val)}
                 type={modalState.type}
             />
 

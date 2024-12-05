@@ -36,11 +36,12 @@ const EventPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const handleCallAPIGetEventsCreated = async ()=>{
-    const api = apis.organizer.getEventCreatedOrganizerByIdForOrganizer({idUser:authData.id,limit:'3',page:currentPage.toString(),filterStatus:activeTab})
+    const api = apis.organizer.getEventCreatedOrganizerByIdForOrganizer({idUser:authData.id,limit:'5',page:currentPage.toString(),filterStatus:activeTab})
     setIsLoadingGetEvents(true)
     try {
         const res:any = await organizerAPI.HandleOrganizer(api)
-        if(res && res.data && res.status === 200){
+        if(res && res.data && res.status === 200)
+        {
           setEventsCreated(res.data)
           setTotalPages(res.pagination.totalPages)
         }
@@ -61,7 +62,6 @@ const EventPage = () => {
 
   ]
   const dispatch = useDispatch()
-  console.log("auth", authData.id)
   const navigate = useNavigate();
   const cn = (...inputs: ClassValue[]) => {
     return twMerge(clsx(inputs))

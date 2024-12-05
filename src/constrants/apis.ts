@@ -74,7 +74,7 @@ export const apis = {
             getShowTimesEvent:({idEvent}:{idEvent:string})=>`/get-showTimes-byIdEvent?idEvent=${idEvent}`,
             getShowTimesEventForOrganizer:({idEvent}:{idEvent:string})=>`/get-showTimes-byIdEventForOrganizer?idEvent=${idEvent}`,
             createEvent:()=>`/create-event`,
-            getEventByIdForOrganizer:({idEvent}:{idEvent:string})=>`/get-event-byIdForOrganizer${idEvent}`
+            getEventByIdForOrganizer:({idEvent}:{idEvent:string})=>`/get-event-byIdForOrganizer?idEvent=${idEvent}`
             
     },
     category:{
@@ -123,6 +123,11 @@ export const apis = {
         replyCommentEvent:()=>`/replyComment-event`,
         getByIdEvent:({idEvent,idUser,idAuthor}:{idEvent:string,idUser:string,idAuthor:string})=>`/get-byIdEvent?idEvent=${idEvent}&idUser=${idUser}&idAuthor=${idAuthor}`,
         deleteComment:()=>`/delete-comment`
-    }   
+    },
+    typeTicket:{
+        createTypeTicket:()=>`/create-typeTicket`,
+        updateTypeTicket:()=>`/update-typeTicket`,
+        deleteTypeTicket:()=>`/delete-typeTicket`
+    }
 
 }

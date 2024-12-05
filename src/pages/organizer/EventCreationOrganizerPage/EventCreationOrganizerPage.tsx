@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import axios from 'axios';
 import EventCreationTimePage from './EventCreationTimePage';
@@ -94,6 +94,7 @@ interface Ward {
 export interface DataEventCreate {
   showTimes: ShowTimeModel[];
   event: {
+    _id:string,
     title: string;
     description: string;
     photoUrl: string;
@@ -387,9 +388,13 @@ const EventCreationOrganizerPage: React.FC = () => {
   const isStep1 = currentStep === '1';
   const isStep2 = currentStep === '2';
   const {authData }:{authData:AuthState} = useSelector((state: any) => state.auth);
+  const [searchParams] = useSearchParams(); 
+  const idEventParams = searchParams.get('idEvent')
+  const idShowTimeParams = searchParams.get('idShowTime')
   const initdataEventCreate = {
     idUser:authData.id,
     event:{
+      _id:'',
       addressDetails:{
         districts:{
           code:0,
@@ -703,7 +708,7 @@ const EventCreationOrganizerPage: React.FC = () => {
               </label>
               <section className="flex justify-center">
                 {/* Event Background Upload */}
-                <div className="bg-customGray2 border border-gray-500 rounded-lg p-4 flex flex-col items-center justify-center text-center w-full h-52 md:w-[900px] md:h-[400px] relative">
+                <div className="bg-customGray2 border border-gray-500 rounded-lg p-1 flex flex-col items-center justify-center text-center w-full h-52 md:w-[900px] md:h-[450px] relative">
                   <input
                     type="file"
                     accept="image/*"
@@ -714,7 +719,7 @@ const EventCreationOrganizerPage: React.FC = () => {
                     <img
                       src={dataEventCreate?.event?.photoUrl}
                       alt="Event Background Preview"
-                      className="h-full w-full object-cover rounded-lg"
+                      className="h-full w-full object-fill rounded-lg"
                     />
                   ) : (
                     <>
@@ -991,7 +996,7 @@ const EventCreationOrganizerPage: React.FC = () => {
         <EventCreationTimePage
           dataEventCreate={dataEventCreate}
           setDataEventCreate={setDataEventCreate}
-
+          idEvent={idEventParams ?? ''}
         />
       )}
       <LoadingModal visible={isLoading}/>

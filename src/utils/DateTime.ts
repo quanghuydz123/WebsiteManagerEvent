@@ -163,7 +163,8 @@ export class DateTime {
         const years = Math.floor(days / 365);
         return `${years} năm`;
     }
-    static formatLocalDateTime = (date:Date) => {
+    static formatLocalDateTime = (rawDate:Date) => {
+        const date = new Date(rawDate); // Convert to a Date object
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); 
         const day = String(date.getDate()).padStart(2, '0');
