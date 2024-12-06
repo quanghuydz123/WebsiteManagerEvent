@@ -627,15 +627,21 @@ const EditPage: React.FC = () => {
   const handleCallAPIUpdateEvent = async (position:number) =>{
     const api = apis.event.updateEvent()
     try {
+      setIsLoading(true)
       const res = await eventAPI.HandleEvent(api,{
         ...dataEvent.event,
         idEvent: dataEvent.event._id,
         position: position,
     },'put')
+    setIsLoading(false)
+
       if(res && res.status === 200){
         toast.success('Cập nhập thành công')
       }
+
     } catch (error:any) {
+      setIsLoading(false)
+
       const errorMessage = JSON.parse(error.message)
       console.log("lỗi tại EditPage",errorMessage)
       toast.error('Cập nhập thất bại')
@@ -648,6 +654,7 @@ const EditPage: React.FC = () => {
       toast.error('Hãy nhập đẩy đủ địa chỉ sự kiện !!!')
     }else{
       handleCallApiGetLatAndLong()
+
     }
 
   }
