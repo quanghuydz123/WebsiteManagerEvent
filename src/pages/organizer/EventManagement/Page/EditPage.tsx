@@ -454,9 +454,10 @@ const EditPage: React.FC = () => {
         setSelectedDistrict(res?.data?.addressDetails?.districts?.code)
 
       }
+      setIsLoading(false)
     } catch (error:any) {
-      // const errorMessage = JSON.parse(error.message)
-      // console.log("lỗi tại EventPage",errorMessage)
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại EventPage",errorMessage)
     }
   }
   const handleCallAPIShowTimeByIdEvent = async ()=>{
