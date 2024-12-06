@@ -60,12 +60,20 @@ import {
   Underline,
   Undo
 } from 'ckeditor5';
+import { initTypeTicket, TypeTicketModel } from "../../../models/TypeTicketModel";
+import { DateTime } from "../../../utils/DateTime";
+import { SpaceComponent } from "../../../components";
+import { ShowTimeModel } from "../../../models/ShowTimeModel";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  type:'create' | 'update',
+  onSubmit:(val:TypeTicketModel)=>void,
+  value:TypeTicketModel,
+  showTimeSelected:ShowTimeModel
 }
 
-const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,value,showTimeSelected}) => {
   const editorConfig: any = {
     toolbar: {
       items: [
@@ -326,55 +334,69 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     }
   };
   const [isFree, setIsFree] = useState(false);
-  const [price, setPrice] = useState("");
-  const [ticketName, setTicketName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [ticketNameError, setTicketNameError] = useState("");
-  const [quantityError, setQuantityError] = useState("");
-  const [dateError, setDateError] = useState("");
-
+  // const [price, setPrice] = useState("");
+  // const [ticketName, setTicketName] = useState("");
+  // const [quantity, setQuantity] = useState("");
+  // const [startDate, setStartDate] = useState("");
+  // const [endDate, setEndDate] = useState("");
+  // const [ticketNameError, setTicketNameError] = useState("");
+  // const [quantityError, setQuantityError] = useState("");
+  // const [dateError, setDateError] = useState("");
+  const [typeTicket,setTypeTicket] = useState<TypeTicketModel>(initTypeTicket)
+  const [errorMessage,setErrorMessage] = useState('')
+  useEffect(()=>{
+    if(type==='update'){
+      setTypeTicket(value)
+    }else{
+      setTypeTicket(initTypeTicket)
+    }
+  },[value,isOpen])
   // Kiểm tra tên vé có vượt quá 50 ký tự
-  const handleTicketNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setTicketName(value);
+  // const handleTicketNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setTicketName(value);
 
-    if (value.length > 50) {
-      setTicketNameError("Quá ký tự yêu cầu");
-    } else {
-      setTicketNameError("");
-    }
-  };
+  //   // if (value.length > 50) {
+  //   //   setTicketNameError("Quá ký tự yêu cầu");
+  //   // } else {
+  //   //   setTicketNameError("");
+  //   // }
+  // };
 
-  // Kiểm tra tổng số lượng vé là số
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuantity(value);
+  // // Kiểm tra tổng số lượng vé là số
+  // const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setQuantity(value);
 
-    if (isNaN(Number(value)) || Number(value) <= 0) {
-      setQuantityError("Số lượng vé phải là số lớn hơn 0");
-    } else {
-      setQuantityError("");
-    }
-  };
+  //   // if (isNaN(Number(value)) || Number(value) <= 0) {
+  //   //   setQuantityError("Số lượng vé phải là số lớn hơn 0");
+  //   // } else {
+  //   //   setQuantityError("");
+  //   // }
+  // };
 
-  // Kiểm tra thời gian kết thúc phải sau thời gian bắt đầu
-  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEndDate(value);
+  // // Kiểm tra thời gian kết thúc phải sau thời gian bắt đầu
+  // const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setEndDate(value);
 
-    if (startDate && new Date(value) <= new Date(startDate)) {
-      setDateError("Thời gian kết thúc phải sau thời gian bắt đầu");
-    } else {
-      setDateError("");
-    }
-  };
+  //   // if (startDate && new Date(value) <= new Date(startDate)) {
+  //   //   setDateError("Thời gian kết thúc phải sau thời gian bắt đầu");
+  //   // } else {
+  //   //   setDateError("");
+  //   // }
+  // };
 
   useEffect(() => {
     // Nếu checkbox "miễn phí" được chọn, giá vé phải là 0
     if (isFree) {
-      setPrice("0");
+      setTypeTicket(prev => {
+        return {
+          ...prev,
+          price:0,
+          type:'Free'
+        }
+      })
     }
   }, [isFree]);
 
@@ -383,16 +405,41 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const handleFreeChange = () => {
     setIsFree(!isFree);
   };
+ 
+  const handleSubmit = ()=>{
+    let error = ''
+    if(new Date(typeTicket.startSaleTime) > new Date(typeTicket.endSaleTime)){
+      error = 'Thời gian kết thúc bán phải lớn hơn thời gian bắt đầu bán !!!'
+    }else{
+      if(new Date(showTimeSelected.startDate) < new Date(typeTicket.endSaleTime)){
+        error = 'Thời gian kết thúc bán vé phải nhỏ hơn thời gian bắt đầu của suất diễn'
+      }
+    }
+    if(typeTicket.name === ''){
+      error = 'Hãy nhập tên vé !!!'
 
+    }
+    setErrorMessage(error)
+    if(error === ''){
+        setTypeTicket(initTypeTicket)
+        onSubmit(typeTicket)
+        onClose()
+    }
+   
+  }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       {/* Modal container with rounded corners */}
       <div className="bg-gray-800 text-white w-full max-w-7xl rounded-xl shadow-lg text-lg overflow-y-auto max-h-screen">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-600 sticky top-0 bg-gray-800 z-10 rounded-t-xl">
-          <h2 className="text-2xl font-semibold">Tạo loại vé mới</h2>
+          <h2 className="text-2xl font-semibold">{type==='create' ? 'Tạo loại vé mới' : 'Cập nhập loại vé'}</h2>
           <button
-            onClick={onClose}
+            onClick={()=>{
+              setTypeTicket(initTypeTicket)
+              setErrorMessage('')
+              onClose()
+            }}
             className="text-gray-400 hover:text-gray-200 text-2xl"
           >
             ✕
@@ -410,16 +457,23 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               type="text"
               placeholder="Tên vé"
               maxLength={50}
-              value={ticketName}
-              onChange={handleTicketNameChange}
+              value={typeTicket.name}
+              onChange={(e)=>{
+                setTypeTicket(prev => {
+                  return {
+                    ...prev,
+                    name:e.target.value
+                  }
+                })
+              }}
               className="w-full p-4 rounded-xl border border-gray-500 bg-white text-black focus:ring-2 focus:ring-green-500 text-lg"
             />
-            <div className="text-right text-sm text-gray-400">
+            {/* <div className="text-right text-sm text-gray-400">
               {ticketName.length} / 50
             </div>
             {ticketNameError && (
               <div className="text-sm text-red-500">{ticketNameError}</div>
-            )}
+            )} */}
           </div>
 
           {/* Giá vé */}
@@ -431,8 +485,15 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               <div className="flex items-center gap-4">
                 <input
                   type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  value={typeTicket.price}
+                  onChange={(e) => {
+                    setTypeTicket(prev => {
+                      return {
+                        ...prev,
+                        price:Number(e.target.value)
+                      }
+                    })
+                  }}
                   disabled={isFree}
                   className={`w-full p-4 rounded-xl border ${
                     isFree
@@ -460,13 +521,20 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               </label>
               <input
                 type="number"
-                value={quantity}
-                onChange={handleQuantityChange}
+                value={typeTicket.amount}
+                onChange={(e)=>{
+                  setTypeTicket(prev =>{
+                    return {
+                      ...prev,
+                      amount:Number(e.target.value)
+                    }
+                  })
+                }}
                 className="w-full p-4 rounded-xl border border-gray-500 bg-white text-black focus:ring-2 focus:ring-green-500 text-lg"
               />
-              {quantityError && (
+              {/* {quantityError && (
                 <div className="text-sm text-red-500">{quantityError}</div>
-              )}
+              )} */}
             </div>
           </div>
 
@@ -478,8 +546,15 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               </label>
               <input
                 type="datetime-local"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                value={DateTime.formatLocalDateTime(typeTicket.startSaleTime)}
+                onChange={(e) => {
+                  setTypeTicket(prev =>{
+                    return {
+                      ...prev,
+                      startSaleTime:new Date(e.target.value)
+                    }
+                  })
+                }}
                 className="w-full p-4 rounded-xl border border-gray-500 bg-white text-black focus:ring-2 focus:ring-green-500 text-lg"
               />
             </div>
@@ -489,13 +564,20 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               </label>
               <input
                 type="datetime-local"
-                value={endDate}
-                onChange={handleEndDateChange}
+                value={DateTime.formatLocalDateTime(typeTicket.endSaleTime)}
+                onChange={(e) => {
+                  setTypeTicket(prev =>{
+                    return {
+                      ...prev,
+                      endSaleTime:new Date(e.target.value)
+                    }
+                  })
+                }}
                 className="w-full p-4 rounded-xl border border-gray-500 bg-white text-black focus:ring-2 focus:ring-green-500 text-lg"
               />
-              {dateError && (
+              {/* {dateError && (
                 <div className="text-sm text-red-500">{dateError}</div>
-              )}
+              )} */}
             </div>
           </div>
 
@@ -505,19 +587,26 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             <CKEditor
                 editor={ClassicEditor}
                 config={editorConfig}
+                data={typeTicket.description}
                 onChange={(event, editor) => {
-                  console.log(editor.getData())
+                  setTypeTicket(prev =>{
+                    return {
+                      ...prev,
+                      description:editor.getData()
+                    }
+                  })
                 }}
 
               />
             {/* <div className="text-right text-sm text-gray-400">0 / 1000</div> */}
           </div>
         </div>
-
+        {errorMessage && <p className="text-center text-red-600">{errorMessage}</p>}
+        <SpaceComponent height={8}/>
         {/* Footer */}
         <div className="p-6 border-t border-gray-600 rounded-b-xl">
-          <button className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-xl">
-            Lưu
+          <button onClick={()=>handleSubmit()} className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-xl">
+            {type==='create' ? 'Thêm' : 'Cập nhập'}
           </button>
         </div>
       </div>

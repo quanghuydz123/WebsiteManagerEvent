@@ -9,6 +9,8 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import { persistor, store } from './reduxs/store';
 import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -17,6 +19,7 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <BrowserRouter>
         <App />
+        <ToastContainer position="top-center" autoClose={2000}/>
       </BrowserRouter>
     </PersistGate>
   </Provider>

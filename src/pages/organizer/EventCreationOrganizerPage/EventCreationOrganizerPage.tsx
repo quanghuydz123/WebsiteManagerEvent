@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import axios from 'axios';
 import EventCreationTimePage from './EventCreationTimePage';
@@ -70,6 +70,13 @@ import { CategoryModel } from '../../../models/CategoryModel';
 import { apis } from '../../../constrants/apis';
 import categoryAPI from '../../../apis/categoryAPI';
 import { getBase64 } from '../../../utils/utils';
+import { AuthState } from '../../../reduxs/reducers/authReducers';
+import { useSelector } from 'react-redux';
+import { TypeTicketModel } from '../../../models/TypeTicketModel';
+import { ShowTimeModel } from '../../../models/ShowTimeModel';
+import { toast } from 'react-toastify';
+import eventAPI from '../../../apis/eventAPI';
+import LoadingModal from '../../../modals/LoadingModal';
 interface Province {
   code: number;
   name: string;
@@ -84,20 +91,10 @@ interface Ward {
   code: number;
   name: string;
 }
-interface DataEventCreate {
-  showTimes: {
-    startDate: Date;
-    endDate: Date;
-    typeTickets: {
-      name: string;
-      description: string;
-      price: string;
-      amount: number;
-      startSaleTime: Date;
-      endSaleTime: Date;
-    }[];
-  }[];
+export interface DataEventCreate {
+  showTimes: ShowTimeModel[];
   event: {
+    _id:string,
     title: string;
     description: string;
     photoUrl: string;
@@ -390,13 +387,48 @@ const EventCreationOrganizerPage: React.FC = () => {
   const currentStep = new URLSearchParams(location.search).get('step') || '1';
   const isStep1 = currentStep === '1';
   const isStep2 = currentStep === '2';
-  const [dateEventCreate,setDataEventCreate] = useState<DataEventCreate>()
+  const {authData }:{authData:AuthState} = useSelector((state: any) => state.auth);
+  const [searchParams] = useSearchParams(); 
+  const idEventParams = searchParams.get('idEvent')
+  const idShowTimeParams = searchParams.get('idShowTime')
+  const initdataEventCreate = {
+    idUser:authData.id,
+    event:{
+      _id:'',
+      addressDetails:{
+        districts:{
+          code:0,
+          name:''
+        },
+        province:{
+          code:0,
+          name:''
+        },
+        ward:{
+          code:0,
+          name:''
+        },
+        houseNumberAndStreet:''
+      },
+      category:'',
+      description:"<p><strong>Giới thiệu sự kiện:</strong></p><p>[Tóm tắt ngắn gọn về sự kiện: Nội dung chính của sự kiện, điểm đặc sắc nhất và lý do khiến người tham gia không nên bỏ lỡ]</p><p><strong>Chi tiết sự kiện:</strong></p><ul><li><strong>Chương trình chính:</strong> [Liệt kê những hoạt động nổi bật trong sự kiện: các phần trình diễn, khách mời đặc biệt, lịch trình các tiết mục cụ thể nếu có.]</li><li><strong>Khách mời:</strong> [Thông tin về các khách mời đặc biệt, nghệ sĩ, diễn giả sẽ tham gia sự kiện. Có thể bao gồm phần mô tả ngắn gọn về họ và những gì họ sẽ mang lại cho sự kiện.]</li><li><strong>Trải nghiệm đặc biệt:</strong> [Nếu có các hoạt động đặc biệt khác như workshop, khu trải nghiệm, photo booth, khu vực check-in hay các phần quà/ưu đãi dành riêng cho người tham dự.]</li></ul><p><strong>Điều khoản và điều kiện:</strong></p><p>[TnC] sự kiện</p><p>Lưu ý về điều khoản trẻ em</p><p>Lưu ý về điều khoản VAT</p>",
+      Location:'',
+      photoUrl:'',
+      position:{
+        lat:0,
+        lng:0
+      },
+      title:''
+    },
+    showTimes:[]
+  } 
+  const [dataEventCreate, setDataEventCreate] = useState<DataEventCreate>(initdataEventCreate)
   const [eventName, setEventName] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [eventType, setEventType] = useState('');
   const [eventDescription, setEventDescription] = useState('');
 
-  const [eventBackground, setEventBackground] = useState<string>('');
+  // const [eventBackground, setEventBackground] = useState<string>('');
 
 
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -407,9 +439,9 @@ const EventCreationOrganizerPage: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState('');
 
   const [inputValue, setInputValue] = useState('');
-
+  const [isLoading,setIsLoading] = useState(false)
   // Tiến hành chuyển sang Bước 2 khi nhấn nút "Tiếp tục"
-  const [categories,setCategories] = useState<CategoryModel[]>([])
+  const [categories, setCategories] = useState<CategoryModel[]>([])
   const handleNextStep = () => {
     if (isStep1) {
       navigate('/organizer/CreateEvent?step=2'); // Go to Step 2
@@ -467,28 +499,55 @@ const EventCreationOrganizerPage: React.FC = () => {
   const handleBackgroundChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      if (!file.type.startsWith("image/")) {
+        console.error("File is not an image");
+        return;
+      }
       validateImageDimensions(file, 1280, 720, async (isValid) => {
         if (isValid) {
-          const data:any = await getBase64(file)
-          setEventBackground(data);
+          try {
+            const data: any = await getBase64(file)
+          setDataEventCreate((prev) => {
+            return {
+              ...prev,
+              event: {
+                ...prev.event,
+                photoUrl: data,
+              },
+            }
+          })
+          } catch (error) {
+            console.error("Error converting file to base64", error);
+
+          }
+          // setEventBackground(data);
+          
 
         } else {
-          setEventBackground('');
+          setDataEventCreate((prev) => {
+            return {
+              ...prev,
+              event: {
+                ...prev.event,
+                photoUrl: '',
+              },
+            }
+          })
           alert('Ảnh nền phải có kích thước 1280x720 pixel.');
         }
       });
     }
   };
-  const handleCallAPIGetCategories = async ()=>{
+  const handleCallAPIGetCategories = async () => {
     const api = apis.category.getAll()
     try {
       const res = await categoryAPI.HandleCategory(api)
-      if(res && res.data && res.status === 200){
+      if (res && res.data && res.status === 200) {
         setCategories(res.data)
       }
-    } catch (error:any) {
+    } catch (error: any) {
       const errorMessage = JSON.parse(error.message)
-      console.log("lỗi gi get category",errorMessage.statusCode)
+      console.log("lỗi gi get category", errorMessage.statusCode)
     }
   }
   const validateImageDimensions = (
@@ -510,9 +569,88 @@ const EventCreationOrganizerPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
   };
+  const handleOnchageValue = (key:string, value:string | Date | string[] | number) => {
+    const item:any = {...dataEventCreate}
+    item[`${key}`] = value
+    setDataEventCreate(item)
+  }
+  // useEffect(()=>{//call api get lat and long
+  //   const api = `https://geocode.search.hereapi.com/v1/geocode?q=${eventData.Address}&limit=20&lang=vi-VI&in=countryCode:VNM&apiKey=${process.env.API_KEY_REVGEOCODE}`
+  //   handleCallApiGetLatAndLong(api)
+  //   },[eventData.Address])
+    
+    const handleCallApiGetLatAndLong = async ()=>{
+      const api = `https://geocode.search.hereapi.com/v1/geocode?q=${[
+        dataEventCreate?.event?.addressDetails?.houseNumberAndStreet,
+        dataEventCreate?.event?.addressDetails?.ward?.name,
+        dataEventCreate?.event?.addressDetails?.districts?.name,
+        dataEventCreate?.event?.addressDetails?.province?.name
+    ].filter(Boolean).join(', ')}&limit=20&lang=vi-VI&in=countryCode:VNM&apiKey=${process.env.REACT_APP_API_KEY_REVGEOCODE}`
+      try {
+        const res = await axios(api)
+        if(res && res.data.items.length > 0 && res.status === 200){
+          const address = res.data.items[0].address
+          if(address.street && address.district && address.city){
+            // setDataEventCreate(prev => {
+            //   return {
+            //     ...prev,
+            //     event:{
+            //       ...prev.event,
+            //       position:res.data.items[0].position
+            //     }
+            //   }
+            // })
+            handleCallAPICreateEvent(res.data.items[0].position)
+          }else{
+            // ToastMessaging.Error({message:'Hãy nhập đầy đủ thông tin địa chỉ sự kiện (tên đường,xã,huyện,tỉnh,....)'})
+            toast.error('Hãy nhập đầy đủ thông tin địa chỉ sự kiện (tên đường,xã,huyện,tỉnh,....')
 
+            // handleOnchageValue('Address','') 
+          }
+        }else{
+          toast.error('vị trí nhập không hợp lệ vui lòng nhập lại')
+
+          // console.log("vị trí chọn không hợp lệ")
+          // ToastMessaging.Error({message:'vị trí nhập không hợp lệ vui lòng nhập lại'})
+          // handleOnchageValue('Address','') 
+        }
+      } catch (error:any) {
+        console.log(error)
+      }
+    }
+  const clickCreateEvent = async ()=>{
+    if(!dataEventCreate.event.title || !dataEventCreate.event.Location || !dataEventCreate.event.category ||!dataEventCreate.event.photoUrl){
+      toast.error('Hãy nhập đầy đủ thông tin !!!')
+    }else if(dataEventCreate.showTimes.length === 0){
+      toast.error('Bạn chưa tạo suất diễn nào cho sự kiện này !!!')
+    }else if(!dataEventCreate.event.addressDetails.districts.name || !dataEventCreate.event.addressDetails.province.name || !dataEventCreate.event.addressDetails.ward.name){
+      toast.error('Hãy nhập đẩy đủ địa chỉ sự kiện !!!')
+    }else{
+      handleCallApiGetLatAndLong()
+    }
+
+  }
+  // useEffect(()=>{
+  //   handleCallAPICreateEvent()
+  // },[dataEventCreate.event.position.lat])
+  const handleCallAPICreateEvent = async (position:number)=>{
+    const api = apis.event.createEvent()
+    try {
+      setIsLoading(true)
+      const res = await eventAPI.HandleEvent(api,{idUser:dataEventCreate.idUser,showTimes:dataEventCreate.showTimes,event:{...dataEventCreate.event,position:position}},'post')
+      if(res && res.status === 200 && res.data){
+        setDataEventCreate(initdataEventCreate)
+        toast.success('Tạo thành công')
+      }
+      setIsLoading(false)
+    } catch (error:any) {
+      setIsLoading(false)
+      toast.error('Lỗi rồi')
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi khi tạo sự kiện", errorMessage)
+    }
+  }
   return (
 
     <div className="min-h-screen bg-custom-gradient text-white">
@@ -547,9 +685,9 @@ const EventCreationOrganizerPage: React.FC = () => {
         </div>
         {/* Action Buttons */}
         <div className="flex space-x-2 md:space-x-4 mt-2 md:mt-0">
-          <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md text-xl">
-            Lưu
-          </button>
+         {isStep2 &&  <button className="bg-gray-700 text-white px-2 md:px-4 py-2 rounded-md text-xl" onClick={()=>clickCreateEvent()}>
+            Tạo
+          </button>}
           <button onClick={handleNextStep}
             className={`bg-green-600 text-white px-2 md:px-4 py-2 rounded-md text-xl ${isStep2 ? 'cursor-not-allowed opacity-50' : ''}`}
             disabled={isStep2} >
@@ -570,18 +708,18 @@ const EventCreationOrganizerPage: React.FC = () => {
               </label>
               <section className="flex justify-center">
                 {/* Event Background Upload */}
-                <div className="bg-customGray2 border border-gray-500 rounded-lg p-4 flex flex-col items-center justify-center text-center w-full h-52 md:w-[900px] md:h-[400px] relative">
+                <div className="bg-customGray2 border border-gray-500 rounded-lg p-1 flex flex-col items-center justify-center text-center w-full h-52 md:w-[900px] md:h-[450px] relative">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleBackgroundChange}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                   />
-                  {eventBackground ? (
+                  {dataEventCreate?.event?.photoUrl ? (
                     <img
-                      src={eventBackground}
+                      src={dataEventCreate?.event?.photoUrl}
                       alt="Event Background Preview"
-                      className="h-full w-full object-cover rounded-lg"
+                      className="h-full w-full object-fill rounded-lg"
                     />
                   ) : (
                     <>
@@ -600,8 +738,17 @@ const EventCreationOrganizerPage: React.FC = () => {
               </label>
               <input
                 type="text"
-                value={eventName}
-                onChange={(e) => setEventName(e.target.value)}
+                value={dataEventCreate?.event.title}
+                onChange={(e) =>{
+                  setDataEventCreate((prev) => {
+                    return {
+                      ...prev,
+                      event: {
+                        ...prev.event,
+                        title: e.target.value, // Cập nhật giá trị title
+                      },
+                    }
+                  })}}
                 className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
                 placeholder="Tên sự kiện"
               />
@@ -620,7 +767,18 @@ const EventCreationOrganizerPage: React.FC = () => {
                   type="text"
                   className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
                   placeholder="Tên địa điểm"
-                  maxLength={80}
+                  maxLength={100}
+                  value={dataEventCreate.event.Location}
+                  onChange={(e) =>{
+                    setDataEventCreate((prev) => {
+                      return {
+                        ...prev,
+                        event: {
+                          ...prev.event,
+                          Location: e.target.value,
+                        },
+                      }
+                    })}}
                 />
               </div>
 
@@ -628,10 +786,33 @@ const EventCreationOrganizerPage: React.FC = () => {
                 <div>
                   <label className="block mb-1">Tỉnh/Thành</label>
                   <select
-                    value={selectedProvince}
+                    value={selectedProvince}  
                     onChange={(e) => {
                       setSelectedProvince(e.target.value);
                       setSelectedDistrict('');
+                      setDataEventCreate((prev) => {
+                        return {
+                          ...prev,
+                          event: {
+                            ...prev.event,
+                            addressDetails: {
+                              ...prev.event.addressDetails,
+                              province:{
+                                code:Number(e.target.value),
+                                name:provinces.filter((province)=>province.code===Number(e.target.value))[0].name
+                              },
+                              districts:{
+                                code:0,
+                                name:''
+                              },
+                              ward:{
+                                code:0,
+                                name:''
+                              }
+                            }
+                          },
+                        }
+                      })
                     }}
                     className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
                   >
@@ -648,7 +829,28 @@ const EventCreationOrganizerPage: React.FC = () => {
                   <label className="block mb-1">Quận/Huyện</label>
                   <select
                     value={selectedDistrict}
-                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                    onChange={(e) => {
+                      setSelectedDistrict(e.target.value)
+                      setDataEventCreate((prev) => {
+                        return {
+                          ...prev,
+                          event: {
+                            ...prev.event,
+                            addressDetails: {
+                              ...prev.event.addressDetails,
+                              districts:{
+                                code:Number(e.target.value),
+                                name:districts.filter((district)=>district.code===Number(e.target.value))[0].name
+                              },
+                              ward:{
+                                code:0,
+                                name:''
+                              }
+                            }
+                          },
+                        }
+                      })
+                    }}
                     disabled={!selectedProvince}
                     className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black disabled:bg-gray-600"
                   >
@@ -667,6 +869,24 @@ const EventCreationOrganizerPage: React.FC = () => {
                   <label className="block mb-1">Phường/Xã</label>
                   <select
                     disabled={!selectedDistrict}
+                    value={dataEventCreate.event.addressDetails.ward.code}
+                    onChange={(e)=>{
+                      setDataEventCreate((prev) => {
+                        return {
+                          ...prev,
+                          event: {
+                            ...prev.event,
+                            addressDetails: {
+                              ...prev.event.addressDetails,
+                              ward:{
+                                code:Number(e.target.value),
+                                name:wards.filter((ward)=>ward.code===Number(e.target.value))[0].name
+                              }
+                            }
+                          },
+                        }
+                      })
+                    }}
                     className="w-full p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black disabled:bg-gray-600"
                   >
                     <option value="">Chọn Phường/Xã</option>
@@ -682,8 +902,21 @@ const EventCreationOrganizerPage: React.FC = () => {
                   <label className="block mb-1">* Số nhà, đường</label>
                   <input
                     type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    value={dataEventCreate.event.addressDetails.houseNumberAndStreet}
+                    onChange={(e) =>{
+                      setDataEventCreate((prev) => {
+                        return {
+                          ...prev,
+                          event: {
+                            ...prev.event,
+                            addressDetails: {
+                              ...prev.event.addressDetails,
+                              houseNumberAndStreet:e.target.value,
+                            }
+                          },
+                        }
+                      })
+                    }}
                     className="w-full p-2 md:p-3 bg-white border border-gray-500 rounded-lg text-black"
                     placeholder="Số nhà, đường"
                     maxLength={90}
@@ -704,12 +937,21 @@ const EventCreationOrganizerPage: React.FC = () => {
                 <span className="text-red-500">*</span> Thể loại sự kiện
               </label>
               <select
-                value={eventType}
-                onChange={(e) => setEventType(e.target.value)}
+                value={dataEventCreate.event.category}
+                onChange={(e) =>{
+                  setDataEventCreate((prev) => {
+                    return {
+                      ...prev,
+                      event: {
+                        ...prev.event,
+                        category: e.target.value,
+                      },
+                    }
+                  })}}
                 className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
               >
                 <option value="">Vui lòng chọn</option>
-                {categories.map((category)=>{
+                {categories.map((category) => {
                   return <option value={`${category._id}`}>{category.name}</option>
                 })}
               </select>
@@ -723,16 +965,22 @@ const EventCreationOrganizerPage: React.FC = () => {
               <CKEditor
                 editor={ClassicEditor}
                 config={editorConfig}
-                data={"<p><strong>Giới thiệu sự kiện:</strong></p><p>[Tóm tắt ngắn gọn về sự kiện: Nội dung chính của sự kiện, điểm đặc sắc nhất và lý do khiến người tham gia không nên bỏ lỡ]</p><p><strong>Chi tiết sự kiện:</strong></p><ul><li><strong>Chương trình chính:</strong> [Liệt kê những hoạt động nổi bật trong sự kiện: các phần trình diễn, khách mời đặc biệt, lịch trình các tiết mục cụ thể nếu có.]</li><li><strong>Khách mời:</strong> [Thông tin về các khách mời đặc biệt, nghệ sĩ, diễn giả sẽ tham gia sự kiện. Có thể bao gồm phần mô tả ngắn gọn về họ và những gì họ sẽ mang lại cho sự kiện.]</li><li><strong>Trải nghiệm đặc biệt:</strong> [Nếu có các hoạt động đặc biệt khác như workshop, khu trải nghiệm, photo booth, khu vực check-in hay các phần quà/ưu đãi dành riêng cho người tham dự.]</li></ul><p><strong>Điều khoản và điều kiện:</strong></p><p>[TnC] sự kiện</p><p>Lưu ý về điều khoản trẻ em</p><p>Lưu ý về điều khoản VAT</p>"}
+                data={dataEventCreate.event.description}
                 onChange={(event, editor) => {
-                  console.log(editor.getData())
-                }}
-
+                  setDataEventCreate((prev) => {
+                    return {
+                      ...prev,
+                      event: {
+                        ...prev.event,
+                        description: editor.getData(),
+                      },
+                    }
+                  })}}
               />
             </div>
 
             {/* Submit Button */}
-              {/* <div className="text-right">
+            {/* <div className="text-right">
                 <button
                   type="submit"
                 className="bg-green-600 px-4 md:px-6 py-3 rounded-md font-semibold hover:bg-green-700"
@@ -746,11 +994,12 @@ const EventCreationOrganizerPage: React.FC = () => {
       {/* Step 2: Time & Ticket Type */}
       {isStep2 && (
         <EventCreationTimePage
-          eventType={eventType}
-          setEventType={setEventType}
-          handleSubmit={handleSubmit}
+          dataEventCreate={dataEventCreate}
+          setDataEventCreate={setDataEventCreate}
+          idEvent={idEventParams ?? ''}
         />
       )}
+      <LoadingModal visible={isLoading}/>
     </div>
 
   );
