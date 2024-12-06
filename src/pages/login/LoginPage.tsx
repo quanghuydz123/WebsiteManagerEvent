@@ -282,15 +282,15 @@ export default function LoginPage(props: any) {
                                         Đăng nhập
                                     </Button>
                                 </Box>
-                                <Divider>or</Divider>
-                                <Button
+                                {/* <Divider>or</Divider> */}
+                                {/* <Button
                                     fullWidth
                                     variant="outlined"
                                     onClick={() => loginGoogle()}
                                     startIcon={<GoogleIcon />}
                                 >
                                     Đăng nhập bằng google
-                                </Button>
+                                </Button> */}
                             </Card>
                             <LoadingModal visible={isLoading} />
                         </SignInContainer>

@@ -639,6 +639,7 @@ const EventCreationOrganizerPage: React.FC = () => {
     try {
       setIsLoading(true)
       const res = await eventAPI.HandleEvent(api,{idUser:dataEventCreate.idUser,showTimes:dataEventCreate.showTimes,event:{...dataEventCreate.event,position:position}},'post')
+      console.log(res)
       if(res && res.status === 200 && res.data){
         setDataEventCreate(initdataEventCreate)
         toast.success('Tạo thành công')
@@ -997,6 +998,7 @@ const EventCreationOrganizerPage: React.FC = () => {
           dataEventCreate={dataEventCreate}
           setDataEventCreate={setDataEventCreate}
           idEvent={idEventParams ?? ''}
+          setIsLoading={setIsLoading}
         />
       )}
       <LoadingModal visible={isLoading}/>
