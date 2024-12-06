@@ -998,6 +998,7 @@ const EventCreationOrganizerPage: React.FC = () => {
           dataEventCreate={dataEventCreate}
           setDataEventCreate={setDataEventCreate}
           idEvent={idEventParams ?? ''}
+          setIsLoading={setIsLoading}
         />
       )}
       <LoadingModal visible={isLoading}/>

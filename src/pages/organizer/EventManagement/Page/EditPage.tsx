@@ -74,6 +74,7 @@ import { AuthState } from '../../../../reduxs/reducers/authReducers';
 import { useSelector } from 'react-redux';
 import { getBase64 } from '../../../../utils/utils';
 import { toast } from 'react-toastify';
+import LoadingModal from '../../../../modals/LoadingModal';
 
 interface Province {
   code: number;
@@ -364,7 +365,7 @@ const EditPage: React.FC = () => {
   const [eventDescription, setEventDescription] = useState('');
   const [eventBackground, setEventBackground] = useState<File | null>(null);
   const {authData}:{authData:AuthState} = useSelector((state: any) => state.auth);
-
+  const [isLoading,setIsLoading] = useState<boolean>(false)
 
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
@@ -439,6 +440,7 @@ const EditPage: React.FC = () => {
   
   const handleCallAPIGetEventById = async ()=>{
     const api = apis.event.getEventByIdForOrganizer({idEvent:idEventParams ?? ''})
+    setIsLoading(true)
     try {
       const res:any = await eventAPI.HandleEvent(api)
       if(res && res.data && res.status === 200){
@@ -450,6 +452,7 @@ const EditPage: React.FC = () => {
         })
         setSelectedProvince(res.data.addressDetails.province.code)
         setSelectedDistrict(res.data.addressDetails.districts.code)
+        setIsLoading(false)
 
       }
     } catch (error:any) {
@@ -988,6 +991,7 @@ const EditPage: React.FC = () => {
           </form>
         </div>
       )}
+      <LoadingModal visible={isLoading}/>
       {/* Step 2: Time & Ticket Type */}
       {isStep2 && (
         <EventCreationTimePage
@@ -995,6 +999,7 @@ const EditPage: React.FC = () => {
           setDataEventCreate={setDataEvent}
           isEdit={true}
           idEvent={idEventParams ?? ''}
+          setIsLoading={setIsLoading}
         />
       )}
     </div>

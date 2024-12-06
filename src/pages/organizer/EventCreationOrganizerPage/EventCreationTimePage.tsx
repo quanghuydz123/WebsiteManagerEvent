@@ -23,9 +23,10 @@ interface EventCreationTimePageProps {
     dataEventCreate: DataEventCreate,
     setDataEventCreate: React.Dispatch<React.SetStateAction<DataEventCreate>>;
     isEdit?:boolean,
-    idEvent:string
+    idEvent:string,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEventCreate, setDataEventCreate,isEdit,idEvent}) => {
+const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEventCreate, setDataEventCreate,isEdit,idEvent,setIsLoading}) => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [isModalShowTimeOpen, setModalShowTimeOpen] = useState(false);
 
@@ -313,6 +314,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                 delete (showTime as Partial<ShowTimeModel>)._id;
                 const api = apis.showTime.createShowTime()
                 try {
+                    setIsLoading(true)
                     const res = await showTimeAPI.HandleShowTime(api,{startDate:showTime.startDate,endDate:showTime.endDate,idEvent:idEvent},'post')
                     if(res && res.data && res.status===200){
                         showTime._id = res.data._id
@@ -326,8 +328,11 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                             }
                         })
                         toast.success('Thêm suất diễn thành công')
+                        setIsLoading(false)
+
                     }
                 } catch (error:any) {
+                    setIsLoading(false)
                     const errorMessage = JSON.parse(error.message)
                     console.log("Thêm suất diễn không thành công", errorMessage)
                     toast.error(errorMessage.message ?? 'Thêm suất diễn không thành công')
@@ -349,6 +354,8 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
         if(isEdit){
             const api = apis.showTime.updateShowTime()
             try {
+                setIsLoading(true)
+
                 const res = await showTimeAPI.HandleShowTime(api,{...showTime,idShowTime:showTime._id,idEvent:idEvent},'put')
                 if(res && res.status === 200 && res.data){
                     setDataEventCreate(prev => {
@@ -361,7 +368,11 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                     })
                     toast.success('Cập nhập suất diễn thành công')
                 }
+                setIsLoading(false)
+
             } catch (error:any) {
+                setIsLoading(false)
+
                 const errorMessage = JSON.parse(error.message)
                 console.log("Cập nhập suất diễn không thành công", errorMessage)
                 toast.error(errorMessage.message ?? 'Cập nhập suất diễn không thành công')
@@ -387,6 +398,8 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                     delete (val as Partial<TypeTicketModel>)._id;
                     const api = apis.typeTicket.createTypeTicket()
                     try {
+                        setIsLoading(true)
+
                         const res = await typeTicketAPI.HandleTypeTicket(api,{...val,idEvent:idEvent,idShowTime:modalState.showTimeSelected._id},'post')
                         if(res && res.data && res.status === 200){
                             val._id = res.data._id  
@@ -406,8 +419,12 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                                 }
                             })
                             toast.success('Tạo loại vé thành công')
+                            setIsLoading(false)
+
                         }
                     } catch (error:any) {
+                        setIsLoading(false)
+
                         const errorMessage = JSON.parse(error.message)
                         console.log("Thêm loại vé không thành công", errorMessage)
                         toast.error(errorMessage.message ?? 'Thêm loại loại vé không thành công')
@@ -436,6 +453,8 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                 if(isEdit){
                     const api = apis.typeTicket.updateTypeTicket()
                     try {
+                        setIsLoading(true)
+
                         const res = await typeTicketAPI.HandleTypeTicket(api,{...val,idTypeTicket:val._id,idShowTime:modalState.showTimeSelected._id,idEvent:idEvent},'put')
                         if(res && res.data && res.status === 200){
                             toast.success('Cập nhập thành công')
@@ -448,7 +467,11 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                                 }
                             })
                         }
+                        setIsLoading(false)
+  
                     } catch (error:any) {
+                        setIsLoading(false)
+
                         const errorMessage = JSON.parse(error.message)
                          console.log("lỗi khi tạo chỉnh sửa", errorMessage)
                          toast.error(errorMessage.message ?? 'Cập nhập loại vé không thành công')
@@ -474,12 +497,17 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
            if(isEdit){
                 const api = apis.showTime.deleteShowTime()
                 try {
+                    setIsLoading(true)
                     const res = await showTimeAPI.HandleShowTime(api,{idShowTime:deleteState.showTimeDelete._id,idEvent:idEvent},'delete')
                     if(res && res.status === 200){
                         deletePerformance(deleteState.indexShowTimeSelected)
                         toast.success('Xóa suất diễn thành công !!!')
                     }
+                    setIsLoading(false)
+
                 } catch (error:any) {
+                    setIsLoading(false)
+
                     const errorMessage = JSON.parse(error.message)
                     toast.error(errorMessage.message ?? 'Xóa suất diễn không thành công')
                     console.log("Lỗi khi xóa suất diễn", errorMessage)
@@ -493,12 +521,18 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
           if(isEdit){
             const api = apis.typeTicket.deleteTypeTicket()
             try {
+                setIsLoading(true)
+
                 const res = await typeTicketAPI.HandleTypeTicket(api,{idEvent:idEvent,idTypeTicket:deleteState.typeTicketDelete._id,idShowTime:deleteState.showTimeDelete._id},'delete')
                 if(res && res.status === 200){
                     toast.success('Xóa loại vé thành công !!!')
                     handleDeleteTicket(deleteState.indexShowTimeSelected, deleteState.indexTypeTicketSelected)
                 }
+                setIsLoading(false)
+
             } catch (error:any) {
+                setIsLoading(false)
+
                 const errorMessage = JSON.parse(error.message)
                 toast.error(errorMessage.message ?? ' xóa không thành công')
                 console.log("lỗi khi xóa loại vé", errorMessage)
