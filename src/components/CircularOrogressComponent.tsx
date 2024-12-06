@@ -37,7 +37,7 @@ const CircularOrogressComponent = ({
                     cx={center}
                     cy={center}
                     r={radius}
-                    className="stroke-gray-700"
+                    className="stroke-gray-600"
                     strokeWidth={strokeWidth}
                     fill="none"
                 />

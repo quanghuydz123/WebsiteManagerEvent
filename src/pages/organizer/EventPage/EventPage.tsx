@@ -12,6 +12,7 @@ import { EventModelNew } from '../../../models/EventModelNew';
 import { apis } from '../../../constrants/apis';
 import organizerAPI from '../../../apis/organizerAPI';
 import { constantState } from '../../../reduxs/reducers/constantReducers';
+import LoadingModal from '../../../modals/LoadingModal';
 
 // Dữ liệu giả lập cho các sự kiện
 // const cartItems = [
@@ -138,6 +139,7 @@ const EventPage = () => {
         totalPages={totalPages}
         onPageChange={handlePageChange}  />
         <SpaceComponent height={30}/>
+        <LoadingModal visible={isLoadingGetEvents}/>
     </div>
   );
 };
