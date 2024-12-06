@@ -587,7 +587,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                     >
                         <div>
                             {/* Time Event Section */}
-                            <label className="font-semibold text-black">
+                            <label className="font-semibold text-green-500">
                                 <span className="text-red-500">*</span> Thời gian sự kiện
                             </label>
                             <section className="flex flex-row gap-4">
@@ -639,7 +639,7 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({ dataEvent
                             {/* Ticket Type Section */}
                             <div className="flex flex-col mt-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="font-semibold text-black">
+                                    <label className="font-semibold text-green-500">
                                         <span className="text-red-500">*</span> Loại vé
                                     </label>
                                     <AddButton
