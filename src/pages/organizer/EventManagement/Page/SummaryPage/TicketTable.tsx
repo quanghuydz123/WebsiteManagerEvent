@@ -51,7 +51,7 @@ const TicketTable = (props:Props) => {
               <td className="px-4 py-3 font-medium text-[19px]">{item?.typeTicket?.name ?? ''}</td>
               <td className="px-4 py-3 font-medium flex items-center text-[19px]">
                 {/* <FaDollarSign className="mr-2 text-green-500 " /> */}
-                <span>{convertMoney(item?.typeTicket?.price ?? 0)} đ</span>
+                <span>{convertMoney(item?.typeTicket?.price ?? 0)}</span>
             </td>
 
               <td className="px-4 py-3 font-medium text-[19px]">

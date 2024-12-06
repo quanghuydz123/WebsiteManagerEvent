@@ -448,8 +448,8 @@ const EditPage: React.FC = () => {
             event:res.data
           }
         })
-        setSelectedProvince(res.data.addressDetails.province.code)
-        setSelectedDistrict(res.data.addressDetails.districts.code)
+        setSelectedProvince(res?.data?.addressDetails?.province?.code)
+        setSelectedDistrict(res?.data?.addressDetails?.districts?.code)
 
       }
     } catch (error:any) {
@@ -783,7 +783,7 @@ const EditPage: React.FC = () => {
               <div>
                   <label className="block mb-1">Tỉnh/Thành</label>
                   <select
-                    value={dataEvent.event.addressDetails.province.code}  
+                    value={dataEvent?.event?.addressDetails?.province?.code}  
                     onChange={(e) => {
                       setSelectedProvince(e.target.value);
                       setSelectedDistrict('');
@@ -796,7 +796,7 @@ const EditPage: React.FC = () => {
                               ...prev.event.addressDetails,
                               province:{
                                 code:Number(e.target.value),
-                                name:provinces.filter((province)=>province.code===Number(e.target.value))[0].name
+                                name:provinces.filter((province)=>province?.code===Number(e.target.value))[0].name
                               },
                               districts:{
                                 code:0,
@@ -815,7 +815,7 @@ const EditPage: React.FC = () => {
                   >
                     <option value="">Chọn Tỉnh/Thành</option>
                     {provinces.map((province) => (
-                      <option key={province.code} value={province.code}>
+                      <option key={province?.code} value={province?.code}>
                         {province.name}
                       </option>
                     ))}
@@ -825,7 +825,7 @@ const EditPage: React.FC = () => {
                 <div>
                   <label className="block mb-1">Quận/Huyện</label>
                   <select
-                    value={dataEvent.event.addressDetails.districts.code}
+                    value={dataEvent.event?.addressDetails?.districts?.code}
                     onChange={(e) => {
                       setSelectedDistrict(e.target.value)
                       setDataEvent((prev) => {
@@ -837,7 +837,7 @@ const EditPage: React.FC = () => {
                               ...prev.event.addressDetails,
                               districts:{
                                 code:Number(e.target.value),
-                                name:districts.filter((district)=>district.code===Number(e.target.value))[0].name
+                                name:districts.filter((district)=>district?.code===Number(e.target.value))[0].name
                               },
                               ward:{
                                 code:0,
@@ -853,7 +853,7 @@ const EditPage: React.FC = () => {
                   >
                     <option value="">Chọn Quận/Huyện</option>
                     {districts.map((district) => (
-                      <option key={district.code} value={district.code}>
+                      <option key={district?.code} value={district?.code}>
                         {district.name}
                       </option>
                     ))}
@@ -866,7 +866,7 @@ const EditPage: React.FC = () => {
                   <label className="block mb-1">Phường/Xã</label>
                   <select
                     disabled={!selectedDistrict}
-                    value={dataEvent.event.addressDetails.ward.code}
+                    value={dataEvent.event?.addressDetails?.ward?.code}
                     onChange={(e)=>{
                       setDataEvent((prev) => {
                         return {
@@ -877,7 +877,7 @@ const EditPage: React.FC = () => {
                               ...prev.event.addressDetails,
                               ward:{
                                 code:Number(e.target.value),
-                                name:wards.filter((ward)=>ward.code===Number(e.target.value))[0].name
+                                name:wards.filter((ward)=>ward?.code===Number(e.target.value))[0].name
                               }
                             }
                           },
@@ -888,7 +888,7 @@ const EditPage: React.FC = () => {
                   >
                     <option value="">Chọn Phường/Xã</option>
                     {wards.map((ward) => (
-                      <option key={ward.code} value={ward.code}>
+                      <option key={ward?.code} value={ward?.code}>
                         {ward.name}
                       </option>
                     ))}
