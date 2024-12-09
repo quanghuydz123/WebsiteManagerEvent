@@ -347,6 +347,7 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
   useEffect(()=>{
     if(type==='update'){
       setTypeTicket(value)
+      setIsFree(value.type === 'Free' ? true : false)
     }else{
       setTypeTicket(initTypeTicket)
     }
@@ -393,8 +394,15 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
       setTypeTicket(prev => {
         return {
           ...prev,
-          price:0,
+          // price:0,
           type:'Free'
+        }
+      })
+    }else{
+      setTypeTicket(prev => {
+        return {
+          ...prev,
+          type:'Paid'
         }
       })
     }
@@ -418,6 +426,8 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
     if(typeTicket.name === ''){
       error = 'Hãy nhập tên vé !!!'
 
+    }else if(typeTicket.price <= 5000){
+      error = 'Giá vé phài trên 5000 VNĐ !!!'
     }
     setErrorMessage(error)
     if(error === ''){

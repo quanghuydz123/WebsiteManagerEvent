@@ -635,7 +635,7 @@ const EditPage: React.FC = () => {
     },'put')
     setIsLoading(false)
 
-      if(res && res.status === 200){
+      if(res && res.status === 200 && res.data){
         toast.success('Cập nhập thành công')
       }
 
