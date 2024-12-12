@@ -4,7 +4,9 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import EventCreationTimePage from './EventCreationTimePage';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-
+import { storage } from "../../../firebase"
+import { getDownloadURL, ref, uploadBytes} from "firebase/storage"
+import { v4 } from 'uuid';
 import {
   ClassicEditor,
   AccessibilityHelp,
@@ -442,6 +444,7 @@ const EventCreationOrganizerPage: React.FC = () => {
   const [isLoading,setIsLoading] = useState(false)
   // Tiến hành chuyển sang Bước 2 khi nhấn nút "Tiếp tục"
   const [categories, setCategories] = useState<CategoryModel[]>([])
+  const [imageUpload,setImageUpload] = useState<any>(null)
   const handleNextStep = () => {
     if (isStep1) {
       navigate('/organizer/CreateEvent?step=2'); // Go to Step 2
@@ -495,9 +498,9 @@ const EventCreationOrganizerPage: React.FC = () => {
       setWards([]);
     }
   }, [selectedDistrict]);
-
   const handleBackgroundChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      setImageUpload(e.target.files[0])
       const file = e.target.files[0];
       if (!file.type.startsWith("image/")) {
         console.error("File is not an image");
@@ -587,6 +590,7 @@ const EventCreationOrganizerPage: React.FC = () => {
         dataEventCreate?.event?.addressDetails?.districts?.name,
         dataEventCreate?.event?.addressDetails?.province?.name
     ].filter(Boolean).join(', ')}&limit=20&lang=vi-VI&in=countryCode:VNM&apiKey=${process.env.REACT_APP_API_KEY_REVGEOCODE}`
+    setIsLoading(true)
       try {
         const res = await axios(api)
         if(res && res.data.items.length > 0 && res.status === 200){
@@ -601,7 +605,15 @@ const EventCreationOrganizerPage: React.FC = () => {
             //     }
             //   }
             // })
-            handleCallAPICreateEvent(res.data.items[0].position)
+            if (imageUpload == null) return;
+            const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+            uploadBytes(imageRef, imageUpload).then((snapshot) => {
+              getDownloadURL(snapshot.ref).then((url) => {
+                handleCallAPICreateEvent(res.data.items[0].position,url)
+              }).catch((error)=>{
+                  console.log("Lỗi upload image",error)
+              });
+            });
           }else{
             // ToastMessaging.Error({message:'Hãy nhập đầy đủ thông tin địa chỉ sự kiện (tên đường,xã,huyện,tỉnh,....)'})
             toast.error('Hãy nhập đầy đủ thông tin địa chỉ sự kiện (tên đường,xã,huyện,tỉnh,....')
@@ -634,11 +646,10 @@ const EventCreationOrganizerPage: React.FC = () => {
   // useEffect(()=>{
   //   handleCallAPICreateEvent()
   // },[dataEventCreate.event.position.lat])
-  const handleCallAPICreateEvent = async (position:number)=>{
+  const handleCallAPICreateEvent = async (position:number,photoUrl:string)=>{
     const api = apis.event.createEvent()
     try {
-      setIsLoading(true)
-      const res = await eventAPI.HandleEvent(api,{idUser:dataEventCreate.idUser,showTimes:dataEventCreate.showTimes,event:{...dataEventCreate.event,position:position}},'post')
+      const res = await eventAPI.HandleEvent(api,{idUser:dataEventCreate.idUser,showTimes:dataEventCreate.showTimes,event:{...dataEventCreate.event,position:position,photoUrl:photoUrl}},'post')
       console.log(res)
       if(res && res.status === 200 && res.data){
         setDataEventCreate(initdataEventCreate)
@@ -652,6 +663,15 @@ const EventCreationOrganizerPage: React.FC = () => {
       console.log("lỗi khi tạo sự kiện", errorMessage)
     }
   }
+  const uploadFile = () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+
+      });
+    });
+  };
   return (
 
     <div className="min-h-screen bg-custom-gradient text-white">
@@ -660,6 +680,7 @@ const EventCreationOrganizerPage: React.FC = () => {
       <div className="px-4 py-2 flex flex-wrap justify-between items-center  text-white">
         <div>
           <h1 className="text-lg md:text-3xl font-semibold">Tạo sự kiện</h1>
+          {/* <button onClick={()=>uploadFile()}>Upload Image</button> */}
         </div>
         {/* Step Bar */}
         <div className="flex flex-wrap justify-center space-x-4 md:space-x-8 mt-2 md:mt-0 text-xl">
