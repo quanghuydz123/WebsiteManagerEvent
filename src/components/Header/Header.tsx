@@ -164,7 +164,7 @@ const Header = (props:Props) => {
                             >
                            
                               
-                                <MenuItem onClick={handleCloseMyAcc}>
+                                <MenuItem onClick={handleCloseMyAcc} component={Link} to="/profile">
                                     <ListItemIcon>
                                         <FaUser />
                                     </ListItemIcon>
