@@ -117,7 +117,7 @@ const EventPage = () => {
               { label: "Đơn hàng",url:'/organizer/EventPage/:idEvent/Order' },
               { label: "CheckIn",url:'/organizer/EventPage/:idEvent/Checkin'},
               { label: "Giảm giá",url:'/organizer/EventPage/:idEvent/Voucher' },
-              { label: "Markerting",url:'/organizer/EventPage/:idEvent/Markerting' },    
+              // { label: "Markerting",url:'/organizer/EventPage/:idEvent/Markerting' },    
             ]}
           /> : <>
          

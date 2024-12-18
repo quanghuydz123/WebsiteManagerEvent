@@ -36,11 +36,11 @@ const EventSidebar = ({ isOpen, toggleSidebar, setIsOpen,idShowTime,idEvent }: {
       name: 'Voucher',
       key: 'Voucher' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
     },
-    {
-      icon: FaClipboardList,  
-      name: 'Marketing',
-      key: 'Marketing' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
-    },
+    // {
+    //   icon: FaClipboardList,  
+    //   name: 'Marketing',
+    //   key: 'Marketing' +`?idEvent=${idEvent}&idShowTime=${idShowTime}`,
+    // },
     {
       icon: FaSignOutAlt, 
       name: 'Logout',
