@@ -6,6 +6,7 @@ import { AuthState } from './reduxs/reducers/authReducers';
 import OrganizerHome from './pages/organizer/OrganizerHome/OrganizerHome';
 import EventManagementHome from './pages/organizer/EventManagement/EventManagementHome/EventManagementHome';
 import 'ckeditor5/ckeditor5.css';
+import ProfilePage from './pages/profile/ProfilePage';
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
@@ -42,6 +43,7 @@ function App() {
             <Route path='/organizer/EventPage/:idEvent/*' element={<EventManagementHome />} />
           
             <Route path='*' element={<h1>404 - Page Not Found</h1>} />
+            <Route path='/profile' element={<ProfilePage />} />
           </Routes>
         </section>
       ) : (
