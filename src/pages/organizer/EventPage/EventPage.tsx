@@ -29,6 +29,7 @@ const EventPage = () => {
   const [eventsCreated,setEventsCreated] = useState<EventModelNew[]>([])
   const [totalPages,setTotalPages] = useState(1)
   const [isLoadingGetEvents,setIsLoadingGetEvents] = useState(false)
+  const [searchValue,setSearchValue] = useState('')
   useEffect(()=>{
     handleCallAPIGetEventsCreated()
   },[authData.id,currentPage,activeTab])
@@ -62,8 +63,9 @@ const EventPage = () => {
     { id: "canceled", label: "ĐÃ HỦY" },
 
   ]
-  const dispatch = useDispatch()
-  const navigate = useNavigate();
+  // const dispatch = useDispatch()
+  // const navigate = useNavigate();
+  console.log(searchValue)
   const cn = (...inputs: ClassValue[]) => {
     return twMerge(clsx(inputs))
   }
@@ -72,7 +74,7 @@ const EventPage = () => {
       <div className="flex items-center justify-between p-4 rounded mb-4">
         <h1 className="text-3xl font-bold">Sự kiện đã tạo</h1>
         <div className="flex-1 flex justify-end">
-          <SearchComponent />
+          <SearchComponent value={searchValue} onSearch={(val)=>setSearchValue(val)}/>
         </div>
       </div>
 
@@ -82,7 +84,10 @@ const EventPage = () => {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => {
+                  setCurrentPage(1)
+                  setActiveTab(tab.id)
+                }}
                 className={cn(
                   "flex-1 px-4 py-2 text-[17px] font-medium rounded-md transition-all duration-200 ease-in-out",
                   activeTab === tab.id
