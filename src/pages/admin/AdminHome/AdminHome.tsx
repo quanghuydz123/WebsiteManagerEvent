@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
-import SidebarComponent from '../../../components/SideBar/SideBarComponent';
-import MainContent from '../../../components/MainContent/MainContent';
+import Sidebar from '../Sidebar/Sidebar';
+import ContentAdmin from '../Content/ContentAdmin';
 
 
 
@@ -16,10 +16,9 @@ const AdminHome = () => {
 
     return (
         <div className={`flex font-Montserrat bg-slate-700`}>
-        <SidebarComponent isOpen={isOpen} toggleSidebar={toggleSidebar} setIsOpen={setIsOpen} />
-        <MainContent 
-            isOpen={isOpen} 
-           
+        <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} setIsOpen={setIsOpen} />
+        <ContentAdmin 
+            isOpen={isOpen}  
             />
 
         </div>

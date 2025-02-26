@@ -1,11 +1,10 @@
 import LoginPage from './login/LoginPage'
-import EventPage from './admin/eventPage/EventPage'
-import CreateEventPage from './admin/createEventPage/CreateEventPage'
-import DashboardPage from './admin/dashboradPage/DashboardPage'
+import EventPage from './admin/EventPage/EventAdminPage'
+import DashboardPage from './admin/DashboardPage/DashboardPage'
 
 export {
     LoginPage,
     EventPage,
-    CreateEventPage,
+   
     DashboardPage
 }

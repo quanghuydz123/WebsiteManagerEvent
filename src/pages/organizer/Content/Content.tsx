@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Header from '../../../components/Header/Header';
-import DashboardPage from '../../admin/dashboradPage/DashboardPage';
+import DashboardPage from '../../admin/DashboardPage/DashboardPage';
 import EventPage from '../EventPage/EventPage';
 import EventCreationOrganizerPage from '../EventCreationOrganizerPage/EventCreationOrganizerPage';
 import OrganizerTerms from '../Policy/Policy';
