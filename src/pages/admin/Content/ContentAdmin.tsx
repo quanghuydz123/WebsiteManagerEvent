@@ -5,6 +5,7 @@ import DashboardPage from '../DashboardPage/DashboardPage';
 import OrganizerPage from '../OrganizerPage/OrganizerPage';
 import EventAdminPage from '../EventPage/EventAdminPage';
 import UserManagementPage from '../UserPage/UserManagementPage';
+import EventDetailPage from '../EventPage/EventDetail';
 
 
 
@@ -31,6 +32,7 @@ const ContentAdmin = ({ isOpen }: { isOpen: boolean }) => {
           <Route path='Organizer' element={<OrganizerPage/>} />
           <Route path='User' element={<UserManagementPage/>}/>
           <Route path="Dashboard" element={<DashboardPage />} />
+          <Route path='eventde' element={<EventDetailPage/>}/>
 
         </Routes>
       </div>

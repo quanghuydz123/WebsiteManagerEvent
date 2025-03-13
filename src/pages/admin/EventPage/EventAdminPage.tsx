@@ -22,9 +22,9 @@ const EventAdminPage = () => {
   useEffect(() => {
     // Fake dữ liệu sự kiện chờ duyệt
     const fakePendingEvents: Event[] = [
-      { _id: "1", title: "Sự kiện A", photoUrl: "https://via.placeholder.com/300", startAt: "2024-12-01", location: "Hà Nội" },
-      { _id: "2", title: "Sự kiện B", photoUrl: "https://via.placeholder.com/300", startAt: "2024-12-10", location: "Hồ Chí Minh" },
-      { _id: "3", title: "Sự kiện C", photoUrl: "https://via.placeholder.com/300", startAt: "2024-12-20", location: "Đà Nẵng" },
+      { _id: "1", title: "Sự kiện A", photoUrl: "https://salt.tkbcdn.com/ts/ds/3f/41/7d/eabf9d9a369477a3fb33a90b806aaac6.jpg", startAt: "2024-12-01", location: "Hà Nội" },
+      { _id: "2", title: "Sự kiện B", photoUrl: "https://salt.tkbcdn.com/ts/ds/3f/41/7d/eabf9d9a369477a3fb33a90b806aaac6.jpg", startAt: "2024-12-10", location: "Hồ Chí Minh" },
+      { _id: "3", title: "Sự kiện C", photoUrl: "https://salt.tkbcdn.com/ts/ds/3f/41/7d/eabf9d9a369477a3fb33a90b806aaac6.jpg", startAt: "2024-12-20", location: "Đà Nẵng" },
     ];
     setPendingEvents(fakePendingEvents);
     setTotalPages(1);
@@ -53,7 +53,8 @@ const EventAdminPage = () => {
           <EventCard
             cartItems={pendingEvents}
             eventActions={[
-              { label: "Xem Chi Tiết", url: '/admin/EventPage/:idEvent/Detail' },
+             // { label: "Xem Chi Tiết", url: '/admin/EventPage/:idEvent/Detail' },
+              { label: "Xem Chi Tiết", url: 'http://localhost:3000/admin/eventde' },
               { label: "Duyệt", url: "#"}
             ]}
           />
