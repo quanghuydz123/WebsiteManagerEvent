@@ -6,7 +6,9 @@ import EventCreationTimePage from './EventCreationTimePage';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import { storage } from "../../../firebase"
 import { getDownloadURL, ref, uploadBytes} from "firebase/storage"
+import CreatableSelect from 'react-select/creatable';
 import { v4 } from 'uuid';
+import Select from 'react-select'
 import {
   ClassicEditor,
   AccessibilityHelp,
@@ -79,6 +81,8 @@ import { ShowTimeModel } from '../../../models/ShowTimeModel';
 import { toast } from 'react-toastify';
 import eventAPI from '../../../apis/eventAPI';
 import LoadingModal from '../../../modals/LoadingModal';
+import { KeyWordModel } from '../../../models/KeyWordModel';
+import keywordAPI from '../../../apis/keywordAPI';
 interface Province {
   code: number;
   name: string;
@@ -116,6 +120,10 @@ export interface DataEventCreate {
       houseNumberAndStreet: string;
     };
     Location: string;
+    keywords:{
+      value:string,
+      label:string,
+    }[];
     position: {
       lat: number;
       lng: number;
@@ -387,13 +395,15 @@ const EventCreationOrganizerPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentStep = new URLSearchParams(location.search).get('step') || '1';
+  const [keywords,setKeywords] = useState<KeyWordModel[]>([])
   const isStep1 = currentStep === '1';
   const isStep2 = currentStep === '2';
   const {authData }:{authData:AuthState} = useSelector((state: any) => state.auth);
   const [searchParams] = useSearchParams(); 
   const idEventParams = searchParams.get('idEvent')
-  const idShowTimeParams = searchParams.get('idShowTime')
-  const initdataEventCreate = {
+ 
+  
+  const initdataEventCreate:DataEventCreate = {
     idUser:authData.id,
     event:{
       _id:'',
@@ -412,6 +422,7 @@ const EventCreationOrganizerPage: React.FC = () => {
         },
         houseNumberAndStreet:''
       },
+      keywords:[],
       category:'',
       description:"<p><strong>Giới thiệu sự kiện:</strong></p><p>[Tóm tắt ngắn gọn về sự kiện: Nội dung chính của sự kiện, điểm đặc sắc nhất và lý do khiến người tham gia không nên bỏ lỡ]</p><p><strong>Chi tiết sự kiện:</strong></p><ul><li><strong>Chương trình chính:</strong> [Liệt kê những hoạt động nổi bật trong sự kiện: các phần trình diễn, khách mời đặc biệt, lịch trình các tiết mục cụ thể nếu có.]</li><li><strong>Khách mời:</strong> [Thông tin về các khách mời đặc biệt, nghệ sĩ, diễn giả sẽ tham gia sự kiện. Có thể bao gồm phần mô tả ngắn gọn về họ và những gì họ sẽ mang lại cho sự kiện.]</li><li><strong>Trải nghiệm đặc biệt:</strong> [Nếu có các hoạt động đặc biệt khác như workshop, khu trải nghiệm, photo booth, khu vực check-in hay các phần quà/ưu đãi dành riêng cho người tham dự.]</li></ul><p><strong>Điều khoản và điều kiện:</strong></p><p>[TnC] sự kiện</p><p>Lưu ý về điều khoản trẻ em</p><p>Lưu ý về điều khoản VAT</p>",
       Location:'',
@@ -425,10 +436,7 @@ const EventCreationOrganizerPage: React.FC = () => {
     showTimes:[]
   } 
   const [dataEventCreate, setDataEventCreate] = useState<DataEventCreate>(initdataEventCreate)
-  const [eventName, setEventName] = useState('');
-  const [eventLocation, setEventLocation] = useState('');
-  const [eventType, setEventType] = useState('');
-  const [eventDescription, setEventDescription] = useState('');
+
 
   // const [eventBackground, setEventBackground] = useState<string>('');
 
@@ -453,8 +461,6 @@ const EventCreationOrganizerPage: React.FC = () => {
   const handleStepClick = (step: number) => {
     navigate(`/organizer/CreateEvent?step=${step}`);
   };
-
-
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
@@ -466,6 +472,7 @@ const EventCreationOrganizerPage: React.FC = () => {
     };
     fetchProvinces();
     handleCallAPIGetCategories()
+    handleCallAPIGetKeywords()
   }, []);
   useEffect(() => {
     if (selectedProvince) {
@@ -483,6 +490,7 @@ const EventCreationOrganizerPage: React.FC = () => {
       setWards([]);
     }
   }, [selectedProvince]);
+
   useEffect(() => {
     if (selectedDistrict) {
       const fetchWards = async () => {
@@ -498,6 +506,7 @@ const EventCreationOrganizerPage: React.FC = () => {
       setWards([]);
     }
   }, [selectedDistrict]);
+
   const handleBackgroundChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImageUpload(e.target.files[0])
@@ -551,6 +560,18 @@ const EventCreationOrganizerPage: React.FC = () => {
     } catch (error: any) {
       const errorMessage = JSON.parse(error.message)
       console.log("lỗi gi get category", errorMessage.statusCode)
+    }
+  }
+  const handleCallAPIGetKeywords = async () => {
+    const api = apis.keyword.getAll()
+    try {
+      const res = await keywordAPI.HandleKeyword(api)
+      if (res && res.data && res.status === 200) {
+        setKeywords(res.data)
+      }
+    } catch (error: any) {
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi gi get keywords", errorMessage.statusCode)
     }
   }
   const validateImageDimensions = (
@@ -643,14 +664,10 @@ const EventCreationOrganizerPage: React.FC = () => {
     }
 
   }
-  // useEffect(()=>{
-  //   handleCallAPICreateEvent()
-  // },[dataEventCreate.event.position.lat])
   const handleCallAPICreateEvent = async (position:number,photoUrl:string)=>{
     const api = apis.event.createEvent()
     try {
       const res = await eventAPI.HandleEvent(api,{idUser:dataEventCreate.idUser,showTimes:dataEventCreate.showTimes,event:{...dataEventCreate.event,position:position,photoUrl:photoUrl}},'post')
-      console.log(res)
       if(res && res.status === 200 && res.data){
         setDataEventCreate(initdataEventCreate)
         toast.success('Tạo thành công')
@@ -977,6 +994,65 @@ const EventCreationOrganizerPage: React.FC = () => {
                   return <option value={`${category._id}`}>{category.name}</option>
                 })}
               </select>
+            </div>
+
+            <div className="bg-customGray p-4 md:p-6 rounded-lg">
+              <label className="font-medium text-white">
+                <span className="text-red-500">*</span> Từ khóa sự kiện
+              </label>
+              <CreatableSelect 
+                isMulti 
+                defaultValue={[...dataEventCreate.event.keywords]}
+                options={keywords.map(({ _id, name }) => ({
+                  value: _id,
+                  label: name,
+                }))}
+                onChange={(e)=>{
+                  setDataEventCreate((prev) => {
+                    return {
+                      ...prev,
+                      event: {
+                        ...prev.event,
+                        keywords: e
+                          .map((item: any) => {
+                            if (item.__isNew__) {
+                              return {...item,isNew:true}
+                              // setKeyWordsNew((prevKeyWords) => {
+                              //   if (!prevKeyWords.includes(item.label)) {
+                              //     return [...prevKeyWords, item.label];
+                              //   }
+                              //   return prevKeyWords; 
+                              // });
+                              // return null; 
+                            }
+                            return item;
+                          })
+                          .filter((val) => val !== null),
+                      },
+                    };
+                  });
+                }}
+                placeholder={'Chọn từ khóa'}
+                
+                theme={(theme) => ({
+                  ...theme,
+                  borderRadius: 0,
+                  
+                  colors: {
+                    ...theme.colors,
+                    primary25: '#deebff',
+                    primary: 'black',
+                    
+                  },
+                })}
+                styles={{
+                  option: (baseStyles, state) => ({
+                    ...baseStyles,
+                    color:'black',
+                  }),
+                
+                }}
+              />
             </div>
 
             {/* Event Description */}

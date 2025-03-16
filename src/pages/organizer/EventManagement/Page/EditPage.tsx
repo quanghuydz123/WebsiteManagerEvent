@@ -78,6 +78,10 @@ import LoadingModal from '../../../../modals/LoadingModal';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../../../../firebase';
 import { v4 } from 'uuid';
+import { KeyWordModel } from '../../../../models/KeyWordModel';
+import keywordAPI from '../../../../apis/keywordAPI';
+import CreatableSelect from 'react-select/creatable';
+import { ShowTimeModel } from '../../../../models/ShowTimeModel';
 
 interface Province {
   code: number;
@@ -93,7 +97,41 @@ interface Ward {
   code: number;
   name: string;
 }
-
+export interface DataEventUpdate {
+  showTimes: ShowTimeModel[];
+  event: {
+    _id:string,
+    title: string;
+    description: string;
+    photoUrl: string;
+    addressDetails: {
+      province: {
+        name: string;
+        code: number;
+      };
+      districts: {
+        name: string;
+        code: number;
+      };
+      ward: {
+        name: string;
+        code: number;
+      };
+      houseNumberAndStreet: string;
+    };
+    Location: string;
+    keywords:{
+      _id:string,
+      name:string,
+    }[];
+    position: {
+      lat: number;
+      lng: number;
+    };
+    category: string;
+  };
+  idUser: string;
+}
 const EditPage: React.FC = () => {
   const editorConfig: any = {
     toolbar: {
@@ -375,10 +413,12 @@ const EditPage: React.FC = () => {
   const [wards, setWards] = useState<Ward[]>([]);
   const [imageUpload, setImageUpload] = useState<any>(null)
   const [inputValue, setInputValue] = useState('');
+  const [keywords,setKeywords] = useState<KeyWordModel[]>([])
   const [dataEvent, setDataEvent] = useState<DataEventCreate>({
     idUser: authData.id,
     event: {
       _id: '',
+      keywords:[],
       addressDetails: {
         districts: {
           code: 0,
@@ -433,6 +473,7 @@ const EditPage: React.FC = () => {
     };
     fetchProvinces();
     handleCallAPIGetCategories()
+    handleCallAPIGetKeywords()
   }, []);
   useEffect(() => {
     if (idEventParams) {
@@ -440,7 +481,18 @@ const EditPage: React.FC = () => {
       handleCallAPIShowTimeByIdEvent()
     }
   }, [idEventParams])
-
+  const handleCallAPIGetKeywords = async () => {
+    const api = apis.keyword.getAll()
+    try {
+      const res = await keywordAPI.HandleKeyword(api)
+      if (res && res.data && res.status === 200) {
+        setKeywords(res.data)
+      }
+    } catch (error: any) {
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi gi get keywords", errorMessage.statusCode)
+    }
+  }
   const handleCallAPIGetEventById = async () => {
     const api = apis.event.getEventByIdForOrganizer({ idEvent: idEventParams ?? '' })
     setIsLoading(true)
@@ -640,6 +692,7 @@ const EditPage: React.FC = () => {
       console.log(error)
     }
   }
+  console.log(dataEvent.event.keywords)
   const handleCallAPIUpdateEvent = async (position: number, photoUrl?: string) => {
     const api = apis.event.updateEvent()
     try {
@@ -994,6 +1047,64 @@ const EditPage: React.FC = () => {
                 })}
               </select>
             </div>
+            <div className="bg-customGray p-4 md:p-6 rounded-lg">
+                          <label className="font-medium text-white">
+                            <span className="text-red-500">*</span> Từ khóa sự kiện
+                          </label>
+                          <CreatableSelect 
+                            isMulti 
+                            value={[...dataEvent.event.keywords]}
+                            options={keywords.map(({ _id, name }) => ({
+                              value: _id,
+                              label: name,
+                            }))}
+                            onChange={(e)=>{
+                              setDataEvent((prev) => {
+                                return {
+                                  ...prev,
+                                  event: {
+                                    ...prev.event,
+                                    keywords: e
+                                      .map((item: any) => {
+                                        if (item.__isNew__) {
+                                          return {...item,isNew:true}
+                                          // setKeyWordsNew((prevKeyWords) => {
+                                          //   if (!prevKeyWords.includes(item.label)) {
+                                          //     return [...prevKeyWords, item.label];
+                                          //   }
+                                          //   return prevKeyWords; 
+                                          // });
+                                          // return null; 
+                                        }
+                                        return item;
+                                      })
+                                      .filter((val) => val !== null),
+                                  },
+                                };
+                              });
+                            }}
+                            placeholder={'Chọn từ khóa'}
+                            
+                            theme={(theme) => ({
+                              ...theme,
+                              borderRadius: 0,
+                              
+                              colors: {
+                                ...theme.colors,
+                                primary25: '#deebff',
+                                primary: 'black',
+                                
+                              },
+                            })}
+                            styles={{
+                              option: (baseStyles, state) => ({
+                                ...baseStyles,
+                                color:'black',
+                              }),
+                            
+                            }}
+                          />
+                    </div>
 
             {/* Event Description */}
             <div className="bg-customGray p-4 md:p-6 rounded-lg">

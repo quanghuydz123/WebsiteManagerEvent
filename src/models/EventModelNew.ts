@@ -1,3 +1,4 @@
+import { KeyWordModel } from "./KeyWordModel"
 import { OrganizerModel } from "./OrganizerModel"
 import { ShowTimeModel } from "./ShowTimeModel"
 import { UserModel } from "./UserModel"
@@ -35,6 +36,7 @@ export interface EventModelNew {
     }],
     totalComments:number,
     showTimes:[ShowTimeModel]
+    keywords:KeyWordModel[]
     statusEvent: 'PendingApproval' | "NotStarted" | 'Ongoing' | 'Ended' | 'Cancelled' | 'OnSale' | 'SoldOut' | 'SaleStopped' | 'NotYetOnSale'
     startAt: string
     endAt: string

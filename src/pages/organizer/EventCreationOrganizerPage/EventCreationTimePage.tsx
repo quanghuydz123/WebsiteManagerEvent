@@ -18,9 +18,10 @@ import ShowTimeModal from './ShowTimeModal';
 import { apis } from '../../../constrants/apis';
 import typeTicketAPI from '../../../apis/typeTicketAPI';
 import showTimeAPI from '../../../apis/showTimeAPI';
+import { DataEventUpdate } from '../EventManagement/Page/EditPage';
 
 interface EventCreationTimePageProps {
-    dataEventCreate: DataEventCreate,
+    dataEventCreate: DataEventCreate  ,
     setDataEventCreate: React.Dispatch<React.SetStateAction<DataEventCreate>>;
     isEdit?:boolean,
     idEvent:string,

@@ -134,5 +134,8 @@ export const apis = {
         updateShowTime:()=>`/update-showTime`,
         deleteShowTime:()=>`/delete-showTime`
     },
+    keyword:{
+        getAll:()=>'/get-all'
+    },
 
 }
