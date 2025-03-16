@@ -33,6 +33,7 @@ const TicketTable = (props:Props) => {
     let percentage = (totalTicketSold / TotalTicke) * 100;
     return parseFloat(percentage.toFixed(2));
   }
+  console.log("TypeTicketSoldAndtotalRevenue",TypeTicketSoldAndtotalRevenue)
   return (
     <motion.div className="flex-1 rounded-xl p-5 dark:bg-slate-600 ">
       <table className="min-w-full text-[19px]">
@@ -53,9 +54,9 @@ const TicketTable = (props:Props) => {
                 {/* <FaDollarSign className="mr-2 text-green-500 " /> */}
                 <span>{convertMoney(item?.typeTicket?.price ?? 0)}</span>
             </td>
-
+            
               <td className="px-4 py-3 font-medium text-[19px]">
-                {item?.totalSold} / {(item?.totalSold + item?.typeTicket?.amount ? item?.typeTicket?.amount : 0 )}
+                {item?.totalSold} / {(item?.totalSold + item?.typeTicket?.amount )}
               </td>
               {/* <td className="px-4 py-3 font-medium flex items-center text-[19px]">
                 {item.locked} <FaLock className="ml-1 text-red-500" />
@@ -63,11 +64,11 @@ const TicketTable = (props:Props) => {
               <td className="px-4 py-3 font-medium text-[19px]">
                 <div className="w-full bg-gray-300 rounded-full h-2.5">
                   <div
-                    className={`h-2.5 rounded-full ${getProgressBarColor(renderSellRatio(item.totalSold,(item.totalSold + item?.typeTicket?.amount ? item?.typeTicket?.amount : 0)))}`}
-                    style={{ width: `${renderSellRatio(item.totalSold,(item.totalSold +item?.typeTicket?.amount ? item?.typeTicket?.amount : 0))}%` }}
+                    className={`h-2.5 rounded-full ${getProgressBarColor(renderSellRatio(item.totalSold,(item.totalSold + item?.typeTicket?.amount )))}`}
+                    style={{ width: `${renderSellRatio(item.totalSold,(item.totalSold + item?.typeTicket?.amount ))}%` }}
                   ></div>
                 </div>
-                <span className="ml-2">{renderSellRatio(item.totalSold,(item.totalSold + item?.typeTicket?.amount ? item?.typeTicket?.amount : 0))}%</span>
+                <span className="ml-2">{renderSellRatio(item.totalSold,(item.totalSold + item?.typeTicket?.amount ))}%</span>
               </td>
             </tr>
           ))}

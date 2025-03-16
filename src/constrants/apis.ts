@@ -83,12 +83,13 @@ export const apis = {
     },
     organizer:{
         getAll:({limit}:{limit?:string})=>`/get-all?limit=${limit}`,
-        getEventCreatedOrganizerByIdForOrganizer:({idUser,limit,page,filterStatus}:{idUser:string,limit:string,page:string,filterStatus?:string})=>
+        getEventCreatedOrganizerByIdForOrganizer:({idUser,limit,page,filterStatus,searchValue}:{idUser:string,limit:string,page:string,filterStatus?:string,searchValue:string})=>
         {
             const params = new URLSearchParams();
             if (idUser !== undefined) params.append('idUser', idUser);
             if (limit !== undefined) params.append('limit', limit);
             if (page !== undefined) params.append('page', page);
+            if (searchValue !== undefined) params.append('searchValue', searchValue);
             if (filterStatus !== undefined) params.append('filterStatus', filterStatus);
 
             return `/get-eventCreatedOrganizerByIdForOrganizer?${params.toString()}`
@@ -137,5 +138,8 @@ export const apis = {
     keyword:{
         getAll:()=>'/get-all'
     },
+    promotion:{
+        getByIdEvent:({idEvent}:{idEvent:string})=>`/get-by-idEvent?idEvent=${idEvent}`
+    }
 
 }

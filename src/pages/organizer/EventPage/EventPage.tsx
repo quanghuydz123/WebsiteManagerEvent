@@ -38,7 +38,7 @@ const EventPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const handleCallAPIGetEventsCreated = async ()=>{
-    const api = apis.organizer.getEventCreatedOrganizerByIdForOrganizer({idUser:authData.id,limit:'5',page:currentPage.toString(),filterStatus:activeTab})
+    const api = apis.organizer.getEventCreatedOrganizerByIdForOrganizer({idUser:authData.id,limit:'5',page:currentPage.toString(),filterStatus:activeTab,searchValue:searchValue})
     setIsLoadingGetEvents(true)
     try {
         const res:any = await organizerAPI.HandleOrganizer(api)
@@ -65,7 +65,6 @@ const EventPage = () => {
   ]
   // const dispatch = useDispatch()
   // const navigate = useNavigate();
-  console.log(searchValue)
   const cn = (...inputs: ClassValue[]) => {
     return twMerge(clsx(inputs))
   }
@@ -74,7 +73,11 @@ const EventPage = () => {
       <div className="flex items-center justify-between p-4 rounded mb-4">
         <h1 className="text-3xl font-bold">Sự kiện đã tạo</h1>
         <div className="flex-1 flex justify-end">
-          <SearchComponent value={searchValue} onSearch={(val)=>setSearchValue(val)}/>
+          <SearchComponent 
+            value={searchValue} 
+            onSearch={(val)=>setSearchValue(val)}
+            handleSearch={()=>handleCallAPIGetEventsCreated()}
+          />
         </div>
       </div>
 

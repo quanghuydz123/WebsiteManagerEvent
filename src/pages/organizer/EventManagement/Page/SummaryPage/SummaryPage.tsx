@@ -116,7 +116,7 @@ const SummaryPage: React.FC = () => {
       },
     },
   };
-
+  console.log("salesSummary",salesSummary)
   return (
     <div className="min-h-screen bg-custom-gradient text-white p-6">
       {/* Tiêu đề */}

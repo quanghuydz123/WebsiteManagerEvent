@@ -692,7 +692,6 @@ const EditPage: React.FC = () => {
       console.log(error)
     }
   }
-  console.log(dataEvent.event.keywords)
   const handleCallAPIUpdateEvent = async (position: number, photoUrl?: string) => {
     const api = apis.event.updateEvent()
     try {

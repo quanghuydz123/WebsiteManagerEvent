@@ -36,17 +36,13 @@ function App() {
     <>
       {/* If the user is logged in, show the authenticated routes */}
       {authData.accesstoken ? (
-        <section>
           <Routes>
-          {/* <Route path='/' element={<LoginPage />} /> */}
             <Route path='/organizer/*' element={<OrganizerHome />} />
             <Route path='/admin/*' element={<AdminHome />} />
             <Route path='/organizer/EventPage/:idEvent/*' element={<EventManagementHome />} />
-          
             <Route path='*' element={<h1>404 - Page Not Found</h1>} />
             <Route path='/profile' element={<ProfilePage />} />
           </Routes>
-        </section>
       ) : (
         
         <Routes>
