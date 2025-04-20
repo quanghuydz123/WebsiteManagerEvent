@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { FaSearch, FaEdit, FaTrashAlt, FaTicketAlt } from "react-icons/fa";
+import { FaSearch, FaEdit, FaTrashAlt, FaTicketAlt, FaTheaterMasks } from "react-icons/fa";
 import { PromotionModel } from "../../../../models/PromotionModel";
 import { apis } from "../../../../constrants/apis";
 import { useSearchParams } from "react-router-dom";
@@ -8,40 +8,97 @@ import promotionAPI from "../../../../apis/promotionAPI";
 import { SearchComponent } from "../../../../components";
 import { convertMoney } from "../../../../utils/convertMoney";
 import { DateTime } from "../../../../utils/DateTime";
-
+import CheckboxTree from "react-checkbox-tree";
+import { FaRegFolder, FaRegFolderOpen, FaRegFile } from 'react-icons/fa';
+import { FaCheckSquare, FaSquare, FaChevronRight, FaChevronDown, FaMinusSquare } from 'react-icons/fa';
+import { MdEvent } from "react-icons/md";
+import { ShowTimeModel } from "../../../../models/ShowTimeModel";
+import eventAPI from "../../../../apis/eventAPI";
+import { colors } from "../../../../constrants/color";
+import { toast } from "react-toastify";
+import { TfiBackRight } from "react-icons/tfi";
+interface promotionReq {
+  idPromotion?:string
+  idEvent:string,
+  idsTypeTicket:string[],
+  title:string,
+  discountType:string,
+  discountValue:number,
+  startDate:Date,
+  endDate:Date,
+  type:'create' | 'edit'
+}
 const VoucherPage = ({ variants }: { variants: any }) => {
   // Fake data for vouchers
-  const [vouchersData, setVouchersData] = useState<any[]>([
-    { id: 1, programName: "Giảm giá mùa hè", voucherCode: "SUMMER20", discount: "20%", totalTickets: 100, usedTickets: 30, validFrom: "2024-06-01", validTo: "2024-06-30", status: "Active" },
-    { id: 2, programName: "Giảm giá Black Friday", voucherCode: "BF50", discount: "50%", totalTickets: 50, usedTickets: 10, validFrom: "2024-11-01", validTo: "2024-11-30", status: "Inactive" },
-    { id: 3, programName: "Giảm giá Tết", voucherCode: "TET25", discount: "25%", totalTickets: 200, usedTickets: 50, validFrom: "2024-01-01", validTo: "2024-01-31", status: "Active" },
-  ]);
+
   const [searchParams] = useSearchParams(); 
   const idEventParams = searchParams.get('idEvent')
   const [searchQuery, setSearchQuery] = useState("");
-  const [newVoucherProgramName, setNewVoucherProgramName] = useState("");
-  const [newVoucherCode, setNewVoucherCode] = useState("");
-  const [newDiscount, setNewDiscount] = useState("");
-  const [newTotalTickets, setNewTotalTickets] = useState(0);
-  const [newUsedTickets, setNewUsedTickets] = useState(0);
-  const [newValidFrom, setNewValidFrom] = useState("");
-  const [newValidTo, setNewValidTo] = useState("");
-  const [newStatus, setNewStatus] = useState("Active");
-  const [isEditing, setIsEditing] = useState<number | null>(null);
-  const [editVoucherData, setEditVoucherData] = useState<any>(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility for delete
   const [voucherToDelete, setVoucherToDelete] = useState<number | null>(null); // Voucher to delete
   const [isAddVoucherModalOpen, setIsAddVoucherModalOpen] = useState(false); // Add voucher modal visibility
   const [promotions,setPromotions] = useState<PromotionModel[]>([])
-  // Filter vouchers based on search query
-  const filteredVouchers = vouchersData.filter((voucher) =>
-    voucher.programName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [nodes,setNodes] = useState<{
+    value:string,
+    label:string,
+    children:{
+      value:string,
+      label:string,
+    }[]
+  }[]>([])
+  const [expands,setExpands] = useState<string[]>([])
+  const [promotionReq,setPromotionReq] = useState<promotionReq>({
+    idPromotion:'',
+    idEvent:idEventParams ?? '', 
+    discountType:'Percentage',
+    discountValue:0,
+    endDate:new Date(),
+    idsTypeTicket:[],
+    startDate:new Date(),
+    title:'',
+    type:'create'
+  })
+  const [choseDeletePromotion,setChoseDeletePromotion] = useState<{title?:string,idPromotion:string,status: 'NotStarted' | 'Ongoing' | 'Ended' | 'Canceled'}>({
+    title:'',
+    idPromotion:'',
+    status:'NotStarted'
+  })
   useEffect(()=>{
     if(idEventParams){
       handleCallAPIGetPromotions(idEventParams)
+      handleCallAPIGetShowtimes(idEventParams)
     }
   },[idEventParams])
+  const convertToCheckboxTreeNodes = (data:ShowTimeModel[]) => {
+    return data.map((item, index) => {
+      const startDate = new Date(item.startDate).toLocaleString('vi-VN');
+      const endDate = new Date(item.endDate).toLocaleString('vi-VN');
+      const showTime = `${startDate} - ${endDate}`;
+  
+      return {
+        value: item._id,
+        label: `(${showTime})`,
+        children: item.typeTickets.map((ticket) => ({
+          value: ticket._id,
+          label: ticket.name || 'Vé không tên',
+        })),
+      };
+    });
+  };
+  const handleCallAPIGetShowtimes = async (idEventParams:string)=>{
+    const api = apis.event.getShowTimesEvent({idEvent:idEventParams})
+    try {
+      const res:any = await eventAPI.HandleEvent(api)
+      if(res && res.data && res.status === 200)
+      {
+        setNodes(convertToCheckboxTreeNodes(res.data))
+      }
+    } catch (error:any) {
+      const errorMessage = JSON.parse(error.message)
+      console.log("lỗi tại EventPage",errorMessage.statusCode)
+    }
+  }
   const handleCallAPIGetPromotions = async (idEventParams:string)=>{
     const api = apis.promotion.getByIdEvent({idEvent:idEventParams})
     try {
@@ -55,83 +112,66 @@ const VoucherPage = ({ variants }: { variants: any }) => {
     }
   }
   // Add new voucher
-  const addVoucher = () => {
-    if (newVoucherProgramName && newVoucherCode) {
-      const newVoucher = {
-        id: vouchersData.length + 1,
-        programName: newVoucherProgramName,
-        voucherCode: newVoucherCode,
-        discount: newDiscount,
-        totalTickets: newTotalTickets,
-        usedTickets: newUsedTickets,
-        validFrom: newValidFrom,
-        validTo: newValidTo,
-        status: newStatus,
-      };
-      setVouchersData([...vouchersData, newVoucher]);
-      setIsAddVoucherModalOpen(false); // Close modal after adding voucher
-      resetForm();
+  const handleClick = async () => {
+    setIsAddVoucherModalOpen(false)
+    if(promotionReq.type === 'create'){
+      const api = apis.promotion.createPromotion()
+      try {
+        const res = await promotionAPI.HandlePromotion(api,promotionReq,'post')
+        if(res && res.status === 200){
+          toast.success('Thêm thành công')
+          handleCallAPIGetPromotions(idEventParams ?? '')
+        }
+      } catch (error:any) {
+        const errorMessage = JSON.parse(error.message)
+        toast.error(`Lỗi: ${errorMessage.message}`)
+
+      }
+    }else{
+      const api= apis.promotion.updatePromotion()
+      try {
+        const res = await promotionAPI.HandlePromotion(api,promotionReq,'put')
+        if(res && res.status === 200){
+          toast.success('Cấp nhập thành công')
+          handleCallAPIGetPromotions(idEventParams ?? '')
+        }
+      } catch (error:any) {
+        const errorMessage = JSON.parse(error.message)
+        toast.error(`Lỗi: ${errorMessage.message}`)
+
+      }
     }
   };
-
-  // Reset form
-  const resetForm = () => {
-    setNewVoucherProgramName("");
-    setNewVoucherCode("");
-    setNewDiscount("");
-    setNewTotalTickets(0);
-    setNewUsedTickets(0);
-    setNewValidFrom("");
-    setNewValidTo("");
-    setNewStatus("Active");
-  };
-
-  // Start editing a voucher
-  const startEditing = (voucher: any) => {
-    setIsEditing(voucher.id);
-    setEditVoucherData({ ...voucher });
-  };
-
-  // Save edited voucher
-  const saveEdit = () => {
-    const updatedVouchers = vouchersData.map((voucher) =>
-      voucher.id === isEditing ? { ...voucher, ...editVoucherData } : voucher
-    );
-    setVouchersData(updatedVouchers);
-    setIsEditing(null);
-    setEditVoucherData(null);
-  };
-
-  // Cancel editing
-  const cancelEdit = () => {
-    setIsEditing(null);
-    setEditVoucherData(null);
-  };
-
-  // Open delete confirmation modal
-  const openDeleteModal = (id: number) => {
-    setVoucherToDelete(id);
-    setIsModalOpen(true);
-  };
-
+  const valid = ()=>{
+    return !promotionReq.title || promotionReq.idsTypeTicket.length === 0 || promotionReq.discountValue === 0
+  }
+  
   // Close delete confirmation modal
   const closeDeleteModal = () => {
     setIsModalOpen(false);
-    setVoucherToDelete(null);
   };
 
-  // Confirm delete
-  const deleteVoucher = () => {
-    setVouchersData(vouchersData.filter((voucher) => voucher.id !== voucherToDelete));
-    closeDeleteModal();
+  const handleCancelPromotion = async () => {
+    const api = apis.promotion.cancelPromotion()
+    setIsModalOpen(false)
+    try {
+      const res = await promotionAPI.HandlePromotion(api,choseDeletePromotion,'put')
+      if(res && res.status === 200){
+        toast.success('Thành công')
+        handleCallAPIGetPromotions(idEventParams ?? '')
+      }
+    } catch (error:any) {
+      const errorMessage = JSON.parse(error.message)
+      toast.error(`Lỗi: ${errorMessage.message}`)
+    }
   };
-
   return (
     <div className="min-h-screen p-6 text-[19px] ">
       <h1 className="text-3xl font-bold mb-6 text-white">Danh sách voucher</h1>
       {/* Top Section - Search Bar and Add Voucher Button */}
       <div className="p-4 rounded-xl shadow-lg mb-6 flex justify-between items-center mt-4">
         {/* Search Bar */}
+       
         <div className="flex items-center space-x-2 w-2/3">
          <SearchComponent 
           handleSearch={()=>console.log('ok')} 
@@ -144,7 +184,20 @@ const VoucherPage = ({ variants }: { variants: any }) => {
         {/* Add Voucher Button */}
         <div>
           <button
-            onClick={() => setIsAddVoucherModalOpen(true)}
+            onClick={() => {
+              setPromotionReq({
+                idPromotion:'',
+                idEvent:idEventParams ?? '', 
+                discountType:'Percentage',
+                discountValue:0,
+                endDate:new Date(),
+                idsTypeTicket:[],
+                startDate:new Date(),
+                title:'',
+                type:'create'
+              })
+              setIsAddVoucherModalOpen(true)
+            }}
             className="bg-green-500 p-2 rounded-md text-white flex items-center space-x-5 text-xl"
           >
             <FaTicketAlt className="mr-2" /> Thêm voucher
@@ -188,15 +241,35 @@ const VoucherPage = ({ variants }: { variants: any }) => {
                   <>
                         <button
                           className="text-blue-500 hover:text-blue-700"
-                          onClick={() => console.log("ok")}
+                          onClick={() => {
+                            setPromotionReq({
+                              idPromotion:promotion._id,
+                              discountType:promotion.discountType,
+                              discountValue:promotion.discountValue,
+                              endDate:new Date(promotion.endDate),
+                              idsTypeTicket:promotion.typeTickets,
+                              startDate:new Date(promotion.startDate),
+                              title:promotion.title,
+                              idEvent:idEventParams ?? '',
+                              type:'edit'
+                            })
+                            setIsAddVoucherModalOpen(true)
+                          }}
                         >
                           <FaEdit />
                         </button>
                         <button
-                          className="text-red-500 hover:text-red-700"
-                          onClick={() => console.log("ok")}
+                          className={promotion.status === 'Canceled' ?  "text-green-500 hover:text-green-700" : "text-red-500 hover:text-red-700"}
+                          onClick={() => {
+                            setChoseDeletePromotion({
+                              title:promotion?.title,
+                              idPromotion:promotion._id,
+                              status:promotion.status
+                            })
+                            setIsModalOpen(true)
+                          }}
                         >
-                          <FaTrashAlt />
+                          {promotion.status === 'Canceled' ? <TfiBackRight />  : <FaTrashAlt />}
                         </button>
                       </>
                   </td>
@@ -213,7 +286,7 @@ const VoucherPage = ({ variants }: { variants: any }) => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-xl w-1/3">
-            <h2 className="text-xl font-semibold mb-4 text-black">Bạn có chắc chắn muốn xóa voucher này?</h2>
+            <h2 className="text-xl font-semibold mb-4 text-black">Bạn có chắc chắn muốn {choseDeletePromotion.status !== 'Canceled' ? 'Xóa' : 'hoàn tác'} voucher {choseDeletePromotion.title}?</h2>
             <div className="flex justify-between">
               <button
                 className="bg-gray-500 text-white px-4 py-2 rounded-md"
@@ -223,7 +296,7 @@ const VoucherPage = ({ variants }: { variants: any }) => {
               </button>
               <button
                 className="bg-red-500 text-white px-4 py-2 rounded-md"
-                onClick={deleteVoucher}
+                onClick={handleCancelPromotion}
               >
                 Xóa
               </button>
@@ -236,7 +309,7 @@ const VoucherPage = ({ variants }: { variants: any }) => {
         {isAddVoucherModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white p-6 rounded-xl w-1/3">
-              <h2 className="text-xl font-semibold mb-4 text-black">Thêm voucher mới</h2>
+              <h2 className="text-xl font-semibold mb-4 text-black">{promotionReq.type ==='create' ? 'Thêm voucher mới' : 'Cập nhập voucher'}</h2>
 
               {/* Tên chương trình khuyến mãi */}
               <div className="mb-4">
@@ -244,25 +317,82 @@ const VoucherPage = ({ variants }: { variants: any }) => {
                 <input
                   id="programName"
                   type="text"
-                  className="p-2 border-gray-900 rounded-md w-full"
+                  className="p-2 text-black border-gray-900 rounded-md w-full"
                   placeholder="Tên chương trình khuyến mãi"
-                  value={newVoucherProgramName}
-                  onChange={(e) => setNewVoucherProgramName(e.target.value)}
+                  value={promotionReq.title}
+                  onChange={(e) => setPromotionReq(prev =>{
+                    return {
+                      ...prev,
+                      title:e.target.value
+                    }
+                  })}
                 />
               </div>
 
-             
+              <div className="mb-4">
+                <label htmlFor="discount" className="block text-black">Loại khuyến mãi</label>
+                <select
+                value={promotionReq.discountType}
+                onChange={(e) =>{
+                    if(e.target.value === 'Percentage'){
+                      if(promotionReq.discountValue > 100){
+                        setPromotionReq(prev =>{
+                          return {
+                            ...prev,
+                            discountValue:0,
+                            discountType:e.target.value
+                          }
+                        })
+                      }else{
+                        setPromotionReq(prev =>{
+                          return {
+                            ...prev,
+                            discountType:e.target.value
+                          }
+                        })
+                      }
+                    }else{
+                      setPromotionReq(prev =>{
+                        return {
+                          ...prev,
+                          discountType:e.target.value
+                        }
+                      })
+                    
+                  }
+                  
+                }}
+                className="w-full mt-2 p-2 md:p-3 bg-white bg-gray-800/70 border border-gray-500 rounded-lg text-black"
+              >
+                {[{value:'FixedAmount',name:'Theo số tiền'},{value:'Percentage',name:"Theo phần trăm"}].map((discountType) => {
+                  return <option value={`${discountType.value}`}>{discountType.name}</option>
+                })}
+              </select>
+              </div>
 
               {/* Mức giảm */}
               <div className="mb-4">
-                <label htmlFor="discount" className="block text-black">Mức giảm</label>
+                <label htmlFor="discount" className="block text-black">Mức giảm {promotionReq.discountType === 'FixedAmount' ? '(VNĐ)' : '(%)'}</label>
                 <input
                   id="discount"
-                  type="text"
-                  className="p-2 border-gray-900 rounded-md w-full"
-                  placeholder="Mức giảm"
-                  value={newDiscount}
-                  onChange={(e) => setNewDiscount(e.target.value)}
+                  type="number"
+                  className="p-2 text-black border-gray-900 rounded-md w-full"
+                  placeholder={`Mức giảm`}
+                  value={promotionReq.discountValue}
+                  onChange={(e) => {
+                    const checkValid = ()=>{
+                      if(promotionReq.discountType === 'Percentage' && Number(e.target.value) > 100) {
+                        return 100
+                      }
+                      return Number(e.target.value)
+                    }
+                    setPromotionReq(prev =>{
+                      return {
+                        ...prev,
+                        discountValue:checkValid()
+                      }
+                    })
+                  }}
                 />
               </div>
 
@@ -276,8 +406,15 @@ const VoucherPage = ({ variants }: { variants: any }) => {
                     id="validFrom"
                     type="date"
                     className="p-2 border-gray-900 rounded-md w-full text-black"
-                    value={newValidFrom}
-                    onChange={(e) => setNewValidFrom(e.target.value)}
+                    value={new Date(promotionReq.startDate).toISOString().split('T')[0]} // ✅ Đúng format
+                    onChange={(e) => {
+                      setPromotionReq(prev => {
+                        return {
+                          ...prev,
+                          startDate:new Date(e.target.value)
+                        }
+                      })
+                    }}
                   />
                 </div>
 
@@ -288,25 +425,44 @@ const VoucherPage = ({ variants }: { variants: any }) => {
                     id="validTo"
                     type="date"
                     className="p-2 border-gray-900 rounded-md w-full text-black"
-                    value={newValidTo}
-                    onChange={(e) => setNewValidTo(e.target.value)}
+                    value={new Date(promotionReq.endDate).toISOString().split('T')[0]} // ✅ Đúng format
+                    onChange={(e) => {
+                      setPromotionReq(prev => {
+                        return {
+                          ...prev,
+                          endDate:new Date(e.target.value)
+                        }
+                      })
+                    }}
                   />
                 </div>
               </div>
 
-              {/* Trạng thái */}
-              {/* <div className="mb-4">
-                <label htmlFor="status" className="block text-black">Trạng thái</label>
-                <select
-                  id="status"
-                  className="p-2 border-gray-800 rounded-md w-full text-black"
-                  value={newStatus}
-                  onChange={(e) => setNewStatus(e.target.value)}
-                >
-                  <option value="Active">Hoạt động</option>
-                  <option value="Inactive">Không hoạt động</option>
-                </select>
-              </div> */}
+               <div className="mb-4">
+                <label htmlFor="status" className="block text-black">Loại vé áp dụng</label>
+                <CheckboxTree
+                nodes={nodes}
+                checked={promotionReq.idsTypeTicket}
+                expanded={expands}
+                onCheck={checked => setPromotionReq(prev=>{
+                  return {
+                    ...prev,
+                    idsTypeTicket:checked
+                  }
+                })}
+                onExpand={expanded => setExpands(expanded)}
+                icons={{
+                  check: <FaCheckSquare />,
+                  uncheck: <FaSquare />,
+                  halfCheck: <FaMinusSquare />,
+                  expandClose: <FaChevronRight />,
+                  expandOpen: <FaChevronDown />,
+                  parentClose: <MdEvent />,   
+                  parentOpen: <MdEvent />,    
+                  leaf: <FaTicketAlt />,
+                }}
+            />
+              </div> 
 
               {/* Buttons */}
               <div className="flex justify-between">
@@ -318,9 +474,11 @@ const VoucherPage = ({ variants }: { variants: any }) => {
                 </button>
                 <button
                   className="bg-green-500 text-white px-4 py-2 rounded-md"
-                  onClick={addVoucher}
+                  onClick={handleClick}
+                  disabled={valid()}
+                style={{backgroundColor:valid() ? colors.gray : colors.primary}}
                 >
-                  Thêm
+                  {promotionReq.type === 'create' ? 'Thêm' : 'Cập nhập'}
                 </button>
               </div>
             </div>

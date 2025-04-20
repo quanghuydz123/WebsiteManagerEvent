@@ -34,7 +34,59 @@
 	--breakpoint-lg: 992px;
 	--breakpoint-xl: 1200px;
 }
+/* Background trắng + viền rõ */
+.rct-tree {
+	background-color: black;
 
+	color: #333;
+	font-size: 14px;
+  }
+  
+  /* Khoảng cách từng node */
+  .rct-title{
+	color: black;
+  }
+  
+  /* Checkbox cải thiện màu sắc */
+  .rct-checkbox svg{
+	
+
+  }
+  .rct-checkbox svg path{
+	border: 1px solid black;
+	border-radius: 2px;
+	fill:#ccc
+  }
+  .rct-collapse svg{
+	color: black;
+  }
+  /* Label rõ ràng hơn */
+  .rct-label {
+	color: #222;
+	font-weight: 500;
+  }
+  
+  /* Icon style */
+  .rct-icon-expand-close,
+  .rct-icon-expand-open {
+	color: #666;
+	font-size: 16px;
+  }
+  
+  /* Icon khi hovered */
+  .rct-label:hover {
+	background-color: #f5f5f5;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: 0.2s ease;
+  }
+  
+  /* Optional: nếu bạn muốn remove dấu viền khi chọn */
+  .rct-node-icon {
+	color: #555;
+  }
+
+  
 * {
 	margin: 0px;
 	padding: 0px;

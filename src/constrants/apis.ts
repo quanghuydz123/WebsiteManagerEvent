@@ -139,7 +139,10 @@ export const apis = {
         getAll:()=>'/get-all'
     },
     promotion:{
-        getByIdEvent:({idEvent}:{idEvent:string})=>`/get-by-idEvent?idEvent=${idEvent}`
+        getByIdEvent:({idEvent}:{idEvent:string})=>`/get-by-idEvent?idEvent=${idEvent}`,
+        createPromotion:()=>'/create-promotion',
+        updatePromotion:()=>'/update-promotion',
+        cancelPromotion:()=>'/cancel-promotion'
     }
 
 }

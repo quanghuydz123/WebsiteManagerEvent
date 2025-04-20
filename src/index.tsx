@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import './index.css';
 import './reponsive.css';
 import App from './App';
@@ -11,6 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
