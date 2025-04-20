@@ -124,7 +124,7 @@ const ShowTimeModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit,type,sh
                     <div className="grid grid-cols-2 gap-6">
                         <div>
                             <label className="block font-semibold mb-2">
-                                <span className="text-red-500">*</span> Thời gian bắt đầu bán vé
+                                <span className="text-red-500">*</span> Thời gian bắt đầu suất diễn
                             </label>
                             <input
                                 type="datetime-local"
@@ -142,7 +142,7 @@ const ShowTimeModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit,type,sh
                         </div>
                         <div>
                             <label className="block font-semibold mb-2">
-                                <span className="text-red-500">*</span> Thời gian kết thúc bán vé
+                                <span className="text-red-500">*</span> Thời gian kết thúc suất diễn
                             </label>
                             <input
                                 type="datetime-local"

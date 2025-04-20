@@ -111,8 +111,16 @@ const VoucherPage = ({ variants }: { variants: any }) => {
       console.log("lỗi tại EventPage",errorMessage.statusCode)
     }
   }
+  const validTime = ()=>{
+    if (new Date(promotionReq.endDate) < new Date(promotionReq.startDate)) {
+      toast.error('Thời gian kết thúc phải sau thời gian bắt đầu')
+      return false
+    }
+    return true
+  }
   // Add new voucher
   const handleClick = async () => {
+    if(validTime()){    
     setIsAddVoucherModalOpen(false)
     if(promotionReq.type === 'create'){
       const api = apis.promotion.createPromotion()
@@ -141,6 +149,7 @@ const VoucherPage = ({ variants }: { variants: any }) => {
 
       }
     }
+  }
   };
   const valid = ()=>{
     return !promotionReq.title || promotionReq.idsTypeTicket.length === 0 || promotionReq.discountValue === 0
