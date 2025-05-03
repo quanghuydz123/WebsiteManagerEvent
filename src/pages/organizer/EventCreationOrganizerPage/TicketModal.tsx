@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import {
   ClassicEditor,
@@ -58,22 +58,32 @@ import {
   TextTransformation,
   TodoList,
   Underline,
-  Undo
+  Undo,
 } from 'ckeditor5';
-import { initTypeTicket, TypeTicketModel } from "../../../models/TypeTicketModel";
-import { DateTime } from "../../../utils/DateTime";
-import { SpaceComponent } from "../../../components";
-import { ShowTimeModel } from "../../../models/ShowTimeModel";
+import {
+  initTypeTicket,
+  TypeTicketModel,
+} from '../../../models/TypeTicketModel';
+import { DateTime } from '../../../utils/DateTime';
+import { SpaceComponent } from '../../../components';
+import { ShowTimeModel } from '../../../models/ShowTimeModel';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  type:'create' | 'update',
-  onSubmit:(val:TypeTicketModel)=>void,
-  value:TypeTicketModel,
-  showTimeSelected:ShowTimeModel
+  type: 'create' | 'update';
+  onSubmit: (val: TypeTicketModel) => void;
+  value: TypeTicketModel;
+  showTimeSelected: ShowTimeModel;
 }
 
-const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,value,showTimeSelected}) => {
+const TicketModal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  type,
+  value,
+  showTimeSelected,
+}) => {
   const editorConfig: any = {
     toolbar: {
       items: [
@@ -108,9 +118,9 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
         'numberedList',
         'todoList',
         'outdent',
-        'indent'
+        'indent',
       ],
-      shouldNotGroupWhenFull: false
+      shouldNotGroupWhenFull: false,
     },
     plugins: [
       AccessibilityHelp,
@@ -169,59 +179,59 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
       TextTransformation,
       TodoList,
       Underline,
-      Undo
+      Undo,
     ],
     fontFamily: {
-      supportAllValues: true
+      supportAllValues: true,
     },
     fontSize: {
       options: [10, 12, 14, 'default', 18, 20, 22],
-      supportAllValues: true
+      supportAllValues: true,
     },
     heading: {
       options: [
         {
           model: 'paragraph',
           title: 'Paragraph',
-          class: 'ck-heading_paragraph'
+          class: 'ck-heading_paragraph',
         },
         {
           model: 'heading1',
           view: 'h1',
           title: 'Heading 1',
-          class: 'ck-heading_heading1'
+          class: 'ck-heading_heading1',
         },
         {
           model: 'heading2',
           view: 'h2',
           title: 'Heading 2',
-          class: 'ck-heading_heading2'
+          class: 'ck-heading_heading2',
         },
         {
           model: 'heading3',
           view: 'h3',
           title: 'Heading 3',
-          class: 'ck-heading_heading3'
+          class: 'ck-heading_heading3',
         },
         {
           model: 'heading4',
           view: 'h4',
           title: 'Heading 4',
-          class: 'ck-heading_heading4'
+          class: 'ck-heading_heading4',
         },
         {
           model: 'heading5',
           view: 'h5',
           title: 'Heading 5',
-          class: 'ck-heading_heading5'
+          class: 'ck-heading_heading5',
         },
         {
           model: 'heading6',
           view: 'h6',
           title: 'Heading 6',
-          class: 'ck-heading_heading6'
-        }
-      ]
+          class: 'ck-heading_heading6',
+        },
+      ],
     },
     htmlSupport: {
       allow: [
@@ -229,9 +239,9 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
           name: /^.*$/,
           styles: true,
           attributes: true,
-          classes: true
-        }
-      ]
+          classes: true,
+        },
+      ],
     },
     image: {
       toolbar: [
@@ -242,10 +252,8 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
         'imageStyle:wrapText',
         'imageStyle:breakText',
         '|',
-        'resizeImage'
+        'resizeImage',
       ],
-
-
     },
 
     initialData: '',
@@ -257,17 +265,17 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
           mode: 'manual',
           label: 'Downloadable',
           attributes: {
-            download: 'file'
-          }
-        }
-      }
+            download: 'file',
+          },
+        },
+      },
     },
     list: {
       properties: {
         styles: true,
         startIndex: true,
-        reversed: true
-      }
+        reversed: true,
+      },
     },
     mention: {
       feeds: [
@@ -275,9 +283,9 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
           marker: '@',
           feed: [
             /* See: https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html */
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     placeholder: 'Nhập thông tin vé...',
     style: {
@@ -285,53 +293,59 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
         {
           name: 'Article category',
           element: 'h3',
-          classes: ['category']
+          classes: ['category'],
         },
         {
           name: 'Title',
           element: 'h2',
-          classes: ['document-title']
+          classes: ['document-title'],
         },
         {
           name: 'Subtitle',
           element: 'h3',
-          classes: ['document-subtitle']
+          classes: ['document-subtitle'],
         },
         {
           name: 'Info box',
           element: 'p',
-          classes: ['info-box']
+          classes: ['info-box'],
         },
         {
           name: 'Side quote',
           element: 'blockquote',
-          classes: ['side-quote']
+          classes: ['side-quote'],
         },
         {
           name: 'Marker',
           element: 'span',
-          classes: ['marker']
+          classes: ['marker'],
         },
         {
           name: 'Spoiler',
           element: 'span',
-          classes: ['spoiler']
+          classes: ['spoiler'],
         },
         {
           name: 'Code (dark)',
           element: 'pre',
-          classes: ['fancy-code', 'fancy-code-dark']
+          classes: ['fancy-code', 'fancy-code-dark'],
         },
         {
           name: 'Code (bright)',
           element: 'pre',
-          classes: ['fancy-code', 'fancy-code-bright']
-        }
-      ]
+          classes: ['fancy-code', 'fancy-code-bright'],
+        },
+      ],
     },
     table: {
-      contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
-    }
+      contentToolbar: [
+        'tableColumn',
+        'tableRow',
+        'mergeTableCells',
+        'tableProperties',
+        'tableCellProperties',
+      ],
+    },
   };
   const [isFree, setIsFree] = useState(false);
   // const [price, setPrice] = useState("");
@@ -342,17 +356,17 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
   // const [ticketNameError, setTicketNameError] = useState("");
   // const [quantityError, setQuantityError] = useState("");
   // const [dateError, setDateError] = useState("");
-  const [typeTicket,setTypeTicket] = useState<TypeTicketModel>(initTypeTicket)
-  const [errorMessage,setErrorMessage] = useState('')
-  useEffect(()=>{
-    if(type==='update'){
-      setTypeTicket(value)
-      setIsFree(value.type === 'Free' ? true : false)
-    }else{
-      setIsFree(false)
-      setTypeTicket(initTypeTicket)
+  const [typeTicket, setTypeTicket] = useState<TypeTicketModel>(initTypeTicket);
+  const [errorMessage, setErrorMessage] = useState('');
+  useEffect(() => {
+    if (type === 'update') {
+      setTypeTicket(value);
+      setIsFree(value.type === 'Free' ? true : false);
+    } else {
+      setIsFree(false);
+      setTypeTicket(initTypeTicket);
     }
-  },[value,isOpen])
+  }, [value, isOpen]);
   // Kiểm tra tên vé có vượt quá 50 ký tự
   // const handleTicketNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const value = e.target.value;
@@ -392,20 +406,20 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
   useEffect(() => {
     // Nếu checkbox "miễn phí" được chọn, giá vé phải là 0
     if (isFree) {
-      setTypeTicket(prev => {
+      setTypeTicket((prev) => {
         return {
           ...prev,
           // price:0,
-          type:'Free'
-        }
-      })
-    }else{
-      setTypeTicket(prev => {
+          type: 'Free',
+        };
+      });
+    } else {
+      setTypeTicket((prev) => {
         return {
           ...prev,
-          type:'Paid'
-        }
-      })
+          type: 'Paid',
+        };
+      });
     }
   }, [isFree]);
 
@@ -414,42 +428,45 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
   const handleFreeChange = () => {
     setIsFree(!isFree);
   };
- 
-  const handleSubmit = ()=>{
-    let error = ''
-    if(new Date(typeTicket.startSaleTime) > new Date(typeTicket.endSaleTime)){
-      error = 'Thời gian kết thúc bán phải lớn hơn thời gian bắt đầu bán !!!'
-    }else{
-      if(new Date(showTimeSelected.startDate) < new Date(typeTicket.endSaleTime)){
-        error = 'Thời gian kết thúc bán vé phải nhỏ hơn thời gian bắt đầu của suất diễn'
+
+  const handleSubmit = () => {
+    let error = '';
+    if (new Date(typeTicket.startSaleTime) > new Date(typeTicket.endSaleTime)) {
+      error = 'Thời gian kết thúc bán phải lớn hơn thời gian bắt đầu bán !!!';
+    } else {
+      if (
+        new Date(showTimeSelected.startDate) < new Date(typeTicket.endSaleTime)
+      ) {
+        error =
+          'Thời gian kết thúc bán vé phải nhỏ hơn thời gian bắt đầu của suất diễn';
       }
     }
-    if(typeTicket.name === ''){
-      error = 'Hãy nhập tên vé !!!'
-
-    }else if(typeTicket.price <= 5000 && typeTicket.type === 'Paid'){
-      error = 'Giá vé phài trên 5000 VNĐ !!!'
+    if (typeTicket.name === '') {
+      error = 'Hãy nhập tên vé !!!';
+    } else if (typeTicket.price <= 5000 && typeTicket.type === 'Paid') {
+      error = 'Giá vé phài trên 5000 VNĐ !!!';
     }
-    setErrorMessage(error)
-    if(error === ''){
-        setTypeTicket(initTypeTicket)
-        onSubmit(typeTicket)
-        onClose()
+    setErrorMessage(error);
+    if (error === '') {
+      setTypeTicket(initTypeTicket);
+      onSubmit(typeTicket);
+      onClose();
     }
-   
-  }
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       {/* Modal container with rounded corners */}
       <div className="bg-gray-800 text-white w-full max-w-7xl rounded-xl shadow-lg text-lg overflow-y-auto max-h-screen">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-600 sticky top-0 bg-gray-800 z-10 rounded-t-xl">
-          <h2 className="text-2xl font-semibold">{type==='create' ? 'Tạo loại vé mới' : 'Cập nhập loại vé'}</h2>
+          <h2 className="text-2xl font-semibold">
+            {type === 'create' ? 'Tạo loại vé mới' : 'Cập nhập loại vé'}
+          </h2>
           <button
-            onClick={()=>{
-              setTypeTicket(initTypeTicket)
-              setErrorMessage('')
-              onClose()
+            onClick={() => {
+              setTypeTicket(initTypeTicket);
+              setErrorMessage('');
+              onClose();
             }}
             className="text-gray-400 hover:text-gray-200 text-2xl"
           >
@@ -469,13 +486,13 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
               placeholder="Tên vé"
               maxLength={50}
               value={typeTicket.name}
-              onChange={(e)=>{
-                setTypeTicket(prev => {
+              onChange={(e) => {
+                setTypeTicket((prev) => {
                   return {
                     ...prev,
-                    name:e.target.value
-                  }
-                })
+                    name: e.target.value,
+                  };
+                });
               }}
               className="w-full p-4 rounded-xl border border-gray-500 bg-white text-black focus:ring-2 focus:ring-green-500 text-lg"
             />
@@ -498,18 +515,18 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
                   type="number"
                   value={typeTicket.price}
                   onChange={(e) => {
-                    setTypeTicket(prev => {
+                    setTypeTicket((prev) => {
                       return {
                         ...prev,
-                        price:Number(e.target.value)
-                      }
-                    })
+                        price: Number(e.target.value),
+                      };
+                    });
                   }}
                   disabled={isFree}
                   className={`w-full p-4 rounded-xl border ${
                     isFree
-                      ? "border-gray-600 bg-gray-600 cursor-not-allowed"
-                      : "border-gray-500 bg-white text-black"
+                      ? 'border-gray-600 bg-gray-600 cursor-not-allowed'
+                      : 'border-gray-500 bg-white text-black'
                   } focus:ring-2 focus:ring-green-500 text-lg`}
                 />
                 <div className="flex items-center">
@@ -533,13 +550,13 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
               <input
                 type="number"
                 value={typeTicket.amount}
-                onChange={(e)=>{
-                  setTypeTicket(prev =>{
+                onChange={(e) => {
+                  setTypeTicket((prev) => {
                     return {
                       ...prev,
-                      amount:Number(e.target.value)
-                    }
-                  })
+                      amount: Number(e.target.value),
+                    };
+                  });
                 }}
                 className="w-full p-4 rounded-xl border border-gray-500 bg-white text-black focus:ring-2 focus:ring-green-500 text-lg"
               />
@@ -559,30 +576,31 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
                 type="datetime-local"
                 value={DateTime.formatLocalDateTime(typeTicket.startSaleTime)}
                 onChange={(e) => {
-                  setTypeTicket(prev =>{
+                  setTypeTicket((prev) => {
                     return {
                       ...prev,
-                      startSaleTime:new Date(e.target.value)
-                    }
-                  })
+                      startSaleTime: new Date(e.target.value),
+                    };
+                  });
                 }}
                 className="w-full p-4 rounded-xl border border-gray-500 bg-white text-black focus:ring-2 focus:ring-green-500 text-lg"
               />
             </div>
             <div>
               <label className="block font-semibold mb-2">
-                <span className="text-red-500">*</span> Thời gian kết thúc bán vé
+                <span className="text-red-500">*</span> Thời gian kết thúc bán
+                vé
               </label>
               <input
                 type="datetime-local"
                 value={DateTime.formatLocalDateTime(typeTicket.endSaleTime)}
                 onChange={(e) => {
-                  setTypeTicket(prev =>{
+                  setTypeTicket((prev) => {
                     return {
                       ...prev,
-                      endSaleTime:new Date(e.target.value)
-                    }
-                  })
+                      endSaleTime: new Date(e.target.value),
+                    };
+                  });
                 }}
                 className="w-full p-4 rounded-xl border border-gray-500 bg-white text-black focus:ring-2 focus:ring-green-500 text-lg"
               />
@@ -596,29 +614,35 @@ const TicketModal: React.FC<ModalProps> = ({ isOpen, onClose,onSubmit ,type,valu
           <div>
             <label className="block font-semibold mb-2">Thông tin vé</label>
             <CKEditor
-                editor={ClassicEditor}
-                config={editorConfig}
-                data={typeTicket.description}
-                onChange={(event, editor) => {
-                  setTypeTicket(prev =>{
-                    return {
-                      ...prev,
-                      description:editor.getData()
-                    }
-                  })
-                }}
-
-              />
+              editor={ClassicEditor}
+              config={editorConfig}
+              data={typeTicket.description}
+              onChange={(event, editor) => {
+                setTypeTicket((prev) => {
+                  return {
+                    ...prev,
+                    description: editor.getData(),
+                  };
+                });
+              }}
+            />
             {/* <div className="text-right text-sm text-gray-400">0 / 1000</div> */}
           </div>
         </div>
-        {errorMessage && <p className="text-center text-red-600">{errorMessage}</p>}
-        <SpaceComponent height={8}/>
+        {errorMessage && (
+          <p className="text-center text-red-600">{errorMessage}</p>
+        )}
+        <SpaceComponent height={8} />
         {/* Footer */}
         <div className="p-6 border-t border-gray-600 rounded-b-xl">
-          <button onClick={()=>handleSubmit()} className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-xl">
-            {type==='create' ? 'Thêm' : 'Cập nhập'}
-          </button>
+          {typeTicket.status !== 'Canceled' && (
+            <button
+              onClick={() => handleSubmit()}
+              className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-xl"
+            >
+              {type === 'create' ? 'Thêm' : 'Cập nhập'}
+            </button>
+          )}
         </div>
       </div>
     </div>
