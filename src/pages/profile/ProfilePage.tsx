@@ -1,5 +1,7 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import axios from "axios";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import axios from 'axios';
+import { AuthState } from '../../reduxs/reducers/authReducers';
+import { useSelector } from 'react-redux';
 
 interface Province {
   code: number;
@@ -17,14 +19,17 @@ interface Ward {
 }
 
 const ProfilePage: React.FC = () => {
+  const { authData }: { authData: AuthState } = useSelector(
+    (state: any) => state.auth
+  );
   const [formData, setFormData] = useState({
-    name: "Toàn Đặng",
-    phone: "357949625",
-    email: "dtoan1612@gmail.com",
-    province: "",
-    district: "",
-    ward: "",
-    gender: "Nam",
+    name: authData?.fullname,
+    phone: authData?.phoneNumber,
+    email: authData?.email,
+    province: '',
+    district: '',
+    ward: '',
+    gender: 'Nam',
   });
 
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -37,10 +42,12 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get("https://provinces.open-api.vn/api/?depth=1");
+        const response = await axios.get(
+          'https://provinces.open-api.vn/api/?depth=1'
+        );
         setProvinces(response.data);
       } catch (error) {
-        console.error("Error fetching provinces:", error);
+        console.error('Error fetching provinces:', error);
       }
     };
     fetchProvinces();
@@ -55,9 +62,9 @@ const ProfilePage: React.FC = () => {
           );
           setDistricts(response.data.districts || []);
           setWards([]);
-          setFormData({ ...formData, district: "", ward: "" });
+          setFormData({ ...formData, district: '', ward: '' });
         } catch (error) {
-          console.error("Error fetching districts:", error);
+          console.error('Error fetching districts:', error);
         }
       };
       fetchDistricts();
@@ -75,9 +82,9 @@ const ProfilePage: React.FC = () => {
             `https://provinces.open-api.vn/api/d/${selectedDistrict}?depth=2`
           );
           setWards(response.data.wards || []);
-          setFormData({ ...formData, ward: "" });
+          setFormData({ ...formData, ward: '' });
         } catch (error) {
-          console.error("Error fetching wards:", error);
+          console.error('Error fetching wards:', error);
         }
       };
       fetchWards();
@@ -86,7 +93,9 @@ const ProfilePage: React.FC = () => {
     }
   }, [selectedDistrict]);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -116,7 +125,7 @@ const ProfilePage: React.FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
+    console.log('Form Data Submitted:', formData);
   };
 
   return (
@@ -125,7 +134,7 @@ const ProfilePage: React.FC = () => {
         <div className="flex justify-center relative">
           <div className="relative w-24 h-24 sm:w-32 sm:h-32">
             <img
-              src={avatar || "https://via.placeholder.com/96x96"}
+              src={authData?.photoUrl}
               alt="Avatar"
               className="w-full h-full rounded-full object-cover border-4 border-green-500"
             />
@@ -154,7 +163,9 @@ const ProfilePage: React.FC = () => {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-gray-700 text-sm font-semibold">Họ và tên</label>
+            <label className="block text-gray-700 text-sm font-semibold">
+              Họ và tên
+            </label>
             <input
               type="text"
               name="name"
@@ -165,7 +176,9 @@ const ProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-semibold">Số điện thoại</label>
+            <label className="block text-gray-700 text-sm font-semibold">
+              Số điện thoại
+            </label>
             <input
               type="text"
               name="phone"
@@ -176,7 +189,9 @@ const ProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-semibold">Tỉnh/Thành</label>
+            <label className="block text-gray-700 text-sm font-semibold">
+              Tỉnh/Thành
+            </label>
             <select
               value={selectedProvince}
               onChange={handleProvinceChange}
@@ -192,7 +207,9 @@ const ProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-semibold">Quận/Huyện</label>
+            <label className="block text-gray-700 text-sm font-semibold">
+              Quận/Huyện
+            </label>
             <select
               value={selectedDistrict}
               onChange={handleDistrictChange}
@@ -209,7 +226,9 @@ const ProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-semibold">Phường/Xã</label>
+            <label className="block text-gray-700 text-sm font-semibold">
+              Phường/Xã
+            </label>
             <select
               name="ward"
               value={formData.ward}
@@ -224,25 +243,6 @@ const ProfilePage: React.FC = () => {
                 </option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label className="block text-gray-700 text-sm font-semibold">Giới tính</label>
-            <div className="flex space-x-4 mt-2">
-              {['Nam', 'Nữ', 'Khác'].map((gender) => (
-                <label key={gender} className="flex items-center">
-                  <input
-                    type="radio"
-                    name="gender"
-                    value={gender}
-                    checked={formData.gender === gender}
-                    onChange={handleChange}
-                    className="form-radio text-green-500"
-                  />
-                  <span className="ml-2 text-gray-700">{gender}</span>
-                </label>
-              ))}
-            </div>
           </div>
 
           <button
