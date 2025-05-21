@@ -379,28 +379,31 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({
             <BsPencilSquare size={20} color={colors.background} />
           </div>
           <SpaceComponent width={12} />
-          {typeTicket.status !== 'Canceled' && (
-            <div
-              className="bg-red-500 p-1.5 rounded-md"
-              onClick={() => {
-                setDeleteState({
-                  content: 'typeTicket',
-                  indexShowTimeSelected: indexShowTime,
-                  indexTypeTicketSelected: indexTypeTicket,
-                  message: `Bạn có muốn xóa loại vé này ${
-                    isEdit
-                      ? '(Nếu có người đã mua vé này thì hệ thống sẽ tự động gửi thông báo hoàn trả tiền cho những người đã mua vé)'
-                      : ''
-                  } !!!`,
-                  showTimeDelete: showTime,
-                  typeTicketDelete: typeTicket,
-                });
-                setIsAlertOpen(true);
-              }}
-            >
-              <MdDeleteOutline size={20} />
-            </div>
-          )}
+          {typeTicket.status !== 'Canceled' &&
+            showTime.status !== 'Canceled' &&
+            showTime.status !== 'Ended' &&
+            showTime.status !== 'Ongoing' && (
+              <div
+                className="bg-red-500 p-1.5 rounded-md"
+                onClick={() => {
+                  setDeleteState({
+                    content: 'typeTicket',
+                    indexShowTimeSelected: indexShowTime,
+                    indexTypeTicketSelected: indexTypeTicket,
+                    message: `Bạn có muốn xóa loại vé này ${
+                      isEdit
+                        ? '(Nếu có người đã mua vé này thì hệ thống sẽ tự động gửi thông báo hoàn trả tiền cho những người đã mua vé)'
+                        : ''
+                    } !!!`,
+                    showTimeDelete: showTime,
+                    typeTicketDelete: typeTicket,
+                  });
+                  setIsAlertOpen(true);
+                }}
+              >
+                <MdDeleteOutline size={20} />
+              </div>
+            )}
         </RowComponent>
       </div>
     );
@@ -784,42 +787,44 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({
                 <label className="font-semibold text-green-500">
                   <span className="text-red-500">*</span> Thời gian sự kiện
                 </label>
-                {performance.status !== 'Canceled' && (
-                  <button
-                    onClick={() => {
-                      setDeleteState((prev) => {
-                        return {
-                          ...prev,
-                          content: 'showTime',
-                          indexShowTimeSelected: indexShowTime,
-                          showTimeDelete: performance,
-                          message: `Bạn có muốn xóa suất diễn này ${
-                            isEdit
-                              ? '(Nếu có người đã mua vé của suất này này thì hệ thống sẽ tự động gửi thông báo hoàn trả tiền cho những người đã mua vé)'
-                              : ''
-                          } !!!`,
-                        };
-                      });
-                      setIsAlertOpen(true);
-                    }}
-                    className=" text-red-500 hover:text-red-700 text-lg font-semibold bg-gray-500 rounded-3xl pl-1 pr-2 pt-1 pb-2 "
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20"
-                      className="w-5 h-5 inline"
+                {performance.status !== 'Canceled' &&
+                  performance.status !== 'Ended' &&
+                  performance.status !== 'Ongoing' && (
+                    <button
+                      onClick={() => {
+                        setDeleteState((prev) => {
+                          return {
+                            ...prev,
+                            content: 'showTime',
+                            indexShowTimeSelected: indexShowTime,
+                            showTimeDelete: performance,
+                            message: `Bạn có muốn xóa suất diễn này ${
+                              isEdit
+                                ? '(Nếu có người đã mua vé của suất này này thì hệ thống sẽ tự động gửi thông báo hoàn trả tiền cho những người đã mua vé)'
+                                : ''
+                            } !!!`,
+                          };
+                        });
+                        setIsAlertOpen(true);
+                      }}
+                      className=" text-red-500 hover:text-red-700 text-lg font-semibold bg-gray-500 rounded-3xl pl-1 pr-2 pt-1 pb-2 "
                     >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                )}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                        className="w-5 h-5 inline"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  )}
               </div>
               <section className="flex flex-row gap-4">
                 <div className="flex-1">
@@ -868,23 +873,25 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({
               </section>
               <SpaceComponent height={12} />
 
-              {performance.status !== 'Canceled' && (
-                <AddButton
-                  text="Cập nhập suất diễn"
-                  onClick={() => {
-                    setModalShowTimeState((prev) => {
-                      return {
-                        ...prev,
-                        indexShowTimeSelected: indexShowTime,
-                        showTimeSelected: performance,
-                        type: 'update',
-                      };
-                    });
-                    setModalShowTimeOpen(true);
-                  }}
-                  className="text-lg font-semibold "
-                />
-              )}
+              {performance.status !== 'Canceled' &&
+                performance.status !== 'Ended' &&
+                performance.status !== 'Ongoing' && (
+                  <AddButton
+                    text="Cập nhập suất diễn"
+                    onClick={() => {
+                      setModalShowTimeState((prev) => {
+                        return {
+                          ...prev,
+                          indexShowTimeSelected: indexShowTime,
+                          showTimeSelected: performance,
+                          type: 'update',
+                        };
+                      });
+                      setModalShowTimeOpen(true);
+                    }}
+                    className="text-lg font-semibold "
+                  />
+                )}
               <SpaceComponent height={12} />
               {errorMessage[indexShowTime] && (
                 <p className="text-red-600 text-center">
@@ -897,15 +904,17 @@ const EventCreationTimePage: React.FC<EventCreationTimePageProps> = ({
                   <label className="font-semibold text-green-500">
                     <span className="text-red-500">*</span> Loại vé
                   </label>
-                  {performance.status !== 'Canceled' && (
-                    <AddButton
-                      text="Tạo loại vé mới"
-                      onClick={() =>
-                        createTypeTicket(performance, indexShowTime)
-                      }
-                      className="text-lg font-semibold "
-                    />
-                  )}
+                  {performance.status !== 'Canceled' &&
+                    performance.status !== 'Ended' &&
+                    performance.status !== 'Ongoing' && (
+                      <AddButton
+                        text="Tạo loại vé mới"
+                        onClick={() =>
+                          createTypeTicket(performance, indexShowTime)
+                        }
+                        className="text-lg font-semibold "
+                      />
+                    )}
                 </div>
                 {
                   <div

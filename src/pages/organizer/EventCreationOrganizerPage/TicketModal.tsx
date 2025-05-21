@@ -635,14 +635,17 @@ const TicketModal: React.FC<ModalProps> = ({
         <SpaceComponent height={8} />
         {/* Footer */}
         <div className="p-6 border-t border-gray-600 rounded-b-xl">
-          {typeTicket.status !== 'Canceled' && (
-            <button
-              onClick={() => handleSubmit()}
-              className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-xl"
-            >
-              {type === 'create' ? 'Thêm' : 'Cập nhập'}
-            </button>
-          )}
+          {typeTicket.status !== 'Canceled' &&
+            showTimeSelected.status !== 'Ended' &&
+            showTimeSelected.status !== 'Canceled' &&
+            showTimeSelected.status !== 'Ongoing' && (
+              <button
+                onClick={() => handleSubmit()}
+                className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-xl"
+              >
+                {type === 'create' ? 'Thêm' : 'Cập nhập'}
+              </button>
+            )}
         </div>
       </div>
     </div>
